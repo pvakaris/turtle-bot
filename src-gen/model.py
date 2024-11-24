@@ -38,7 +38,6 @@ class Model:
 			main_region_system_general_return,
 			main_region_system_general_to_right,
 			main_region_system_general_go2,
-			main_region_system_general_wait,
 			main_region_system_moving_moving,
 			main_region_system_moving_moving_r1move_and_turn_back,
 			main_region_system_moving_moving_r1move_and_turn_back_r1normal,
@@ -50,9 +49,8 @@ class Model:
 			main_region_system_moving_moving_r2turn_left_and_right_r1normal,
 			main_region_system_moving_moving_r2turn_left_and_right_r2normal,
 			main_region_system_moving_moving_r2turn_left_and_right_r2turning,
-			main_region_system_moving_wait,
 			null_state
-		) = range(38)
+		) = range(36)
 	
 	
 	class UserVar:
@@ -482,7 +480,7 @@ class Model:
 			return self.__state_vector[0] == self.__State.main_region_manual_control_manual_control_region_turning_left
 		if s == self.__State.main_region_system:
 			return (self.__state_vector[0] >= self.__State.main_region_system)\
-				and (self.__state_vector[0] <= self.__State.main_region_system_moving_wait)
+				and (self.__state_vector[0] <= self.__State.main_region_system_moving_moving_r2turn_left_and_right_r2turning)
 		if s == self.__State.main_region_system_general_normal_moving:
 			return self.__state_vector[0] == self.__State.main_region_system_general_normal_moving
 		if s == self.__State.main_region_system_general_left_wall_disappeared:
@@ -503,8 +501,6 @@ class Model:
 			return self.__state_vector[0] == self.__State.main_region_system_general_to_right
 		if s == self.__State.main_region_system_general_go2:
 			return self.__state_vector[0] == self.__State.main_region_system_general_go2
-		if s == self.__State.main_region_system_general_wait:
-			return self.__state_vector[0] == self.__State.main_region_system_general_wait
 		if s == self.__State.main_region_system_moving_moving:
 			return (self.__state_vector[1] >= self.__State.main_region_system_moving_moving)\
 				and (self.__state_vector[1] <= self.__State.main_region_system_moving_moving_r2turn_left_and_right_r2turning)
@@ -530,8 +526,6 @@ class Model:
 			return self.__state_vector[4] == self.__State.main_region_system_moving_moving_r2turn_left_and_right_r2normal
 		if s == self.__State.main_region_system_moving_moving_r2turn_left_and_right_r2turning:
 			return self.__state_vector[4] == self.__State.main_region_system_moving_moving_r2turn_left_and_right_r2turning
-		if s == self.__State.main_region_system_moving_wait:
-			return self.__state_vector[1] == self.__State.main_region_system_moving_wait
 		return False
 		
 	def time_elapsed(self, event_id):
@@ -639,7 +633,7 @@ class Model:
 		"""Entry action for state 'normal_moving'..
 		"""
 		#Entry action for state 'normal_moving'.
-		self.output.speed = 0.1
+		self.output.speed = 0.05
 		self.output.rotation = 0.0
 		
 	def __entry_action_main_region_system_general_left_wall_disappeared(self):
@@ -652,6 +646,8 @@ class Model:
 		"""Entry action for state 'wall_in_front'..
 		"""
 		#Entry action for state 'wall_in_front'.
+		self.timer_service.set_timer(self, 1, (2 * 1000), False)
+		self.timer_service.set_timer(self, 2, (2 * 1000), False)
 		self.output.speed = 0.0
 		
 	def __entry_action_main_region_system_general_turn_left(self):
@@ -696,12 +692,6 @@ class Model:
 		#Entry action for state 'go2'.
 		self.user_var.move = 0.5
 		
-	def __entry_action_main_region_system_general_wait(self):
-		"""Entry action for state 'wait'..
-		"""
-		#Entry action for state 'wait'.
-		self.timer_service.set_timer(self, 1, (10 * 1000), False)
-		
 	def __entry_action_main_region_system_moving_moving_r1_move_and_turn_back_r1_normal(self):
 		"""Entry action for state 'normal'..
 		"""
@@ -712,7 +702,7 @@ class Model:
 		"""Entry action for state 'moving'..
 		"""
 		#Entry action for state 'moving'.
-		self.output.speed = 0.123
+		self.output.speed = 0.049
 		self.user_var.xmem = self.odom.x
 		self.user_var.ymem = self.odom.y
 		
@@ -758,12 +748,6 @@ class Model:
 		self.output.rotation = -(0.023)
 		self.user_var.angle_mem = self.imu.yaw
 		
-	def __entry_action_main_region_system_moving_wait(self):
-		"""Entry action for state 'wait'..
-		"""
-		#Entry action for state 'wait'.
-		self.timer_service.set_timer(self, 2, (10 * 1000), False)
-		
 	def __exit_action_main_region_calibration_process_r1_offset_calibration(self):
 		"""Exit action for state 'Offset Calibration'..
 		"""
@@ -782,16 +766,11 @@ class Model:
 		#Exit action for state 'Manual Control'.
 		self.timer_service.unset_timer(self, 0)
 		
-	def __exit_action_main_region_system_general_wait(self):
-		"""Exit action for state 'wait'..
+	def __exit_action_main_region_system_general_wall_in_front(self):
+		"""Exit action for state 'wall_in_front'..
 		"""
-		#Exit action for state 'wait'.
+		#Exit action for state 'wall_in_front'.
 		self.timer_service.unset_timer(self, 1)
-		
-	def __exit_action_main_region_system_moving_wait(self):
-		"""Exit action for state 'wait'..
-		"""
-		#Exit action for state 'wait'.
 		self.timer_service.unset_timer(self, 2)
 		
 	def __enter_sequence_main_region_calibration_process_default(self):
@@ -976,15 +955,6 @@ class Model:
 		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_system_general_wait_default(self):
-		"""'default' enter sequence for state wait.
-		"""
-		#'default' enter sequence for state wait
-		self.__entry_action_main_region_system_general_wait()
-		self.__state_vector[0] = self.State.main_region_system_general_wait
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
 	def __enter_sequence_main_region_system_moving_moving_default(self):
 		"""'default' enter sequence for state moving.
 		"""
@@ -1076,15 +1046,6 @@ class Model:
 		self.__entry_action_main_region_system_moving_moving_r2_turn_left_and_right_r2_turning()
 		self.__state_vector[4] = self.State.main_region_system_moving_moving_r2turn_left_and_right_r2turning
 		self.__state_conf_vector_position = 4
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_main_region_system_moving_wait_default(self):
-		"""'default' enter sequence for state wait.
-		"""
-		#'default' enter sequence for state wait
-		self.__entry_action_main_region_system_moving_wait()
-		self.__state_vector[1] = self.State.main_region_system_moving_wait
-		self.__state_conf_vector_position = 1
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_main_region_default(self):
@@ -1269,6 +1230,7 @@ class Model:
 		#Default exit sequence for state wall_in_front
 		self.__state_vector[0] = self.State.main_region_system
 		self.__state_conf_vector_position = 0
+		self.__exit_action_main_region_system_general_wall_in_front()
 		
 	def __exit_sequence_main_region_system_general_turn_left(self):
 		"""Default exit sequence for state turn left.
@@ -1318,14 +1280,6 @@ class Model:
 		#Default exit sequence for state go2
 		self.__state_vector[0] = self.State.main_region_system
 		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_main_region_system_general_wait(self):
-		"""Default exit sequence for state wait.
-		"""
-		#Default exit sequence for state wait
-		self.__state_vector[0] = self.State.main_region_system
-		self.__state_conf_vector_position = 0
-		self.__exit_action_main_region_system_general_wait()
 		
 	def __exit_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r1_normal(self):
 		"""Default exit sequence for state normal.
@@ -1382,14 +1336,6 @@ class Model:
 		#Default exit sequence for state turning
 		self.__state_vector[4] = self.State.main_region_system_moving_moving_r2turn_left_and_right
 		self.__state_conf_vector_position = 4
-		
-	def __exit_sequence_main_region_system_moving_wait(self):
-		"""Default exit sequence for state wait.
-		"""
-		#Default exit sequence for state wait
-		self.__state_vector[1] = self.State.main_region_system
-		self.__state_conf_vector_position = 1
-		self.__exit_action_main_region_system_moving_wait()
 		
 	def __exit_sequence_main_region(self):
 		"""Default exit sequence for region main region.
@@ -1448,15 +1394,11 @@ class Model:
 			self.__exit_sequence_main_region_system_general_to_right()
 		elif state == self.State.main_region_system_general_go2:
 			self.__exit_sequence_main_region_system_general_go2()
-		elif state == self.State.main_region_system_general_wait:
-			self.__exit_sequence_main_region_system_general_wait()
 		state = self.__state_vector[1]
 		if state == self.State.main_region_system_moving_moving_r1move_and_turn_back_r1normal:
 			self.__exit_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r1_normal()
 		elif state == self.State.main_region_system_moving_moving_r1move_and_turn_back_r1moving:
 			self.__exit_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r1_moving()
-		elif state == self.State.main_region_system_moving_wait:
-			self.__exit_sequence_main_region_system_moving_wait()
 		state = self.__state_vector[2]
 		if state == self.State.main_region_system_moving_moving_r1move_and_turn_back_r2normal:
 			self.__exit_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r2_normal()
@@ -1529,13 +1471,13 @@ class Model:
 		"""Default react sequence for initial entry .
 		"""
 		#Default react sequence for initial entry 
-		self.__enter_sequence_main_region_system_general_wait_default()
+		self.__enter_sequence_main_region_system_general_normal_moving_default()
 		
 	def __react_main_region_system_moving__entry_default(self):
 		"""Default react sequence for initial entry .
 		"""
 		#Default react sequence for initial entry 
-		self.__enter_sequence_main_region_system_moving_wait_default()
+		self.__enter_sequence_main_region_system_moving_moving_default()
 		
 	def __react_main_region_system_moving_moving_r1_move_and_turn_back_r1__entry_default(self):
 		"""Default react sequence for initial entry .
@@ -1921,12 +1863,14 @@ class Model:
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
-				if self.laser_distance.dm90 < 0.5:
+				if (self.__time_events[1]) and (self.laser_distance.dm90 < 0.5):
 					self.__exit_sequence_main_region_system_general_wall_in_front()
+					self.__time_events[1] = False
 					self.__enter_sequence_main_region_system_general_return_default()
 					transitioned_after = 0
-				elif self.laser_distance.dm90 > 0.5:
+				elif (self.__time_events[2]) and (self.laser_distance.dm90 > 0.5):
 					self.__exit_sequence_main_region_system_general_wall_in_front()
+					self.__time_events[2] = False
 					self.__enter_sequence_main_region_system_general_to_right_default()
 					transitioned_after = 0
 		return transitioned_after
@@ -2029,21 +1973,6 @@ class Model:
 			if transitioned_after < 0:
 				if self.user_var.move < 0.0:
 					self.__exit_sequence_main_region_system_general_go2()
-					self.__enter_sequence_main_region_system_general_normal_moving_default()
-					transitioned_after = 0
-		return transitioned_after
-	
-	
-	def __main_region_system_general_wait_react(self, transitioned_before):
-		"""Implementation of __main_region_system_general_wait_react function.
-		"""
-		#The reactions of state wait.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.__time_events[1]:
-					self.__exit_sequence_main_region_system_general_wait()
-					self.__time_events[1] = False
 					self.__enter_sequence_main_region_system_general_normal_moving_default()
 					transitioned_after = 0
 		return transitioned_after
@@ -2211,26 +2140,6 @@ class Model:
 		return transitioned_after
 	
 	
-	def __main_region_system_moving_wait_react(self, transitioned_before):
-		"""Implementation of __main_region_system_moving_wait_react function.
-		"""
-		#The reactions of state wait.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 1:
-				if self.__time_events[2]:
-					self.__exit_sequence_main_region_system_moving_wait()
-					self.__time_events[2] = False
-					self.__enter_sequence_main_region_system_moving_moving_default()
-					self.__main_region_system_react(0)
-					transitioned_after = 1
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__main_region_system_react(transitioned_before)
-		return transitioned_after
-	
-	
 	def __clear_in_events(self):
 		"""Implementation of __clear_in_events function.
 		"""
@@ -2293,16 +2202,12 @@ class Model:
 			transitioned = self.__main_region_system_general_to_right_react(transitioned)
 		elif state == self.State.main_region_system_general_go2:
 			transitioned = self.__main_region_system_general_go2_react(transitioned)
-		elif state == self.State.main_region_system_general_wait:
-			transitioned = self.__main_region_system_general_wait_react(transitioned)
 		if self.__state_conf_vector_position < 1:
 			state = self.__state_vector[1]
 			if state == self.State.main_region_system_moving_moving_r1move_and_turn_back_r1normal:
 				transitioned = self.__main_region_system_moving_moving_r1_move_and_turn_back_r1_normal_react(transitioned)
 			elif state == self.State.main_region_system_moving_moving_r1move_and_turn_back_r1moving:
 				transitioned = self.__main_region_system_moving_moving_r1_move_and_turn_back_r1_moving_react(transitioned)
-			elif state == self.State.main_region_system_moving_wait:
-				transitioned = self.__main_region_system_moving_wait_react(transitioned)
 		if self.__state_conf_vector_position < 2:
 			state = self.__state_vector[2]
 			if state == self.State.main_region_system_moving_moving_r1move_and_turn_back_r2normal:
