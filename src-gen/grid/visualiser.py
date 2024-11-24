@@ -101,6 +101,8 @@ class Visualizer(object):
         self.ax.axes.get_xaxis().set_visible(False)
         self.ax.axes.get_yaxis().set_visible(False)
 
-        # title_box = self.ax.text(0, self.maze.grid_rows + self.cell_size + 0.1, r"{}$\times${}".format(self.maze.grid_rows, self.maze.grid_cols), bbox={"facecolor": "gray", "alpha": 0.5, "pad": 4}, fontname="serif", fontsize=15)
+        title_box = self.ax.text(0, self.maze.grid_rows + self.cell_size + 0.1,
+                            r"{}$\times${}".format(self.maze.grid_rows, self.maze.grid_cols),
+                            bbox={"facecolor": "gray", "alpha": 0.5, "pad": 4}, fontname="serif", fontsize=15)
 
         return fig
