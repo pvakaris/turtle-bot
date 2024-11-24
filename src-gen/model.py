@@ -14,20 +14,45 @@ class Model:
 		""" State Enum
 		"""
 		(
-			main_region_do_stop_manual_control,
-			main_region_do_stop_manual_control_manual_control_region_1idle,
-			main_region_do_stop_manual_control_manual_control_region_1going_forward,
-			main_region_do_stop_manual_control_manual_control_region_1turning_left,
-			main_region_do_stop_manual_control_manual_control_region_1turning_right,
-			main_region_continuous_manual_control,
-			main_region_continuous_manual_control_manual_control_region_2idle,
-			main_region_continuous_manual_control_manual_control_region_2in_action,
-			main_region_continuous_manual_control_manual_control_region_2decreasing_speed,
-			main_region_continuous_manual_control_manual_control_region_2increasing_speed,
-			main_region_continuous_manual_control_manual_control_region_2turning_right,
-			main_region_continuous_manual_control_manual_control_region_2turning_left,
+			main_region_calibration_process,
+			main_region_calibration_process_r1idle,
+			main_region_calibration_process_r1offset_calibration,
+			main_region_calibration_process_r1offset_correction,
+			main_region_calibration_process_r1aligned,
+			main_region_calibration_process_r1calibration_completeted,
+			main_region_manual_control,
+			main_region_manual_control_manual_control_region_idle,
+			main_region_manual_control_manual_control_region_in_action,
+			main_region_manual_control_manual_control_region_decreasing_speed,
+			main_region_manual_control_manual_control_region_increasing_speed,
+			main_region_manual_control_manual_control_region_turning_right,
+			main_region_manual_control_manual_control_region_turning_left,
+			main_region_system,
+			main_region_system_general_normal_moving,
+			main_region_system_general_left_wall_disappeared,
+			main_region_system_general_wall_in_front,
+			main_region_system_general_turn_left,
+			main_region_system_general_move_forward,
+			main_region_system_general_turn_and_go,
+			main_region_system_general_go,
+			main_region_system_general_return,
+			main_region_system_general_to_right,
+			main_region_system_general_go2,
+			main_region_system_general_wait,
+			main_region_system_moving_moving,
+			main_region_system_moving_moving_r1move_and_turn_back,
+			main_region_system_moving_moving_r1move_and_turn_back_r1normal,
+			main_region_system_moving_moving_r1move_and_turn_back_r1moving,
+			main_region_system_moving_moving_r1move_and_turn_back_r2normal,
+			main_region_system_moving_moving_r1move_and_turn_back_r2turning,
+			main_region_system_moving_moving_r2turn_left_and_right,
+			main_region_system_moving_moving_r2turn_left_and_right_r1turning,
+			main_region_system_moving_moving_r2turn_left_and_right_r1normal,
+			main_region_system_moving_moving_r2turn_left_and_right_r2normal,
+			main_region_system_moving_moving_r2turn_left_and_right_r2turning,
+			main_region_system_moving_wait,
 			null_state
-		) = range(13)
+		) = range(38)
 	
 	
 	class UserVar:
@@ -38,6 +63,13 @@ class Model:
 			self.base_speed = None
 			self.base_rotation = None
 			self.startprocedure = None
+			self.move = None
+			self.xmem = None
+			self.ymem = None
+			self.turn_back = None
+			self.turn_left = None
+			self.turn_right = None
+			self.angle_mem = None
 			
 			self.statemachine = statemachine
 		
@@ -290,18 +322,36 @@ class Model:
 		self.laser_intensity = Model.LaserIntensity(self)
 		
 		self.in_event_queue = queue.Queue()
+		self.__aligned = None
+		self.__laser_offset = None
+		self.__calculate_laser_offset = None
+		
 		# enumeration of all states:
 		self.__State = Model.State
 		self.__state_conf_vector_changed = None
-		self.__state_vector = [None] * 1
-		for __state_index in range(1):
+		self.__state_vector = [None] * 5
+		for __state_index in range(5):
 			self.__state_vector[__state_index] = self.State.null_state
+		
+		# for timed statechart:
+		self.timer_service = None
+		self.__time_events = [None] * 3
 		
 		# initializations:
 		#Default init sequence for statechart model
+		self.__aligned = False
+		self.__laser_offset = 0.0
+		self.__calculate_laser_offset = 0.0
 		self.user_var.base_speed = 0.05
 		self.user_var.base_rotation = 0.2
 		self.user_var.startprocedure = True
+		self.user_var.move = -(1.0)
+		self.user_var.xmem = 0.0
+		self.user_var.ymem = 0.0
+		self.user_var.turn_back = False
+		self.user_var.turn_left = False
+		self.user_var.turn_right = False
+		self.user_var.angle_mem = 0
 		self.base_values.max_speed = 0.22
 		self.base_values.max_rotation = 2.84
 		self.base_values.degrees_front = 10
@@ -385,11 +435,12 @@ class Model:
 		self.__completed = False
 		self.__do_completion = False
 		self.__is_executing = False
+		self.__state_conf_vector_position = None
 	
 	def is_active(self):
 		"""Checks if the state machine is active.
 		"""
-		return self.__state_vector[0] is not self.__State.null_state
+		return self.__state_vector[0] is not self.__State.null_state or self.__state_vector[1] is not self.__State.null_state or self.__state_vector[2] is not self.__State.null_state or self.__state_vector[3] is not self.__State.null_state or self.__state_vector[4] is not self.__State.null_state
 	
 	def is_final(self):
 		"""Checks if the statemachine is final.
@@ -401,34 +452,100 @@ class Model:
 		"""Checks if the state is currently active.
 		"""
 		s = state
-		if s == self.__State.main_region_do_stop_manual_control:
-			return (self.__state_vector[0] >= self.__State.main_region_do_stop_manual_control)\
-				and (self.__state_vector[0] <= self.__State.main_region_do_stop_manual_control_manual_control_region_1turning_right)
-		if s == self.__State.main_region_do_stop_manual_control_manual_control_region_1idle:
-			return self.__state_vector[0] == self.__State.main_region_do_stop_manual_control_manual_control_region_1idle
-		if s == self.__State.main_region_do_stop_manual_control_manual_control_region_1going_forward:
-			return self.__state_vector[0] == self.__State.main_region_do_stop_manual_control_manual_control_region_1going_forward
-		if s == self.__State.main_region_do_stop_manual_control_manual_control_region_1turning_left:
-			return self.__state_vector[0] == self.__State.main_region_do_stop_manual_control_manual_control_region_1turning_left
-		if s == self.__State.main_region_do_stop_manual_control_manual_control_region_1turning_right:
-			return self.__state_vector[0] == self.__State.main_region_do_stop_manual_control_manual_control_region_1turning_right
-		if s == self.__State.main_region_continuous_manual_control:
-			return (self.__state_vector[0] >= self.__State.main_region_continuous_manual_control)\
-				and (self.__state_vector[0] <= self.__State.main_region_continuous_manual_control_manual_control_region_2turning_left)
-		if s == self.__State.main_region_continuous_manual_control_manual_control_region_2idle:
-			return self.__state_vector[0] == self.__State.main_region_continuous_manual_control_manual_control_region_2idle
-		if s == self.__State.main_region_continuous_manual_control_manual_control_region_2in_action:
-			return self.__state_vector[0] == self.__State.main_region_continuous_manual_control_manual_control_region_2in_action
-		if s == self.__State.main_region_continuous_manual_control_manual_control_region_2decreasing_speed:
-			return self.__state_vector[0] == self.__State.main_region_continuous_manual_control_manual_control_region_2decreasing_speed
-		if s == self.__State.main_region_continuous_manual_control_manual_control_region_2increasing_speed:
-			return self.__state_vector[0] == self.__State.main_region_continuous_manual_control_manual_control_region_2increasing_speed
-		if s == self.__State.main_region_continuous_manual_control_manual_control_region_2turning_right:
-			return self.__state_vector[0] == self.__State.main_region_continuous_manual_control_manual_control_region_2turning_right
-		if s == self.__State.main_region_continuous_manual_control_manual_control_region_2turning_left:
-			return self.__state_vector[0] == self.__State.main_region_continuous_manual_control_manual_control_region_2turning_left
+		if s == self.__State.main_region_calibration_process:
+			return (self.__state_vector[0] >= self.__State.main_region_calibration_process)\
+				and (self.__state_vector[0] <= self.__State.main_region_calibration_process_r1calibration_completeted)
+		if s == self.__State.main_region_calibration_process_r1idle:
+			return self.__state_vector[0] == self.__State.main_region_calibration_process_r1idle
+		if s == self.__State.main_region_calibration_process_r1offset_calibration:
+			return self.__state_vector[0] == self.__State.main_region_calibration_process_r1offset_calibration
+		if s == self.__State.main_region_calibration_process_r1offset_correction:
+			return self.__state_vector[0] == self.__State.main_region_calibration_process_r1offset_correction
+		if s == self.__State.main_region_calibration_process_r1aligned:
+			return self.__state_vector[0] == self.__State.main_region_calibration_process_r1aligned
+		if s == self.__State.main_region_calibration_process_r1calibration_completeted:
+			return self.__state_vector[0] == self.__State.main_region_calibration_process_r1calibration_completeted
+		if s == self.__State.main_region_manual_control:
+			return (self.__state_vector[0] >= self.__State.main_region_manual_control)\
+				and (self.__state_vector[0] <= self.__State.main_region_manual_control_manual_control_region_turning_left)
+		if s == self.__State.main_region_manual_control_manual_control_region_idle:
+			return self.__state_vector[0] == self.__State.main_region_manual_control_manual_control_region_idle
+		if s == self.__State.main_region_manual_control_manual_control_region_in_action:
+			return self.__state_vector[0] == self.__State.main_region_manual_control_manual_control_region_in_action
+		if s == self.__State.main_region_manual_control_manual_control_region_decreasing_speed:
+			return self.__state_vector[0] == self.__State.main_region_manual_control_manual_control_region_decreasing_speed
+		if s == self.__State.main_region_manual_control_manual_control_region_increasing_speed:
+			return self.__state_vector[0] == self.__State.main_region_manual_control_manual_control_region_increasing_speed
+		if s == self.__State.main_region_manual_control_manual_control_region_turning_right:
+			return self.__state_vector[0] == self.__State.main_region_manual_control_manual_control_region_turning_right
+		if s == self.__State.main_region_manual_control_manual_control_region_turning_left:
+			return self.__state_vector[0] == self.__State.main_region_manual_control_manual_control_region_turning_left
+		if s == self.__State.main_region_system:
+			return (self.__state_vector[0] >= self.__State.main_region_system)\
+				and (self.__state_vector[0] <= self.__State.main_region_system_moving_wait)
+		if s == self.__State.main_region_system_general_normal_moving:
+			return self.__state_vector[0] == self.__State.main_region_system_general_normal_moving
+		if s == self.__State.main_region_system_general_left_wall_disappeared:
+			return self.__state_vector[0] == self.__State.main_region_system_general_left_wall_disappeared
+		if s == self.__State.main_region_system_general_wall_in_front:
+			return self.__state_vector[0] == self.__State.main_region_system_general_wall_in_front
+		if s == self.__State.main_region_system_general_turn_left:
+			return self.__state_vector[0] == self.__State.main_region_system_general_turn_left
+		if s == self.__State.main_region_system_general_move_forward:
+			return self.__state_vector[0] == self.__State.main_region_system_general_move_forward
+		if s == self.__State.main_region_system_general_turn_and_go:
+			return self.__state_vector[0] == self.__State.main_region_system_general_turn_and_go
+		if s == self.__State.main_region_system_general_go:
+			return self.__state_vector[0] == self.__State.main_region_system_general_go
+		if s == self.__State.main_region_system_general_return:
+			return self.__state_vector[0] == self.__State.main_region_system_general_return
+		if s == self.__State.main_region_system_general_to_right:
+			return self.__state_vector[0] == self.__State.main_region_system_general_to_right
+		if s == self.__State.main_region_system_general_go2:
+			return self.__state_vector[0] == self.__State.main_region_system_general_go2
+		if s == self.__State.main_region_system_general_wait:
+			return self.__state_vector[0] == self.__State.main_region_system_general_wait
+		if s == self.__State.main_region_system_moving_moving:
+			return (self.__state_vector[1] >= self.__State.main_region_system_moving_moving)\
+				and (self.__state_vector[1] <= self.__State.main_region_system_moving_moving_r2turn_left_and_right_r2turning)
+		if s == self.__State.main_region_system_moving_moving_r1move_and_turn_back:
+			return (self.__state_vector[1] >= self.__State.main_region_system_moving_moving_r1move_and_turn_back)\
+				and (self.__state_vector[1] <= self.__State.main_region_system_moving_moving_r1move_and_turn_back_r2turning)
+		if s == self.__State.main_region_system_moving_moving_r1move_and_turn_back_r1normal:
+			return self.__state_vector[1] == self.__State.main_region_system_moving_moving_r1move_and_turn_back_r1normal
+		if s == self.__State.main_region_system_moving_moving_r1move_and_turn_back_r1moving:
+			return self.__state_vector[1] == self.__State.main_region_system_moving_moving_r1move_and_turn_back_r1moving
+		if s == self.__State.main_region_system_moving_moving_r1move_and_turn_back_r2normal:
+			return self.__state_vector[2] == self.__State.main_region_system_moving_moving_r1move_and_turn_back_r2normal
+		if s == self.__State.main_region_system_moving_moving_r1move_and_turn_back_r2turning:
+			return self.__state_vector[2] == self.__State.main_region_system_moving_moving_r1move_and_turn_back_r2turning
+		if s == self.__State.main_region_system_moving_moving_r2turn_left_and_right:
+			return (self.__state_vector[3] >= self.__State.main_region_system_moving_moving_r2turn_left_and_right)\
+				and (self.__state_vector[3] <= self.__State.main_region_system_moving_moving_r2turn_left_and_right_r2turning)
+		if s == self.__State.main_region_system_moving_moving_r2turn_left_and_right_r1turning:
+			return self.__state_vector[3] == self.__State.main_region_system_moving_moving_r2turn_left_and_right_r1turning
+		if s == self.__State.main_region_system_moving_moving_r2turn_left_and_right_r1normal:
+			return self.__state_vector[3] == self.__State.main_region_system_moving_moving_r2turn_left_and_right_r1normal
+		if s == self.__State.main_region_system_moving_moving_r2turn_left_and_right_r2normal:
+			return self.__state_vector[4] == self.__State.main_region_system_moving_moving_r2turn_left_and_right_r2normal
+		if s == self.__State.main_region_system_moving_moving_r2turn_left_and_right_r2turning:
+			return self.__state_vector[4] == self.__State.main_region_system_moving_moving_r2turn_left_and_right_r2turning
+		if s == self.__State.main_region_system_moving_wait:
+			return self.__state_vector[1] == self.__State.main_region_system_moving_wait
 		return False
 		
+	def time_elapsed(self, event_id):
+		"""Add time events to in event queue
+		"""
+		if event_id in range(3):
+			self.in_event_queue.put(lambda: self.raise_time_event(event_id))
+			self.run_cycle()
+	
+	def raise_time_event(self, event_id):
+		"""Raise timed events using the event_id.
+		"""
+		self.__time_events[event_id] = True
+	
 	def __execute_queued_event(self, func):
 		func()
 	
@@ -437,148 +554,537 @@ class Model:
 			return self.in_event_queue.get()
 		return None
 	
-	def __entry_action_main_region_do_stop_manual_control_manual_control_region_1_idle(self):
+	
+	def __entry_action_main_region_calibration_process_r1_idle(self):
+		""".
+		"""
+		#Entry action for state 'Idle'.
+		self.output.speed = 0.0
+		self.output.rotation = 0.0
+		self.__completed = True
+		
+	def __entry_action_main_region_calibration_process_r1_offset_calibration(self):
+		"""Entry action for state 'Offset Calibration'..
+		"""
+		#Entry action for state 'Offset Calibration'.
+		self.__laser_offset = self.__calculate_laser_offset
+		
+	def __entry_action_main_region_calibration_process_r1_offset_correction(self):
+		""".
+		"""
+		#Entry action for state 'Offset Correction'.
+		self.output.rotation = self.user_var.base_rotation if (self.__laser_offset > 0.0) else -(self.user_var.base_rotation)
+		self.__completed = True
+		
+	def __entry_action_main_region_calibration_process_r1_aligned(self):
+		""".
+		"""
+		#Entry action for state 'Aligned'.
+		self.output.rotation = 0.0
+		self.start_pos.set_zero = True
+		self.start_pos.zero_x = self.odom.x
+		self.start_pos.zero_y = self.odom.y
+		self.start_pos.zero_south_degree = self.imu.yaw
+		self.start_pos.laser_deg_offset = 0
+		self.__completed = True
+		
+	def __entry_action_main_region_calibration_process_r1_calibration_completeted(self):
+		"""Entry action for state 'Calibration Completeted'..
+		"""
+		#Entry action for state 'Calibration Completeted'.
+		self.output.finish = 1
+		
+	def __entry_action_main_region_manual_control(self):
+		"""Entry action for state 'Manual Control'..
+		"""
+		#Entry action for state 'Manual Control'.
+		self.timer_service.set_timer(self, 0, (1000 * 1000), False)
+		
+	def __entry_action_main_region_manual_control_manual_control_region_idle(self):
 		"""Entry action for state 'Idle'..
 		"""
 		#Entry action for state 'Idle'.
-		self.output.speed = 0
-		self.output.rotation = 0
+		self.output.speed = 0.0
+		self.output.rotation = 0.0
 		
-	def __entry_action_main_region_do_stop_manual_control_manual_control_region_1_going_forward(self):
-		"""Entry action for state 'Going forward'..
-		"""
-		#Entry action for state 'Going forward'.
-		self.output.speed = self.output.speed + 0.02
-		
-	def __entry_action_main_region_do_stop_manual_control_manual_control_region_1_turning_left(self):
-		"""Entry action for state 'Turning left'..
-		"""
-		#Entry action for state 'Turning left'.
-		self.output.rotation = self.output.rotation + 0.02
-		
-	def __entry_action_main_region_do_stop_manual_control_manual_control_region_1_turning_right(self):
-		"""Entry action for state 'Turning right'..
-		"""
-		#Entry action for state 'Turning right'.
-		self.output.rotation = self.output.rotation - 0.02
-		
-	def __entry_action_main_region_continuous_manual_control_manual_control_region_2_idle(self):
-		"""Entry action for state 'Idle'..
-		"""
-		#Entry action for state 'Idle'.
-		self.output.speed = 0
-		self.output.rotation = 0
-		
-	def __entry_action_main_region_continuous_manual_control_manual_control_region_2_decreasing_speed(self):
+	def __entry_action_main_region_manual_control_manual_control_region_decreasing_speed(self):
 		""".
 		"""
 		#Entry action for state 'Decreasing speed'.
-		self.output.speed = self.output.speed - 0.02
+		self.output.speed = (self.output.speed - 0.02) if self.output.speed > 0.02 else 0.0
 		self.__completed = True
 		
-	def __entry_action_main_region_continuous_manual_control_manual_control_region_2_increasing_speed(self):
+	def __entry_action_main_region_manual_control_manual_control_region_increasing_speed(self):
 		""".
 		"""
 		#Entry action for state 'Increasing speed'.
-		self.output.speed = self.output.speed - 0.02
+		self.output.speed = (self.output.speed + 0.02) if self.output.speed < 0.2 else 0.22
 		self.__completed = True
 		
-	def __entry_action_main_region_continuous_manual_control_manual_control_region_2_turning_right(self):
+	def __entry_action_main_region_manual_control_manual_control_region_turning_right(self):
 		""".
 		"""
 		#Entry action for state 'Turning right'.
-		self.output.rotation = self.output.rotation - 0.02
+		self.output.rotation = (self.output.rotation - 0.02) if self.output.rotation > -(2.82) else -(2.84)
 		self.__completed = True
 		
-	def __entry_action_main_region_continuous_manual_control_manual_control_region_2_turning_left(self):
+	def __entry_action_main_region_manual_control_manual_control_region_turning_left(self):
 		""".
 		"""
 		#Entry action for state 'Turning left'.
-		self.output.rotation = self.output.rotation + 0.02
+		self.output.rotation = (self.output.rotation + 0.02) if self.output.rotation < 2.82 else 2.84
 		self.__completed = True
 		
-	def __enter_sequence_main_region_do_stop_manual_control_default(self):
-		"""'default' enter sequence for state Do-Stop Manual control.
+	def __entry_action_main_region_system_general_normal_moving(self):
+		"""Entry action for state 'normal_moving'..
 		"""
-		#'default' enter sequence for state Do-Stop Manual control
-		self.__enter_sequence_main_region_do_stop_manual_control_manual_control_region_1_default()
+		#Entry action for state 'normal_moving'.
+		self.output.speed = 0.1
+		self.output.rotation = 0.0
 		
-	def __enter_sequence_main_region_do_stop_manual_control_manual_control_region_1_idle_default(self):
+	def __entry_action_main_region_system_general_left_wall_disappeared(self):
+		"""Entry action for state 'left_wall_disappeared'..
+		"""
+		#Entry action for state 'left_wall_disappeared'.
+		self.user_var.move = 0.24
+		
+	def __entry_action_main_region_system_general_wall_in_front(self):
+		"""Entry action for state 'wall_in_front'..
+		"""
+		#Entry action for state 'wall_in_front'.
+		self.output.speed = 0.0
+		
+	def __entry_action_main_region_system_general_turn_left(self):
+		"""Entry action for state 'turn left'..
+		"""
+		#Entry action for state 'turn left'.
+		self.user_var.turn_left = True
+		
+	def __entry_action_main_region_system_general_move_forward(self):
+		"""Entry action for state 'move forward'..
+		"""
+		#Entry action for state 'move forward'.
+		self.user_var.move = 0.5
+		
+	def __entry_action_main_region_system_general_turn_and_go(self):
+		"""Entry action for state 'turn and go'..
+		"""
+		#Entry action for state 'turn and go'.
+		self.user_var.turn_left = True
+		
+	def __entry_action_main_region_system_general_go(self):
+		"""Entry action for state 'go'..
+		"""
+		#Entry action for state 'go'.
+		self.user_var.move = 0.5
+		
+	def __entry_action_main_region_system_general_return(self):
+		"""Entry action for state 'return'..
+		"""
+		#Entry action for state 'return'.
+		self.user_var.turn_back = True
+		
+	def __entry_action_main_region_system_general_to_right(self):
+		"""Entry action for state 'to right'..
+		"""
+		#Entry action for state 'to right'.
+		self.user_var.turn_right = True
+		
+	def __entry_action_main_region_system_general_go2(self):
+		"""Entry action for state 'go2'..
+		"""
+		#Entry action for state 'go2'.
+		self.user_var.move = 0.5
+		
+	def __entry_action_main_region_system_general_wait(self):
+		"""Entry action for state 'wait'..
+		"""
+		#Entry action for state 'wait'.
+		self.timer_service.set_timer(self, 1, (10 * 1000), False)
+		
+	def __entry_action_main_region_system_moving_moving_r1_move_and_turn_back_r1_normal(self):
+		"""Entry action for state 'normal'..
+		"""
+		#Entry action for state 'normal'.
+		self.user_var.move = -(1.0)
+		
+	def __entry_action_main_region_system_moving_moving_r1_move_and_turn_back_r1_moving(self):
+		"""Entry action for state 'moving'..
+		"""
+		#Entry action for state 'moving'.
+		self.output.speed = 0.123
+		self.user_var.xmem = self.odom.x
+		self.user_var.ymem = self.odom.y
+		
+	def __entry_action_main_region_system_moving_moving_r1_move_and_turn_back_r2_normal(self):
+		"""Entry action for state 'normal'..
+		"""
+		#Entry action for state 'normal'.
+		self.output.rotation = 0.0
+		self.user_var.turn_back = False
+		
+	def __entry_action_main_region_system_moving_moving_r1_move_and_turn_back_r2_turning(self):
+		"""Entry action for state 'turning'..
+		"""
+		#Entry action for state 'turning'.
+		self.output.rotation = 0.021
+		self.user_var.angle_mem = self.imu.yaw
+		
+	def __entry_action_main_region_system_moving_moving_r2_turn_left_and_right_r1_turning(self):
+		"""Entry action for state 'turning'..
+		"""
+		#Entry action for state 'turning'.
+		self.output.rotation = 0.022
+		self.user_var.angle_mem = self.imu.yaw
+		
+	def __entry_action_main_region_system_moving_moving_r2_turn_left_and_right_r1_normal(self):
+		"""Entry action for state 'normal'..
+		"""
+		#Entry action for state 'normal'.
+		self.output.rotation = 0.0
+		self.user_var.turn_left = False
+		
+	def __entry_action_main_region_system_moving_moving_r2_turn_left_and_right_r2_normal(self):
+		"""Entry action for state 'normal'..
+		"""
+		#Entry action for state 'normal'.
+		self.output.rotation = 0.0
+		self.user_var.turn_right = False
+		
+	def __entry_action_main_region_system_moving_moving_r2_turn_left_and_right_r2_turning(self):
+		"""Entry action for state 'turning'..
+		"""
+		#Entry action for state 'turning'.
+		self.output.rotation = -(0.023)
+		self.user_var.angle_mem = self.imu.yaw
+		
+	def __entry_action_main_region_system_moving_wait(self):
+		"""Entry action for state 'wait'..
+		"""
+		#Entry action for state 'wait'.
+		self.timer_service.set_timer(self, 2, (10 * 1000), False)
+		
+	def __exit_action_main_region_calibration_process_r1_offset_calibration(self):
+		"""Exit action for state 'Offset Calibration'..
+		"""
+		#Exit action for state 'Offset Calibration'.
+		self.__aligned = ((self.__laser_offset * self.__laser_offset)) <= ((0.05 * 0.05))
+		
+	def __exit_action_main_region_calibration_process_r1_offset_correction(self):
+		"""Exit action for state 'Offset Correction'..
+		"""
+		#Exit action for state 'Offset Correction'.
+		self.__laser_offset = self.__calculate_laser_offset
+		
+	def __exit_action_main_region_manual_control(self):
+		"""Exit action for state 'Manual Control'..
+		"""
+		#Exit action for state 'Manual Control'.
+		self.timer_service.unset_timer(self, 0)
+		
+	def __exit_action_main_region_system_general_wait(self):
+		"""Exit action for state 'wait'..
+		"""
+		#Exit action for state 'wait'.
+		self.timer_service.unset_timer(self, 1)
+		
+	def __exit_action_main_region_system_moving_wait(self):
+		"""Exit action for state 'wait'..
+		"""
+		#Exit action for state 'wait'.
+		self.timer_service.unset_timer(self, 2)
+		
+	def __enter_sequence_main_region_calibration_process_default(self):
+		"""'default' enter sequence for state Calibration Process.
+		"""
+		#'default' enter sequence for state Calibration Process
+		self.__enter_sequence_main_region_calibration_process_r1_default()
+		
+	def __enter_sequence_main_region_calibration_process_r1_idle_default(self):
 		"""'default' enter sequence for state Idle.
 		"""
 		#'default' enter sequence for state Idle
-		self.__entry_action_main_region_do_stop_manual_control_manual_control_region_1_idle()
-		self.__state_vector[0] = self.State.main_region_do_stop_manual_control_manual_control_region_1idle
+		self.__entry_action_main_region_calibration_process_r1_idle()
+		self.__state_vector[0] = self.State.main_region_calibration_process_r1idle
+		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_do_stop_manual_control_manual_control_region_1_going_forward_default(self):
-		"""'default' enter sequence for state Going forward.
+	def __enter_sequence_main_region_calibration_process_r1_offset_correction_default(self):
+		"""'default' enter sequence for state Offset Correction.
 		"""
-		#'default' enter sequence for state Going forward
-		self.__entry_action_main_region_do_stop_manual_control_manual_control_region_1_going_forward()
-		self.__state_vector[0] = self.State.main_region_do_stop_manual_control_manual_control_region_1going_forward
+		#'default' enter sequence for state Offset Correction
+		self.__entry_action_main_region_calibration_process_r1_offset_correction()
+		self.__state_vector[0] = self.State.main_region_calibration_process_r1offset_correction
+		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_do_stop_manual_control_manual_control_region_1_turning_left_default(self):
-		"""'default' enter sequence for state Turning left.
+	def __enter_sequence_main_region_calibration_process_r1_aligned_default(self):
+		"""'default' enter sequence for state Aligned.
 		"""
-		#'default' enter sequence for state Turning left
-		self.__entry_action_main_region_do_stop_manual_control_manual_control_region_1_turning_left()
-		self.__state_vector[0] = self.State.main_region_do_stop_manual_control_manual_control_region_1turning_left
+		#'default' enter sequence for state Aligned
+		self.__entry_action_main_region_calibration_process_r1_aligned()
+		self.__state_vector[0] = self.State.main_region_calibration_process_r1aligned
+		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_do_stop_manual_control_manual_control_region_1_turning_right_default(self):
-		"""'default' enter sequence for state Turning right.
+	def __enter_sequence_main_region_manual_control_default(self):
+		"""'default' enter sequence for state Manual Control.
 		"""
-		#'default' enter sequence for state Turning right
-		self.__entry_action_main_region_do_stop_manual_control_manual_control_region_1_turning_right()
-		self.__state_vector[0] = self.State.main_region_do_stop_manual_control_manual_control_region_1turning_right
-		self.__state_conf_vector_changed = True
+		#'default' enter sequence for state Manual Control
+		self.__entry_action_main_region_manual_control()
+		self.__enter_sequence_main_region_manual_control_manual_control_region_default()
 		
-	def __enter_sequence_main_region_continuous_manual_control_default(self):
-		"""'default' enter sequence for state Continuous Manual Control.
-		"""
-		#'default' enter sequence for state Continuous Manual Control
-		self.__enter_sequence_main_region_continuous_manual_control_manual_control_region_2_default()
-		
-	def __enter_sequence_main_region_continuous_manual_control_manual_control_region_2_idle_default(self):
+	def __enter_sequence_main_region_manual_control_manual_control_region_idle_default(self):
 		"""'default' enter sequence for state Idle.
 		"""
 		#'default' enter sequence for state Idle
-		self.__entry_action_main_region_continuous_manual_control_manual_control_region_2_idle()
-		self.__state_vector[0] = self.State.main_region_continuous_manual_control_manual_control_region_2idle
+		self.__entry_action_main_region_manual_control_manual_control_region_idle()
+		self.__state_vector[0] = self.State.main_region_manual_control_manual_control_region_idle
+		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_continuous_manual_control_manual_control_region_2_decreasing_speed_default(self):
+	def __enter_sequence_main_region_manual_control_manual_control_region_decreasing_speed_default(self):
 		"""'default' enter sequence for state Decreasing speed.
 		"""
 		#'default' enter sequence for state Decreasing speed
-		self.__entry_action_main_region_continuous_manual_control_manual_control_region_2_decreasing_speed()
-		self.__state_vector[0] = self.State.main_region_continuous_manual_control_manual_control_region_2decreasing_speed
+		self.__entry_action_main_region_manual_control_manual_control_region_decreasing_speed()
+		self.__state_vector[0] = self.State.main_region_manual_control_manual_control_region_decreasing_speed
+		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_continuous_manual_control_manual_control_region_2_increasing_speed_default(self):
+	def __enter_sequence_main_region_manual_control_manual_control_region_increasing_speed_default(self):
 		"""'default' enter sequence for state Increasing speed.
 		"""
 		#'default' enter sequence for state Increasing speed
-		self.__entry_action_main_region_continuous_manual_control_manual_control_region_2_increasing_speed()
-		self.__state_vector[0] = self.State.main_region_continuous_manual_control_manual_control_region_2increasing_speed
+		self.__entry_action_main_region_manual_control_manual_control_region_increasing_speed()
+		self.__state_vector[0] = self.State.main_region_manual_control_manual_control_region_increasing_speed
+		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_continuous_manual_control_manual_control_region_2_turning_right_default(self):
+	def __enter_sequence_main_region_manual_control_manual_control_region_turning_right_default(self):
 		"""'default' enter sequence for state Turning right.
 		"""
 		#'default' enter sequence for state Turning right
-		self.__entry_action_main_region_continuous_manual_control_manual_control_region_2_turning_right()
-		self.__state_vector[0] = self.State.main_region_continuous_manual_control_manual_control_region_2turning_right
+		self.__entry_action_main_region_manual_control_manual_control_region_turning_right()
+		self.__state_vector[0] = self.State.main_region_manual_control_manual_control_region_turning_right
+		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_continuous_manual_control_manual_control_region_2_turning_left_default(self):
+	def __enter_sequence_main_region_manual_control_manual_control_region_turning_left_default(self):
 		"""'default' enter sequence for state Turning left.
 		"""
 		#'default' enter sequence for state Turning left
-		self.__entry_action_main_region_continuous_manual_control_manual_control_region_2_turning_left()
-		self.__state_vector[0] = self.State.main_region_continuous_manual_control_manual_control_region_2turning_left
+		self.__entry_action_main_region_manual_control_manual_control_region_turning_left()
+		self.__state_vector[0] = self.State.main_region_manual_control_manual_control_region_turning_left
+		self.__state_conf_vector_position = 0
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_main_region_system_default(self):
+		"""'default' enter sequence for state system.
+		"""
+		#'default' enter sequence for state system
+		self.__enter_sequence_main_region_system_general_default()
+		self.__enter_sequence_main_region_system_moving_default()
+		
+	def __enter_sequence_main_region_system_general_normal_moving_default(self):
+		"""'default' enter sequence for state normal_moving.
+		"""
+		#'default' enter sequence for state normal_moving
+		self.__entry_action_main_region_system_general_normal_moving()
+		self.__state_vector[0] = self.State.main_region_system_general_normal_moving
+		self.__state_conf_vector_position = 0
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_main_region_system_general_left_wall_disappeared_default(self):
+		"""'default' enter sequence for state left_wall_disappeared.
+		"""
+		#'default' enter sequence for state left_wall_disappeared
+		self.__entry_action_main_region_system_general_left_wall_disappeared()
+		self.__state_vector[0] = self.State.main_region_system_general_left_wall_disappeared
+		self.__state_conf_vector_position = 0
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_main_region_system_general_wall_in_front_default(self):
+		"""'default' enter sequence for state wall_in_front.
+		"""
+		#'default' enter sequence for state wall_in_front
+		self.__entry_action_main_region_system_general_wall_in_front()
+		self.__state_vector[0] = self.State.main_region_system_general_wall_in_front
+		self.__state_conf_vector_position = 0
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_main_region_system_general_turn_left_default(self):
+		"""'default' enter sequence for state turn left.
+		"""
+		#'default' enter sequence for state turn left
+		self.__entry_action_main_region_system_general_turn_left()
+		self.__state_vector[0] = self.State.main_region_system_general_turn_left
+		self.__state_conf_vector_position = 0
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_main_region_system_general_move_forward_default(self):
+		"""'default' enter sequence for state move forward.
+		"""
+		#'default' enter sequence for state move forward
+		self.__entry_action_main_region_system_general_move_forward()
+		self.__state_vector[0] = self.State.main_region_system_general_move_forward
+		self.__state_conf_vector_position = 0
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_main_region_system_general_turn_and_go_default(self):
+		"""'default' enter sequence for state turn and go.
+		"""
+		#'default' enter sequence for state turn and go
+		self.__entry_action_main_region_system_general_turn_and_go()
+		self.__state_vector[0] = self.State.main_region_system_general_turn_and_go
+		self.__state_conf_vector_position = 0
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_main_region_system_general_go_default(self):
+		"""'default' enter sequence for state go.
+		"""
+		#'default' enter sequence for state go
+		self.__entry_action_main_region_system_general_go()
+		self.__state_vector[0] = self.State.main_region_system_general_go
+		self.__state_conf_vector_position = 0
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_main_region_system_general_return_default(self):
+		"""'default' enter sequence for state return.
+		"""
+		#'default' enter sequence for state return
+		self.__entry_action_main_region_system_general_return()
+		self.__state_vector[0] = self.State.main_region_system_general_return
+		self.__state_conf_vector_position = 0
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_main_region_system_general_to_right_default(self):
+		"""'default' enter sequence for state to right.
+		"""
+		#'default' enter sequence for state to right
+		self.__entry_action_main_region_system_general_to_right()
+		self.__state_vector[0] = self.State.main_region_system_general_to_right
+		self.__state_conf_vector_position = 0
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_main_region_system_general_go2_default(self):
+		"""'default' enter sequence for state go2.
+		"""
+		#'default' enter sequence for state go2
+		self.__entry_action_main_region_system_general_go2()
+		self.__state_vector[0] = self.State.main_region_system_general_go2
+		self.__state_conf_vector_position = 0
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_main_region_system_general_wait_default(self):
+		"""'default' enter sequence for state wait.
+		"""
+		#'default' enter sequence for state wait
+		self.__entry_action_main_region_system_general_wait()
+		self.__state_vector[0] = self.State.main_region_system_general_wait
+		self.__state_conf_vector_position = 0
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_main_region_system_moving_moving_default(self):
+		"""'default' enter sequence for state moving.
+		"""
+		#'default' enter sequence for state moving
+		self.__enter_sequence_main_region_system_moving_moving_r1_default()
+		self.__enter_sequence_main_region_system_moving_moving_r2_default()
+		
+	def __enter_sequence_main_region_system_moving_moving_r1_move_and_turn_back_default(self):
+		"""'default' enter sequence for state move and turn back.
+		"""
+		#'default' enter sequence for state move and turn back
+		self.__enter_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r1_default()
+		self.__enter_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r2_default()
+		
+	def __enter_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r1_normal_default(self):
+		"""'default' enter sequence for state normal.
+		"""
+		#'default' enter sequence for state normal
+		self.__entry_action_main_region_system_moving_moving_r1_move_and_turn_back_r1_normal()
+		self.__state_vector[1] = self.State.main_region_system_moving_moving_r1move_and_turn_back_r1normal
+		self.__state_conf_vector_position = 1
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r1_moving_default(self):
+		"""'default' enter sequence for state moving.
+		"""
+		#'default' enter sequence for state moving
+		self.__entry_action_main_region_system_moving_moving_r1_move_and_turn_back_r1_moving()
+		self.__state_vector[1] = self.State.main_region_system_moving_moving_r1move_and_turn_back_r1moving
+		self.__state_conf_vector_position = 1
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r2_normal_default(self):
+		"""'default' enter sequence for state normal.
+		"""
+		#'default' enter sequence for state normal
+		self.__entry_action_main_region_system_moving_moving_r1_move_and_turn_back_r2_normal()
+		self.__state_vector[2] = self.State.main_region_system_moving_moving_r1move_and_turn_back_r2normal
+		self.__state_conf_vector_position = 2
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r2_turning_default(self):
+		"""'default' enter sequence for state turning.
+		"""
+		#'default' enter sequence for state turning
+		self.__entry_action_main_region_system_moving_moving_r1_move_and_turn_back_r2_turning()
+		self.__state_vector[2] = self.State.main_region_system_moving_moving_r1move_and_turn_back_r2turning
+		self.__state_conf_vector_position = 2
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_main_region_system_moving_moving_r2_turn_left_and_right_default(self):
+		"""'default' enter sequence for state turn left and right.
+		"""
+		#'default' enter sequence for state turn left and right
+		self.__enter_sequence_main_region_system_moving_moving_r2_turn_left_and_right_r1_default()
+		self.__enter_sequence_main_region_system_moving_moving_r2_turn_left_and_right_r2_default()
+		
+	def __enter_sequence_main_region_system_moving_moving_r2_turn_left_and_right_r1_turning_default(self):
+		"""'default' enter sequence for state turning.
+		"""
+		#'default' enter sequence for state turning
+		self.__entry_action_main_region_system_moving_moving_r2_turn_left_and_right_r1_turning()
+		self.__state_vector[3] = self.State.main_region_system_moving_moving_r2turn_left_and_right_r1turning
+		self.__state_conf_vector_position = 3
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_main_region_system_moving_moving_r2_turn_left_and_right_r1_normal_default(self):
+		"""'default' enter sequence for state normal.
+		"""
+		#'default' enter sequence for state normal
+		self.__entry_action_main_region_system_moving_moving_r2_turn_left_and_right_r1_normal()
+		self.__state_vector[3] = self.State.main_region_system_moving_moving_r2turn_left_and_right_r1normal
+		self.__state_conf_vector_position = 3
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_main_region_system_moving_moving_r2_turn_left_and_right_r2_normal_default(self):
+		"""'default' enter sequence for state normal.
+		"""
+		#'default' enter sequence for state normal
+		self.__entry_action_main_region_system_moving_moving_r2_turn_left_and_right_r2_normal()
+		self.__state_vector[4] = self.State.main_region_system_moving_moving_r2turn_left_and_right_r2normal
+		self.__state_conf_vector_position = 4
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_main_region_system_moving_moving_r2_turn_left_and_right_r2_turning_default(self):
+		"""'default' enter sequence for state turning.
+		"""
+		#'default' enter sequence for state turning
+		self.__entry_action_main_region_system_moving_moving_r2_turn_left_and_right_r2_turning()
+		self.__state_vector[4] = self.State.main_region_system_moving_moving_r2turn_left_and_right_r2turning
+		self.__state_conf_vector_position = 4
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_main_region_system_moving_wait_default(self):
+		"""'default' enter sequence for state wait.
+		"""
+		#'default' enter sequence for state wait
+		self.__entry_action_main_region_system_moving_wait()
+		self.__state_vector[1] = self.State.main_region_system_moving_wait
+		self.__state_conf_vector_position = 1
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_main_region_default(self):
@@ -587,180 +1093,485 @@ class Model:
 		#'default' enter sequence for region main region
 		self.__react_main_region__entry_default()
 		
-	def __enter_sequence_main_region_do_stop_manual_control_manual_control_region_1_default(self):
-		"""'default' enter sequence for region manual control region 1.
+	def __enter_sequence_main_region_calibration_process_r1_default(self):
+		"""'default' enter sequence for region r1.
 		"""
-		#'default' enter sequence for region manual control region 1
-		self.__react_main_region_do_stop_manual_control_manual_control_region_1__entry_default()
+		#'default' enter sequence for region r1
+		self.__react_main_region_calibration_process_r1__entry_default()
 		
-	def __enter_sequence_main_region_continuous_manual_control_manual_control_region_2_default(self):
-		"""'default' enter sequence for region manual control region 2.
+	def __enter_sequence_main_region_manual_control_manual_control_region_default(self):
+		"""'default' enter sequence for region manual control region.
 		"""
-		#'default' enter sequence for region manual control region 2
-		self.__react_main_region_continuous_manual_control_manual_control_region_2__entry_default()
+		#'default' enter sequence for region manual control region
+		self.__react_main_region_manual_control_manual_control_region__entry_default()
 		
-	def __exit_sequence_main_region_do_stop_manual_control(self):
-		"""Default exit sequence for state Do-Stop Manual control.
+	def __enter_sequence_main_region_system_general_default(self):
+		"""'default' enter sequence for region general.
 		"""
-		#Default exit sequence for state Do-Stop Manual control
-		self.__exit_sequence_main_region_do_stop_manual_control_manual_control_region_1()
+		#'default' enter sequence for region general
+		self.__react_main_region_system_general__entry_default()
+		
+	def __enter_sequence_main_region_system_moving_default(self):
+		"""'default' enter sequence for region moving.
+		"""
+		#'default' enter sequence for region moving
+		self.__react_main_region_system_moving__entry_default()
+		
+	def __enter_sequence_main_region_system_moving_moving_r1_default(self):
+		"""'default' enter sequence for region r1.
+		"""
+		#'default' enter sequence for region r1
+		self.__react_main_region_system_moving_moving_r1__entry_default()
+		
+	def __enter_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r1_default(self):
+		"""'default' enter sequence for region r1.
+		"""
+		#'default' enter sequence for region r1
+		self.__react_main_region_system_moving_moving_r1_move_and_turn_back_r1__entry_default()
+		
+	def __enter_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r2_default(self):
+		"""'default' enter sequence for region r2.
+		"""
+		#'default' enter sequence for region r2
+		self.__react_main_region_system_moving_moving_r1_move_and_turn_back_r2__entry_default()
+		
+	def __enter_sequence_main_region_system_moving_moving_r2_default(self):
+		"""'default' enter sequence for region r2.
+		"""
+		#'default' enter sequence for region r2
+		self.__react_main_region_system_moving_moving_r2__entry_default()
+		
+	def __enter_sequence_main_region_system_moving_moving_r2_turn_left_and_right_r1_default(self):
+		"""'default' enter sequence for region r1.
+		"""
+		#'default' enter sequence for region r1
+		self.__react_main_region_system_moving_moving_r2_turn_left_and_right_r1__entry_default()
+		
+	def __enter_sequence_main_region_system_moving_moving_r2_turn_left_and_right_r2_default(self):
+		"""'default' enter sequence for region r2.
+		"""
+		#'default' enter sequence for region r2
+		self.__react_main_region_system_moving_moving_r2_turn_left_and_right_r2__entry_default()
+		
+	def __exit_sequence_main_region_calibration_process(self):
+		"""Default exit sequence for state Calibration Process.
+		"""
+		#Default exit sequence for state Calibration Process
+		self.__exit_sequence_main_region_calibration_process_r1()
 		self.__state_vector[0] = self.State.null_state
+		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_main_region_do_stop_manual_control_manual_control_region_1_idle(self):
+	def __exit_sequence_main_region_calibration_process_r1_idle(self):
 		"""Default exit sequence for state Idle.
 		"""
 		#Default exit sequence for state Idle
-		self.__state_vector[0] = self.State.main_region_do_stop_manual_control
+		self.__state_vector[0] = self.State.main_region_calibration_process
+		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_main_region_do_stop_manual_control_manual_control_region_1_going_forward(self):
-		"""Default exit sequence for state Going forward.
+	def __exit_sequence_main_region_calibration_process_r1_offset_calibration(self):
+		"""Default exit sequence for state Offset Calibration.
 		"""
-		#Default exit sequence for state Going forward
-		self.__state_vector[0] = self.State.main_region_do_stop_manual_control
+		#Default exit sequence for state Offset Calibration
+		self.__state_vector[0] = self.State.main_region_calibration_process
+		self.__state_conf_vector_position = 0
+		self.__exit_action_main_region_calibration_process_r1_offset_calibration()
 		
-	def __exit_sequence_main_region_do_stop_manual_control_manual_control_region_1_turning_left(self):
-		"""Default exit sequence for state Turning left.
+	def __exit_sequence_main_region_calibration_process_r1_offset_correction(self):
+		"""Default exit sequence for state Offset Correction.
 		"""
-		#Default exit sequence for state Turning left
-		self.__state_vector[0] = self.State.main_region_do_stop_manual_control
+		#Default exit sequence for state Offset Correction
+		self.__state_vector[0] = self.State.main_region_calibration_process
+		self.__state_conf_vector_position = 0
+		self.__exit_action_main_region_calibration_process_r1_offset_correction()
 		
-	def __exit_sequence_main_region_do_stop_manual_control_manual_control_region_1_turning_right(self):
-		"""Default exit sequence for state Turning right.
+	def __exit_sequence_main_region_calibration_process_r1_aligned(self):
+		"""Default exit sequence for state Aligned.
 		"""
-		#Default exit sequence for state Turning right
-		self.__state_vector[0] = self.State.main_region_do_stop_manual_control
+		#Default exit sequence for state Aligned
+		self.__state_vector[0] = self.State.main_region_calibration_process
+		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_main_region_continuous_manual_control(self):
-		"""Default exit sequence for state Continuous Manual Control.
+	def __exit_sequence_main_region_calibration_process_r1_calibration_completeted(self):
+		"""Default exit sequence for state Calibration Completeted.
 		"""
-		#Default exit sequence for state Continuous Manual Control
-		self.__exit_sequence_main_region_continuous_manual_control_manual_control_region_2()
+		#Default exit sequence for state Calibration Completeted
+		self.__state_vector[0] = self.State.main_region_calibration_process
+		self.__state_conf_vector_position = 0
+		
+	def __exit_sequence_main_region_manual_control(self):
+		"""Default exit sequence for state Manual Control.
+		"""
+		#Default exit sequence for state Manual Control
+		self.__exit_sequence_main_region_manual_control_manual_control_region()
 		self.__state_vector[0] = self.State.null_state
+		self.__state_conf_vector_position = 0
+		self.__exit_action_main_region_manual_control()
 		
-	def __exit_sequence_main_region_continuous_manual_control_manual_control_region_2_idle(self):
+	def __exit_sequence_main_region_manual_control_manual_control_region_idle(self):
 		"""Default exit sequence for state Idle.
 		"""
 		#Default exit sequence for state Idle
-		self.__state_vector[0] = self.State.main_region_continuous_manual_control
+		self.__state_vector[0] = self.State.main_region_manual_control
+		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_main_region_continuous_manual_control_manual_control_region_2_in_action(self):
+	def __exit_sequence_main_region_manual_control_manual_control_region_in_action(self):
 		"""Default exit sequence for state In action.
 		"""
 		#Default exit sequence for state In action
-		self.__state_vector[0] = self.State.main_region_continuous_manual_control
+		self.__state_vector[0] = self.State.main_region_manual_control
+		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_main_region_continuous_manual_control_manual_control_region_2_decreasing_speed(self):
+	def __exit_sequence_main_region_manual_control_manual_control_region_decreasing_speed(self):
 		"""Default exit sequence for state Decreasing speed.
 		"""
 		#Default exit sequence for state Decreasing speed
-		self.__state_vector[0] = self.State.main_region_continuous_manual_control
+		self.__state_vector[0] = self.State.main_region_manual_control
+		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_main_region_continuous_manual_control_manual_control_region_2_increasing_speed(self):
+	def __exit_sequence_main_region_manual_control_manual_control_region_increasing_speed(self):
 		"""Default exit sequence for state Increasing speed.
 		"""
 		#Default exit sequence for state Increasing speed
-		self.__state_vector[0] = self.State.main_region_continuous_manual_control
+		self.__state_vector[0] = self.State.main_region_manual_control
+		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_main_region_continuous_manual_control_manual_control_region_2_turning_right(self):
+	def __exit_sequence_main_region_manual_control_manual_control_region_turning_right(self):
 		"""Default exit sequence for state Turning right.
 		"""
 		#Default exit sequence for state Turning right
-		self.__state_vector[0] = self.State.main_region_continuous_manual_control
+		self.__state_vector[0] = self.State.main_region_manual_control
+		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_main_region_continuous_manual_control_manual_control_region_2_turning_left(self):
+	def __exit_sequence_main_region_manual_control_manual_control_region_turning_left(self):
 		"""Default exit sequence for state Turning left.
 		"""
 		#Default exit sequence for state Turning left
-		self.__state_vector[0] = self.State.main_region_continuous_manual_control
+		self.__state_vector[0] = self.State.main_region_manual_control
+		self.__state_conf_vector_position = 0
+		
+	def __exit_sequence_main_region_system_general_normal_moving(self):
+		"""Default exit sequence for state normal_moving.
+		"""
+		#Default exit sequence for state normal_moving
+		self.__state_vector[0] = self.State.main_region_system
+		self.__state_conf_vector_position = 0
+		
+	def __exit_sequence_main_region_system_general_left_wall_disappeared(self):
+		"""Default exit sequence for state left_wall_disappeared.
+		"""
+		#Default exit sequence for state left_wall_disappeared
+		self.__state_vector[0] = self.State.main_region_system
+		self.__state_conf_vector_position = 0
+		
+	def __exit_sequence_main_region_system_general_wall_in_front(self):
+		"""Default exit sequence for state wall_in_front.
+		"""
+		#Default exit sequence for state wall_in_front
+		self.__state_vector[0] = self.State.main_region_system
+		self.__state_conf_vector_position = 0
+		
+	def __exit_sequence_main_region_system_general_turn_left(self):
+		"""Default exit sequence for state turn left.
+		"""
+		#Default exit sequence for state turn left
+		self.__state_vector[0] = self.State.main_region_system
+		self.__state_conf_vector_position = 0
+		
+	def __exit_sequence_main_region_system_general_move_forward(self):
+		"""Default exit sequence for state move forward.
+		"""
+		#Default exit sequence for state move forward
+		self.__state_vector[0] = self.State.main_region_system
+		self.__state_conf_vector_position = 0
+		
+	def __exit_sequence_main_region_system_general_turn_and_go(self):
+		"""Default exit sequence for state turn and go.
+		"""
+		#Default exit sequence for state turn and go
+		self.__state_vector[0] = self.State.main_region_system
+		self.__state_conf_vector_position = 0
+		
+	def __exit_sequence_main_region_system_general_go(self):
+		"""Default exit sequence for state go.
+		"""
+		#Default exit sequence for state go
+		self.__state_vector[0] = self.State.main_region_system
+		self.__state_conf_vector_position = 0
+		
+	def __exit_sequence_main_region_system_general_return(self):
+		"""Default exit sequence for state return.
+		"""
+		#Default exit sequence for state return
+		self.__state_vector[0] = self.State.main_region_system
+		self.__state_conf_vector_position = 0
+		
+	def __exit_sequence_main_region_system_general_to_right(self):
+		"""Default exit sequence for state to right.
+		"""
+		#Default exit sequence for state to right
+		self.__state_vector[0] = self.State.main_region_system
+		self.__state_conf_vector_position = 0
+		
+	def __exit_sequence_main_region_system_general_go2(self):
+		"""Default exit sequence for state go2.
+		"""
+		#Default exit sequence for state go2
+		self.__state_vector[0] = self.State.main_region_system
+		self.__state_conf_vector_position = 0
+		
+	def __exit_sequence_main_region_system_general_wait(self):
+		"""Default exit sequence for state wait.
+		"""
+		#Default exit sequence for state wait
+		self.__state_vector[0] = self.State.main_region_system
+		self.__state_conf_vector_position = 0
+		self.__exit_action_main_region_system_general_wait()
+		
+	def __exit_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r1_normal(self):
+		"""Default exit sequence for state normal.
+		"""
+		#Default exit sequence for state normal
+		self.__state_vector[1] = self.State.main_region_system_moving_moving_r1move_and_turn_back
+		self.__state_conf_vector_position = 1
+		
+	def __exit_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r1_moving(self):
+		"""Default exit sequence for state moving.
+		"""
+		#Default exit sequence for state moving
+		self.__state_vector[1] = self.State.main_region_system_moving_moving_r1move_and_turn_back
+		self.__state_conf_vector_position = 1
+		
+	def __exit_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r2_normal(self):
+		"""Default exit sequence for state normal.
+		"""
+		#Default exit sequence for state normal
+		self.__state_vector[2] = self.State.main_region_system_moving_moving_r1move_and_turn_back
+		self.__state_conf_vector_position = 2
+		
+	def __exit_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r2_turning(self):
+		"""Default exit sequence for state turning.
+		"""
+		#Default exit sequence for state turning
+		self.__state_vector[2] = self.State.main_region_system_moving_moving_r1move_and_turn_back
+		self.__state_conf_vector_position = 2
+		
+	def __exit_sequence_main_region_system_moving_moving_r2_turn_left_and_right_r1_turning(self):
+		"""Default exit sequence for state turning.
+		"""
+		#Default exit sequence for state turning
+		self.__state_vector[3] = self.State.main_region_system_moving_moving_r2turn_left_and_right
+		self.__state_conf_vector_position = 3
+		
+	def __exit_sequence_main_region_system_moving_moving_r2_turn_left_and_right_r1_normal(self):
+		"""Default exit sequence for state normal.
+		"""
+		#Default exit sequence for state normal
+		self.__state_vector[3] = self.State.main_region_system_moving_moving_r2turn_left_and_right
+		self.__state_conf_vector_position = 3
+		
+	def __exit_sequence_main_region_system_moving_moving_r2_turn_left_and_right_r2_normal(self):
+		"""Default exit sequence for state normal.
+		"""
+		#Default exit sequence for state normal
+		self.__state_vector[4] = self.State.main_region_system_moving_moving_r2turn_left_and_right
+		self.__state_conf_vector_position = 4
+		
+	def __exit_sequence_main_region_system_moving_moving_r2_turn_left_and_right_r2_turning(self):
+		"""Default exit sequence for state turning.
+		"""
+		#Default exit sequence for state turning
+		self.__state_vector[4] = self.State.main_region_system_moving_moving_r2turn_left_and_right
+		self.__state_conf_vector_position = 4
+		
+	def __exit_sequence_main_region_system_moving_wait(self):
+		"""Default exit sequence for state wait.
+		"""
+		#Default exit sequence for state wait
+		self.__state_vector[1] = self.State.main_region_system
+		self.__state_conf_vector_position = 1
+		self.__exit_action_main_region_system_moving_wait()
 		
 	def __exit_sequence_main_region(self):
 		"""Default exit sequence for region main region.
 		"""
 		#Default exit sequence for region main region
 		state = self.__state_vector[0]
-		if state == self.State.main_region_do_stop_manual_control:
-			self.__exit_sequence_main_region_do_stop_manual_control()
-		elif state == self.State.main_region_do_stop_manual_control_manual_control_region_1idle:
-			self.__exit_sequence_main_region_do_stop_manual_control_manual_control_region_1_idle()
-		elif state == self.State.main_region_do_stop_manual_control_manual_control_region_1going_forward:
-			self.__exit_sequence_main_region_do_stop_manual_control_manual_control_region_1_going_forward()
-		elif state == self.State.main_region_do_stop_manual_control_manual_control_region_1turning_left:
-			self.__exit_sequence_main_region_do_stop_manual_control_manual_control_region_1_turning_left()
-		elif state == self.State.main_region_do_stop_manual_control_manual_control_region_1turning_right:
-			self.__exit_sequence_main_region_do_stop_manual_control_manual_control_region_1_turning_right()
-		elif state == self.State.main_region_continuous_manual_control:
-			self.__exit_sequence_main_region_continuous_manual_control()
-		elif state == self.State.main_region_continuous_manual_control_manual_control_region_2idle:
-			self.__exit_sequence_main_region_continuous_manual_control_manual_control_region_2_idle()
-		elif state == self.State.main_region_continuous_manual_control_manual_control_region_2in_action:
-			self.__exit_sequence_main_region_continuous_manual_control_manual_control_region_2_in_action()
-		elif state == self.State.main_region_continuous_manual_control_manual_control_region_2decreasing_speed:
-			self.__exit_sequence_main_region_continuous_manual_control_manual_control_region_2_decreasing_speed()
-		elif state == self.State.main_region_continuous_manual_control_manual_control_region_2increasing_speed:
-			self.__exit_sequence_main_region_continuous_manual_control_manual_control_region_2_increasing_speed()
-		elif state == self.State.main_region_continuous_manual_control_manual_control_region_2turning_right:
-			self.__exit_sequence_main_region_continuous_manual_control_manual_control_region_2_turning_right()
-		elif state == self.State.main_region_continuous_manual_control_manual_control_region_2turning_left:
-			self.__exit_sequence_main_region_continuous_manual_control_manual_control_region_2_turning_left()
+		if state == self.State.main_region_calibration_process:
+			self.__exit_sequence_main_region_calibration_process()
+		elif state == self.State.main_region_calibration_process_r1idle:
+			self.__exit_sequence_main_region_calibration_process_r1_idle()
+		elif state == self.State.main_region_calibration_process_r1offset_calibration:
+			self.__exit_sequence_main_region_calibration_process_r1_offset_calibration()
+		elif state == self.State.main_region_calibration_process_r1offset_correction:
+			self.__exit_sequence_main_region_calibration_process_r1_offset_correction()
+		elif state == self.State.main_region_calibration_process_r1aligned:
+			self.__exit_sequence_main_region_calibration_process_r1_aligned()
+		elif state == self.State.main_region_calibration_process_r1calibration_completeted:
+			self.__exit_sequence_main_region_calibration_process_r1_calibration_completeted()
+		elif state == self.State.main_region_manual_control:
+			self.__exit_sequence_main_region_manual_control()
+		elif state == self.State.main_region_manual_control_manual_control_region_idle:
+			self.__exit_sequence_main_region_manual_control_manual_control_region_idle()
+			self.__exit_action_main_region_manual_control()
+		elif state == self.State.main_region_manual_control_manual_control_region_in_action:
+			self.__exit_sequence_main_region_manual_control_manual_control_region_in_action()
+			self.__exit_action_main_region_manual_control()
+		elif state == self.State.main_region_manual_control_manual_control_region_decreasing_speed:
+			self.__exit_sequence_main_region_manual_control_manual_control_region_decreasing_speed()
+			self.__exit_action_main_region_manual_control()
+		elif state == self.State.main_region_manual_control_manual_control_region_increasing_speed:
+			self.__exit_sequence_main_region_manual_control_manual_control_region_increasing_speed()
+			self.__exit_action_main_region_manual_control()
+		elif state == self.State.main_region_manual_control_manual_control_region_turning_right:
+			self.__exit_sequence_main_region_manual_control_manual_control_region_turning_right()
+			self.__exit_action_main_region_manual_control()
+		elif state == self.State.main_region_manual_control_manual_control_region_turning_left:
+			self.__exit_sequence_main_region_manual_control_manual_control_region_turning_left()
+			self.__exit_action_main_region_manual_control()
+		elif state == self.State.main_region_system_general_normal_moving:
+			self.__exit_sequence_main_region_system_general_normal_moving()
+		elif state == self.State.main_region_system_general_left_wall_disappeared:
+			self.__exit_sequence_main_region_system_general_left_wall_disappeared()
+		elif state == self.State.main_region_system_general_wall_in_front:
+			self.__exit_sequence_main_region_system_general_wall_in_front()
+		elif state == self.State.main_region_system_general_turn_left:
+			self.__exit_sequence_main_region_system_general_turn_left()
+		elif state == self.State.main_region_system_general_move_forward:
+			self.__exit_sequence_main_region_system_general_move_forward()
+		elif state == self.State.main_region_system_general_turn_and_go:
+			self.__exit_sequence_main_region_system_general_turn_and_go()
+		elif state == self.State.main_region_system_general_go:
+			self.__exit_sequence_main_region_system_general_go()
+		elif state == self.State.main_region_system_general_return:
+			self.__exit_sequence_main_region_system_general_return()
+		elif state == self.State.main_region_system_general_to_right:
+			self.__exit_sequence_main_region_system_general_to_right()
+		elif state == self.State.main_region_system_general_go2:
+			self.__exit_sequence_main_region_system_general_go2()
+		elif state == self.State.main_region_system_general_wait:
+			self.__exit_sequence_main_region_system_general_wait()
+		state = self.__state_vector[1]
+		if state == self.State.main_region_system_moving_moving_r1move_and_turn_back_r1normal:
+			self.__exit_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r1_normal()
+		elif state == self.State.main_region_system_moving_moving_r1move_and_turn_back_r1moving:
+			self.__exit_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r1_moving()
+		elif state == self.State.main_region_system_moving_wait:
+			self.__exit_sequence_main_region_system_moving_wait()
+		state = self.__state_vector[2]
+		if state == self.State.main_region_system_moving_moving_r1move_and_turn_back_r2normal:
+			self.__exit_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r2_normal()
+		elif state == self.State.main_region_system_moving_moving_r1move_and_turn_back_r2turning:
+			self.__exit_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r2_turning()
+		state = self.__state_vector[3]
+		if state == self.State.main_region_system_moving_moving_r2turn_left_and_right_r1turning:
+			self.__exit_sequence_main_region_system_moving_moving_r2_turn_left_and_right_r1_turning()
+		elif state == self.State.main_region_system_moving_moving_r2turn_left_and_right_r1normal:
+			self.__exit_sequence_main_region_system_moving_moving_r2_turn_left_and_right_r1_normal()
+		state = self.__state_vector[4]
+		if state == self.State.main_region_system_moving_moving_r2turn_left_and_right_r2normal:
+			self.__exit_sequence_main_region_system_moving_moving_r2_turn_left_and_right_r2_normal()
+		elif state == self.State.main_region_system_moving_moving_r2turn_left_and_right_r2turning:
+			self.__exit_sequence_main_region_system_moving_moving_r2_turn_left_and_right_r2_turning()
 		
-	def __exit_sequence_main_region_do_stop_manual_control_manual_control_region_1(self):
-		"""Default exit sequence for region manual control region 1.
+	def __exit_sequence_main_region_calibration_process_r1(self):
+		"""Default exit sequence for region r1.
 		"""
-		#Default exit sequence for region manual control region 1
+		#Default exit sequence for region r1
 		state = self.__state_vector[0]
-		if state == self.State.main_region_do_stop_manual_control_manual_control_region_1idle:
-			self.__exit_sequence_main_region_do_stop_manual_control_manual_control_region_1_idle()
-		elif state == self.State.main_region_do_stop_manual_control_manual_control_region_1going_forward:
-			self.__exit_sequence_main_region_do_stop_manual_control_manual_control_region_1_going_forward()
-		elif state == self.State.main_region_do_stop_manual_control_manual_control_region_1turning_left:
-			self.__exit_sequence_main_region_do_stop_manual_control_manual_control_region_1_turning_left()
-		elif state == self.State.main_region_do_stop_manual_control_manual_control_region_1turning_right:
-			self.__exit_sequence_main_region_do_stop_manual_control_manual_control_region_1_turning_right()
+		if state == self.State.main_region_calibration_process_r1idle:
+			self.__exit_sequence_main_region_calibration_process_r1_idle()
+		elif state == self.State.main_region_calibration_process_r1offset_calibration:
+			self.__exit_sequence_main_region_calibration_process_r1_offset_calibration()
+		elif state == self.State.main_region_calibration_process_r1offset_correction:
+			self.__exit_sequence_main_region_calibration_process_r1_offset_correction()
+		elif state == self.State.main_region_calibration_process_r1aligned:
+			self.__exit_sequence_main_region_calibration_process_r1_aligned()
+		elif state == self.State.main_region_calibration_process_r1calibration_completeted:
+			self.__exit_sequence_main_region_calibration_process_r1_calibration_completeted()
 		
-	def __exit_sequence_main_region_continuous_manual_control_manual_control_region_2(self):
-		"""Default exit sequence for region manual control region 2.
+	def __exit_sequence_main_region_manual_control_manual_control_region(self):
+		"""Default exit sequence for region manual control region.
 		"""
-		#Default exit sequence for region manual control region 2
+		#Default exit sequence for region manual control region
 		state = self.__state_vector[0]
-		if state == self.State.main_region_continuous_manual_control_manual_control_region_2idle:
-			self.__exit_sequence_main_region_continuous_manual_control_manual_control_region_2_idle()
-		elif state == self.State.main_region_continuous_manual_control_manual_control_region_2in_action:
-			self.__exit_sequence_main_region_continuous_manual_control_manual_control_region_2_in_action()
-		elif state == self.State.main_region_continuous_manual_control_manual_control_region_2decreasing_speed:
-			self.__exit_sequence_main_region_continuous_manual_control_manual_control_region_2_decreasing_speed()
-		elif state == self.State.main_region_continuous_manual_control_manual_control_region_2increasing_speed:
-			self.__exit_sequence_main_region_continuous_manual_control_manual_control_region_2_increasing_speed()
-		elif state == self.State.main_region_continuous_manual_control_manual_control_region_2turning_right:
-			self.__exit_sequence_main_region_continuous_manual_control_manual_control_region_2_turning_right()
-		elif state == self.State.main_region_continuous_manual_control_manual_control_region_2turning_left:
-			self.__exit_sequence_main_region_continuous_manual_control_manual_control_region_2_turning_left()
+		if state == self.State.main_region_manual_control_manual_control_region_idle:
+			self.__exit_sequence_main_region_manual_control_manual_control_region_idle()
+		elif state == self.State.main_region_manual_control_manual_control_region_in_action:
+			self.__exit_sequence_main_region_manual_control_manual_control_region_in_action()
+		elif state == self.State.main_region_manual_control_manual_control_region_decreasing_speed:
+			self.__exit_sequence_main_region_manual_control_manual_control_region_decreasing_speed()
+		elif state == self.State.main_region_manual_control_manual_control_region_increasing_speed:
+			self.__exit_sequence_main_region_manual_control_manual_control_region_increasing_speed()
+		elif state == self.State.main_region_manual_control_manual_control_region_turning_right:
+			self.__exit_sequence_main_region_manual_control_manual_control_region_turning_right()
+		elif state == self.State.main_region_manual_control_manual_control_region_turning_left:
+			self.__exit_sequence_main_region_manual_control_manual_control_region_turning_left()
 		
-	def __react_main_region__choice_0(self):
-		"""The reactions of state null..
+	def __react_main_region_calibration_process_r1__entry_default(self):
+		"""Default react sequence for initial entry .
 		"""
-		#The reactions of state null.
-		if self.computer.x_press:
-			self.__enter_sequence_main_region_continuous_manual_control_default()
-		else:
-			self.__enter_sequence_main_region_do_stop_manual_control_default()
+		#Default react sequence for initial entry 
+		self.__enter_sequence_main_region_calibration_process_r1_idle_default()
+		
+	def __react_main_region_manual_control_manual_control_region__entry_default(self):
+		"""Default react sequence for initial entry .
+		"""
+		#Default react sequence for initial entry 
+		self.__enter_sequence_main_region_manual_control_manual_control_region_idle_default()
 		
 	def __react_main_region__entry_default(self):
 		"""Default react sequence for initial entry .
 		"""
 		#Default react sequence for initial entry 
-		self.__react_main_region__choice_0()
+		self.__enter_sequence_main_region_manual_control_default()
 		
-	def __react_main_region_do_stop_manual_control_manual_control_region_1__entry_default(self):
+	def __react_main_region_system_general__entry_default(self):
 		"""Default react sequence for initial entry .
 		"""
 		#Default react sequence for initial entry 
-		self.__enter_sequence_main_region_do_stop_manual_control_manual_control_region_1_idle_default()
+		self.__enter_sequence_main_region_system_general_wait_default()
 		
-	def __react_main_region_continuous_manual_control_manual_control_region_2__entry_default(self):
+	def __react_main_region_system_moving__entry_default(self):
 		"""Default react sequence for initial entry .
 		"""
 		#Default react sequence for initial entry 
-		self.__enter_sequence_main_region_continuous_manual_control_manual_control_region_2_idle_default()
+		self.__enter_sequence_main_region_system_moving_wait_default()
+		
+	def __react_main_region_system_moving_moving_r1_move_and_turn_back_r1__entry_default(self):
+		"""Default react sequence for initial entry .
+		"""
+		#Default react sequence for initial entry 
+		self.__enter_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r1_normal_default()
+		
+	def __react_main_region_system_moving_moving_r1_move_and_turn_back_r2__entry_default(self):
+		"""Default react sequence for initial entry .
+		"""
+		#Default react sequence for initial entry 
+		self.__enter_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r2_normal_default()
+		
+	def __react_main_region_system_moving_moving_r1__entry_default(self):
+		"""Default react sequence for initial entry .
+		"""
+		#Default react sequence for initial entry 
+		self.__enter_sequence_main_region_system_moving_moving_r1_move_and_turn_back_default()
+		
+	def __react_main_region_system_moving_moving_r2_turn_left_and_right_r1__entry_default(self):
+		"""Default react sequence for initial entry .
+		"""
+		#Default react sequence for initial entry 
+		self.__enter_sequence_main_region_system_moving_moving_r2_turn_left_and_right_r1_normal_default()
+		
+	def __react_main_region_system_moving_moving_r2_turn_left_and_right_r2__entry_default(self):
+		"""Default react sequence for initial entry .
+		"""
+		#Default react sequence for initial entry 
+		self.__enter_sequence_main_region_system_moving_moving_r2_turn_left_and_right_r2_normal_default()
+		
+	def __react_main_region_system_moving_moving_r2__entry_default(self):
+		"""Default react sequence for initial entry .
+		"""
+		#Default react sequence for initial entry 
+		self.__enter_sequence_main_region_system_moving_moving_r2_turn_left_and_right_default()
 		
 	def __react(self, transitioned_before):
 		"""Implementation of __react function.
@@ -769,10 +1580,10 @@ class Model:
 		return transitioned_before
 	
 	
-	def __main_region_do_stop_manual_control_react(self, transitioned_before):
-		"""Implementation of __main_region_do_stop_manual_control_react function.
+	def __main_region_calibration_process_react(self, transitioned_before):
+		"""Implementation of __main_region_calibration_process_react function.
 		"""
-		#The reactions of state Do-Stop Manual control.
+		#The reactions of state Calibration Process.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			#Always execute local reactions.
@@ -780,255 +1591,643 @@ class Model:
 		return transitioned_after
 	
 	
-	def __main_region_do_stop_manual_control_manual_control_region_1_idle_react(self, transitioned_before):
-		"""Implementation of __main_region_do_stop_manual_control_manual_control_region_1_idle_react function.
+	def __main_region_calibration_process_r1_idle_react(self, transitioned_before):
+		"""Implementation of __main_region_calibration_process_r1_idle_react function.
 		"""
 		#The reactions of state Idle.
 		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.computer.w_press:
-					self.__exit_sequence_main_region_do_stop_manual_control_manual_control_region_1_idle()
-					self.__enter_sequence_main_region_do_stop_manual_control_manual_control_region_1_going_forward_default()
-					self.__main_region_do_stop_manual_control_react(0)
-					transitioned_after = 0
-				elif self.computer.d_press:
-					self.__exit_sequence_main_region_do_stop_manual_control_manual_control_region_1_idle()
-					self.__enter_sequence_main_region_do_stop_manual_control_manual_control_region_1_turning_right_default()
-					self.__main_region_do_stop_manual_control_react(0)
-					transitioned_after = 0
-				elif self.computer.a_press:
-					self.__exit_sequence_main_region_do_stop_manual_control_manual_control_region_1_idle()
-					self.__enter_sequence_main_region_do_stop_manual_control_manual_control_region_1_turning_left_default()
-					self.__main_region_do_stop_manual_control_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__main_region_do_stop_manual_control_react(transitioned_before)
+		if self.__do_completion:
+			#Default exit sequence for state Idle
+			self.__state_vector[0] = self.State.main_region_calibration_process
+			self.__state_conf_vector_position = 0
+			#'default' enter sequence for state Offset Calibration
+			self.__entry_action_main_region_calibration_process_r1_offset_calibration()
+			self.__state_vector[0] = self.State.main_region_calibration_process_r1offset_calibration
+			self.__state_conf_vector_position = 0
+			self.__state_conf_vector_changed = True
+			self.__main_region_calibration_process_react(0)
+		else:
+			#Always execute local reactions.
+			transitioned_after = self.__main_region_calibration_process_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_do_stop_manual_control_manual_control_region_1_going_forward_react(self, transitioned_before):
-		"""Implementation of __main_region_do_stop_manual_control_manual_control_region_1_going_forward_react function.
+	def __main_region_calibration_process_r1_offset_calibration_react(self, transitioned_before):
+		"""Implementation of __main_region_calibration_process_r1_offset_calibration_react function.
 		"""
-		#The reactions of state Going forward.
+		#The reactions of state Offset Calibration.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
-				if self.computer.w_press:
-					self.__exit_sequence_main_region_do_stop_manual_control_manual_control_region_1_going_forward()
-					self.__enter_sequence_main_region_do_stop_manual_control_manual_control_region_1_going_forward_default()
-					self.__main_region_do_stop_manual_control_react(0)
+				if not self.__aligned:
+					self.__exit_sequence_main_region_calibration_process_r1_offset_calibration()
+					self.__enter_sequence_main_region_calibration_process_r1_offset_correction_default()
+					self.__main_region_calibration_process_react(0)
 					transitioned_after = 0
-				elif self.computer.s_press:
-					self.__exit_sequence_main_region_do_stop_manual_control_manual_control_region_1_going_forward()
-					self.__enter_sequence_main_region_do_stop_manual_control_manual_control_region_1_idle_default()
-					self.__main_region_do_stop_manual_control_react(0)
+				elif self.__aligned:
+					self.__exit_sequence_main_region_calibration_process_r1_offset_calibration()
+					self.__enter_sequence_main_region_calibration_process_r1_aligned_default()
+					self.__main_region_calibration_process_react(0)
 					transitioned_after = 0
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__main_region_do_stop_manual_control_react(transitioned_before)
+				transitioned_after = self.__main_region_calibration_process_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_do_stop_manual_control_manual_control_region_1_turning_left_react(self, transitioned_before):
-		"""Implementation of __main_region_do_stop_manual_control_manual_control_region_1_turning_left_react function.
+	def __main_region_calibration_process_r1_offset_correction_react(self, transitioned_before):
+		"""Implementation of __main_region_calibration_process_r1_offset_correction_react function.
 		"""
-		#The reactions of state Turning left.
+		#The reactions of state Offset Correction.
 		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.computer.d_press:
-					self.__exit_sequence_main_region_do_stop_manual_control_manual_control_region_1_turning_left()
-					self.__enter_sequence_main_region_do_stop_manual_control_manual_control_region_1_idle_default()
-					self.__main_region_do_stop_manual_control_react(0)
-					transitioned_after = 0
-				elif self.computer.a_press:
-					self.__exit_sequence_main_region_do_stop_manual_control_manual_control_region_1_turning_left()
-					self.__enter_sequence_main_region_do_stop_manual_control_manual_control_region_1_turning_left_default()
-					self.__main_region_do_stop_manual_control_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__main_region_do_stop_manual_control_react(transitioned_before)
+		if self.__do_completion:
+			#Default exit sequence for state Offset Correction
+			self.__state_vector[0] = self.State.main_region_calibration_process
+			self.__state_conf_vector_position = 0
+			self.__exit_action_main_region_calibration_process_r1_offset_correction()
+			#'default' enter sequence for state Offset Calibration
+			self.__entry_action_main_region_calibration_process_r1_offset_calibration()
+			self.__state_vector[0] = self.State.main_region_calibration_process_r1offset_calibration
+			self.__state_conf_vector_position = 0
+			self.__state_conf_vector_changed = True
+			self.__main_region_calibration_process_react(0)
+		else:
+			#Always execute local reactions.
+			transitioned_after = self.__main_region_calibration_process_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_do_stop_manual_control_manual_control_region_1_turning_right_react(self, transitioned_before):
-		"""Implementation of __main_region_do_stop_manual_control_manual_control_region_1_turning_right_react function.
+	def __main_region_calibration_process_r1_aligned_react(self, transitioned_before):
+		"""Implementation of __main_region_calibration_process_r1_aligned_react function.
 		"""
-		#The reactions of state Turning right.
+		#The reactions of state Aligned.
 		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.computer.a_press:
-					self.__exit_sequence_main_region_do_stop_manual_control_manual_control_region_1_turning_right()
-					self.__enter_sequence_main_region_do_stop_manual_control_manual_control_region_1_idle_default()
-					self.__main_region_do_stop_manual_control_react(0)
-					transitioned_after = 0
-				elif self.computer.d_press:
-					self.__exit_sequence_main_region_do_stop_manual_control_manual_control_region_1_turning_right()
-					self.__enter_sequence_main_region_do_stop_manual_control_manual_control_region_1_turning_right_default()
-					self.__main_region_do_stop_manual_control_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__main_region_do_stop_manual_control_react(transitioned_before)
+		if self.__do_completion:
+			#Default exit sequence for state Aligned
+			self.__state_vector[0] = self.State.main_region_calibration_process
+			self.__state_conf_vector_position = 0
+			#'default' enter sequence for state Calibration Completeted
+			self.__entry_action_main_region_calibration_process_r1_calibration_completeted()
+			self.__state_vector[0] = self.State.main_region_calibration_process_r1calibration_completeted
+			self.__state_conf_vector_position = 0
+			self.__state_conf_vector_changed = True
+			self.__main_region_calibration_process_react(0)
+		else:
+			#Always execute local reactions.
+			transitioned_after = self.__main_region_calibration_process_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_continuous_manual_control_react(self, transitioned_before):
-		"""Implementation of __main_region_continuous_manual_control_react function.
+	def __main_region_calibration_process_r1_calibration_completeted_react(self, transitioned_before):
+		"""Implementation of __main_region_calibration_process_r1_calibration_completeted_react function.
 		"""
-		#The reactions of state Continuous Manual Control.
+		#The reactions of state Calibration Completeted.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			#Always execute local reactions.
-			transitioned_after = self.__react(transitioned_before)
+			transitioned_after = self.__main_region_calibration_process_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_continuous_manual_control_manual_control_region_2_idle_react(self, transitioned_before):
-		"""Implementation of __main_region_continuous_manual_control_manual_control_region_2_idle_react function.
+	def __main_region_manual_control_react(self, transitioned_before):
+		"""Implementation of __main_region_manual_control_react function.
+		"""
+		#The reactions of state Manual Control.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 0:
+				if self.__time_events[0]:
+					self.__exit_sequence_main_region_manual_control()
+					self.__time_events[0] = False
+					self.__enter_sequence_main_region_calibration_process_default()
+					self.__react(0)
+					transitioned_after = 0
+				elif self.computer.m_press:
+					self.__exit_sequence_main_region_manual_control()
+					self.__enter_sequence_main_region_system_default()
+					self.__react(0)
+					transitioned_after = 0
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __main_region_manual_control_manual_control_region_idle_react(self, transitioned_before):
+		"""Implementation of __main_region_manual_control_manual_control_region_idle_react function.
 		"""
 		#The reactions of state Idle.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
 				if self.computer.a_press:
-					self.__exit_sequence_main_region_continuous_manual_control_manual_control_region_2_idle()
-					self.__enter_sequence_main_region_continuous_manual_control_manual_control_region_2_turning_left_default()
-					self.__main_region_continuous_manual_control_react(0)
+					self.__exit_sequence_main_region_manual_control_manual_control_region_idle()
+					self.__enter_sequence_main_region_manual_control_manual_control_region_turning_left_default()
+					self.__main_region_manual_control_react(0)
 					transitioned_after = 0
 				elif self.computer.d_press:
-					self.__exit_sequence_main_region_continuous_manual_control_manual_control_region_2_idle()
-					self.__enter_sequence_main_region_continuous_manual_control_manual_control_region_2_turning_right_default()
-					self.__main_region_continuous_manual_control_react(0)
+					self.__exit_sequence_main_region_manual_control_manual_control_region_idle()
+					self.__enter_sequence_main_region_manual_control_manual_control_region_turning_right_default()
+					self.__main_region_manual_control_react(0)
 					transitioned_after = 0
 				elif self.computer.w_press:
-					self.__exit_sequence_main_region_continuous_manual_control_manual_control_region_2_idle()
-					self.__enter_sequence_main_region_continuous_manual_control_manual_control_region_2_increasing_speed_default()
-					self.__main_region_continuous_manual_control_react(0)
+					self.__exit_sequence_main_region_manual_control_manual_control_region_idle()
+					self.__enter_sequence_main_region_manual_control_manual_control_region_increasing_speed_default()
+					self.__main_region_manual_control_react(0)
 					transitioned_after = 0
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__main_region_continuous_manual_control_react(transitioned_before)
+				transitioned_after = self.__main_region_manual_control_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_continuous_manual_control_manual_control_region_2_in_action_react(self, transitioned_before):
-		"""Implementation of __main_region_continuous_manual_control_manual_control_region_2_in_action_react function.
+	def __main_region_manual_control_manual_control_region_in_action_react(self, transitioned_before):
+		"""Implementation of __main_region_manual_control_manual_control_region_in_action_react function.
 		"""
 		#The reactions of state In action.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
 				if self.computer.w_press:
-					self.__exit_sequence_main_region_continuous_manual_control_manual_control_region_2_in_action()
-					self.__enter_sequence_main_region_continuous_manual_control_manual_control_region_2_increasing_speed_default()
-					self.__main_region_continuous_manual_control_react(0)
-					transitioned_after = 0
-				elif self.computer.s_press:
-					self.__exit_sequence_main_region_continuous_manual_control_manual_control_region_2_in_action()
-					self.__enter_sequence_main_region_continuous_manual_control_manual_control_region_2_decreasing_speed_default()
-					self.__main_region_continuous_manual_control_react(0)
+					self.__exit_sequence_main_region_manual_control_manual_control_region_in_action()
+					self.__enter_sequence_main_region_manual_control_manual_control_region_increasing_speed_default()
+					self.__main_region_manual_control_react(0)
 					transitioned_after = 0
 				elif self.computer.x_press:
-					self.__exit_sequence_main_region_continuous_manual_control_manual_control_region_2_in_action()
-					self.__enter_sequence_main_region_continuous_manual_control_manual_control_region_2_idle_default()
-					self.__main_region_continuous_manual_control_react(0)
+					self.__exit_sequence_main_region_manual_control_manual_control_region_in_action()
+					self.__enter_sequence_main_region_manual_control_manual_control_region_decreasing_speed_default()
+					self.__main_region_manual_control_react(0)
+					transitioned_after = 0
+				elif self.computer.s_press:
+					self.__exit_sequence_main_region_manual_control_manual_control_region_in_action()
+					self.__enter_sequence_main_region_manual_control_manual_control_region_idle_default()
+					self.__main_region_manual_control_react(0)
 					transitioned_after = 0
 				elif self.computer.d_press:
-					self.__exit_sequence_main_region_continuous_manual_control_manual_control_region_2_in_action()
-					self.__enter_sequence_main_region_continuous_manual_control_manual_control_region_2_turning_right_default()
-					self.__main_region_continuous_manual_control_react(0)
+					self.__exit_sequence_main_region_manual_control_manual_control_region_in_action()
+					self.__enter_sequence_main_region_manual_control_manual_control_region_turning_right_default()
+					self.__main_region_manual_control_react(0)
 					transitioned_after = 0
 				elif self.computer.a_press:
-					self.__exit_sequence_main_region_continuous_manual_control_manual_control_region_2_in_action()
-					self.__enter_sequence_main_region_continuous_manual_control_manual_control_region_2_turning_left_default()
-					self.__main_region_continuous_manual_control_react(0)
+					self.__exit_sequence_main_region_manual_control_manual_control_region_in_action()
+					self.__enter_sequence_main_region_manual_control_manual_control_region_turning_left_default()
+					self.__main_region_manual_control_react(0)
 					transitioned_after = 0
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__main_region_continuous_manual_control_react(transitioned_before)
+				transitioned_after = self.__main_region_manual_control_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_continuous_manual_control_manual_control_region_2_decreasing_speed_react(self, transitioned_before):
-		"""Implementation of __main_region_continuous_manual_control_manual_control_region_2_decreasing_speed_react function.
+	def __main_region_manual_control_manual_control_region_decreasing_speed_react(self, transitioned_before):
+		"""Implementation of __main_region_manual_control_manual_control_region_decreasing_speed_react function.
 		"""
 		#The reactions of state Decreasing speed.
 		transitioned_after = transitioned_before
 		if self.__do_completion:
 			#Default exit sequence for state Decreasing speed
-			self.__state_vector[0] = self.State.main_region_continuous_manual_control
+			self.__state_vector[0] = self.State.main_region_manual_control
+			self.__state_conf_vector_position = 0
 			#'default' enter sequence for state In action
-			self.__state_vector[0] = self.State.main_region_continuous_manual_control_manual_control_region_2in_action
+			self.__state_vector[0] = self.State.main_region_manual_control_manual_control_region_in_action
+			self.__state_conf_vector_position = 0
 			self.__state_conf_vector_changed = True
-			self.__main_region_continuous_manual_control_react(0)
+			self.__main_region_manual_control_react(0)
 		else:
-			#Always execute local reactions.
-			transitioned_after = self.__main_region_continuous_manual_control_react(transitioned_before)
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__main_region_manual_control_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_continuous_manual_control_manual_control_region_2_increasing_speed_react(self, transitioned_before):
-		"""Implementation of __main_region_continuous_manual_control_manual_control_region_2_increasing_speed_react function.
+	def __main_region_manual_control_manual_control_region_increasing_speed_react(self, transitioned_before):
+		"""Implementation of __main_region_manual_control_manual_control_region_increasing_speed_react function.
 		"""
 		#The reactions of state Increasing speed.
 		transitioned_after = transitioned_before
 		if self.__do_completion:
 			#Default exit sequence for state Increasing speed
-			self.__state_vector[0] = self.State.main_region_continuous_manual_control
+			self.__state_vector[0] = self.State.main_region_manual_control
+			self.__state_conf_vector_position = 0
 			#'default' enter sequence for state In action
-			self.__state_vector[0] = self.State.main_region_continuous_manual_control_manual_control_region_2in_action
+			self.__state_vector[0] = self.State.main_region_manual_control_manual_control_region_in_action
+			self.__state_conf_vector_position = 0
 			self.__state_conf_vector_changed = True
-			self.__main_region_continuous_manual_control_react(0)
+			self.__main_region_manual_control_react(0)
 		else:
-			#Always execute local reactions.
-			transitioned_after = self.__main_region_continuous_manual_control_react(transitioned_before)
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__main_region_manual_control_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_continuous_manual_control_manual_control_region_2_turning_right_react(self, transitioned_before):
-		"""Implementation of __main_region_continuous_manual_control_manual_control_region_2_turning_right_react function.
+	def __main_region_manual_control_manual_control_region_turning_right_react(self, transitioned_before):
+		"""Implementation of __main_region_manual_control_manual_control_region_turning_right_react function.
 		"""
 		#The reactions of state Turning right.
 		transitioned_after = transitioned_before
 		if self.__do_completion:
 			#Default exit sequence for state Turning right
-			self.__state_vector[0] = self.State.main_region_continuous_manual_control
+			self.__state_vector[0] = self.State.main_region_manual_control
+			self.__state_conf_vector_position = 0
 			#'default' enter sequence for state In action
-			self.__state_vector[0] = self.State.main_region_continuous_manual_control_manual_control_region_2in_action
+			self.__state_vector[0] = self.State.main_region_manual_control_manual_control_region_in_action
+			self.__state_conf_vector_position = 0
 			self.__state_conf_vector_changed = True
-			self.__main_region_continuous_manual_control_react(0)
+			self.__main_region_manual_control_react(0)
 		else:
-			#Always execute local reactions.
-			transitioned_after = self.__main_region_continuous_manual_control_react(transitioned_before)
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__main_region_manual_control_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_continuous_manual_control_manual_control_region_2_turning_left_react(self, transitioned_before):
-		"""Implementation of __main_region_continuous_manual_control_manual_control_region_2_turning_left_react function.
+	def __main_region_manual_control_manual_control_region_turning_left_react(self, transitioned_before):
+		"""Implementation of __main_region_manual_control_manual_control_region_turning_left_react function.
 		"""
 		#The reactions of state Turning left.
 		transitioned_after = transitioned_before
 		if self.__do_completion:
 			#Default exit sequence for state Turning left
-			self.__state_vector[0] = self.State.main_region_continuous_manual_control
+			self.__state_vector[0] = self.State.main_region_manual_control
+			self.__state_conf_vector_position = 0
 			#'default' enter sequence for state In action
-			self.__state_vector[0] = self.State.main_region_continuous_manual_control_manual_control_region_2in_action
+			self.__state_vector[0] = self.State.main_region_manual_control_manual_control_region_in_action
+			self.__state_conf_vector_position = 0
 			self.__state_conf_vector_changed = True
-			self.__main_region_continuous_manual_control_react(0)
+			self.__main_region_manual_control_react(0)
 		else:
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__main_region_manual_control_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __main_region_system_react(self, transitioned_before):
+		"""Implementation of __main_region_system_react function.
+		"""
+		#The reactions of state system.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
 			#Always execute local reactions.
-			transitioned_after = self.__main_region_continuous_manual_control_react(transitioned_before)
+			transitioned_after = self.__react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __main_region_system_general_normal_moving_react(self, transitioned_before):
+		"""Implementation of __main_region_system_general_normal_moving_react function.
+		"""
+		#The reactions of state normal_moving.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 0:
+				if self.laser_distance.d0 < 0.26:
+					self.__exit_sequence_main_region_system_general_normal_moving()
+					self.__enter_sequence_main_region_system_general_wall_in_front_default()
+					transitioned_after = 0
+				elif self.laser_distance.d90 > 0.5:
+					self.__exit_sequence_main_region_system_general_normal_moving()
+					self.__enter_sequence_main_region_system_general_left_wall_disappeared_default()
+					transitioned_after = 0
+		return transitioned_after
+	
+	
+	def __main_region_system_general_left_wall_disappeared_react(self, transitioned_before):
+		"""Implementation of __main_region_system_general_left_wall_disappeared_react function.
+		"""
+		#The reactions of state left_wall_disappeared.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 0:
+				if self.user_var.move < 0:
+					self.__exit_sequence_main_region_system_general_left_wall_disappeared()
+					self.__enter_sequence_main_region_system_general_turn_left_default()
+					transitioned_after = 0
+		return transitioned_after
+	
+	
+	def __main_region_system_general_wall_in_front_react(self, transitioned_before):
+		"""Implementation of __main_region_system_general_wall_in_front_react function.
+		"""
+		#The reactions of state wall_in_front.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 0:
+				if self.laser_distance.dm90 < 0.5:
+					self.__exit_sequence_main_region_system_general_wall_in_front()
+					self.__enter_sequence_main_region_system_general_return_default()
+					transitioned_after = 0
+				elif self.laser_distance.dm90 > 0.5:
+					self.__exit_sequence_main_region_system_general_wall_in_front()
+					self.__enter_sequence_main_region_system_general_to_right_default()
+					transitioned_after = 0
+		return transitioned_after
+	
+	
+	def __main_region_system_general_turn_left_react(self, transitioned_before):
+		"""Implementation of __main_region_system_general_turn_left_react function.
+		"""
+		#The reactions of state turn left.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 0:
+				if not self.user_var.turn_left:
+					self.__exit_sequence_main_region_system_general_turn_left()
+					self.__enter_sequence_main_region_system_general_move_forward_default()
+					transitioned_after = 0
+		return transitioned_after
+	
+	
+	def __main_region_system_general_move_forward_react(self, transitioned_before):
+		"""Implementation of __main_region_system_general_move_forward_react function.
+		"""
+		#The reactions of state move forward.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 0:
+				if self.user_var.move < 0.0 and self.laser_distance.d90 > 0.5:
+					self.__exit_sequence_main_region_system_general_move_forward()
+					self.__enter_sequence_main_region_system_general_turn_and_go_default()
+					transitioned_after = 0
+				elif self.user_var.move < 0.0 and self.laser_distance.d90 < 0.5:
+					self.__exit_sequence_main_region_system_general_move_forward()
+					self.__enter_sequence_main_region_system_general_normal_moving_default()
+					transitioned_after = 0
+		return transitioned_after
+	
+	
+	def __main_region_system_general_turn_and_go_react(self, transitioned_before):
+		"""Implementation of __main_region_system_general_turn_and_go_react function.
+		"""
+		#The reactions of state turn and go.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 0:
+				if not self.user_var.turn_left:
+					self.__exit_sequence_main_region_system_general_turn_and_go()
+					self.__enter_sequence_main_region_system_general_go_default()
+					transitioned_after = 0
+		return transitioned_after
+	
+	
+	def __main_region_system_general_go_react(self, transitioned_before):
+		"""Implementation of __main_region_system_general_go_react function.
+		"""
+		#The reactions of state go.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 0:
+				if self.user_var.move < 0.0:
+					self.__exit_sequence_main_region_system_general_go()
+					self.__enter_sequence_main_region_system_general_normal_moving_default()
+					transitioned_after = 0
+		return transitioned_after
+	
+	
+	def __main_region_system_general_return_react(self, transitioned_before):
+		"""Implementation of __main_region_system_general_return_react function.
+		"""
+		#The reactions of state return.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 0:
+				if not self.user_var.turn_back:
+					self.__exit_sequence_main_region_system_general_return()
+					self.__enter_sequence_main_region_system_general_normal_moving_default()
+					transitioned_after = 0
+		return transitioned_after
+	
+	
+	def __main_region_system_general_to_right_react(self, transitioned_before):
+		"""Implementation of __main_region_system_general_to_right_react function.
+		"""
+		#The reactions of state to right.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 0:
+				if not self.user_var.turn_right:
+					self.__exit_sequence_main_region_system_general_to_right()
+					self.__enter_sequence_main_region_system_general_go2_default()
+					transitioned_after = 0
+		return transitioned_after
+	
+	
+	def __main_region_system_general_go2_react(self, transitioned_before):
+		"""Implementation of __main_region_system_general_go2_react function.
+		"""
+		#The reactions of state go2.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 0:
+				if self.user_var.move < 0.0:
+					self.__exit_sequence_main_region_system_general_go2()
+					self.__enter_sequence_main_region_system_general_normal_moving_default()
+					transitioned_after = 0
+		return transitioned_after
+	
+	
+	def __main_region_system_general_wait_react(self, transitioned_before):
+		"""Implementation of __main_region_system_general_wait_react function.
+		"""
+		#The reactions of state wait.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 0:
+				if self.__time_events[1]:
+					self.__exit_sequence_main_region_system_general_wait()
+					self.__time_events[1] = False
+					self.__enter_sequence_main_region_system_general_normal_moving_default()
+					transitioned_after = 0
+		return transitioned_after
+	
+	
+	def __main_region_system_moving_moving_react(self, transitioned_before):
+		"""Implementation of __main_region_system_moving_moving_react function.
+		"""
+		#The reactions of state moving.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			#Always execute local reactions.
+			transitioned_after = self.__main_region_system_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __main_region_system_moving_moving_r1_move_and_turn_back_react(self, transitioned_before):
+		"""Implementation of __main_region_system_moving_moving_r1_move_and_turn_back_react function.
+		"""
+		#The reactions of state move and turn back.
+		return transitioned_before
+	
+	
+	def __main_region_system_moving_moving_r1_move_and_turn_back_r1_normal_react(self, transitioned_before):
+		"""Implementation of __main_region_system_moving_moving_r1_move_and_turn_back_r1_normal_react function.
+		"""
+		#The reactions of state normal.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 1:
+				if self.user_var.move > 0.0:
+					self.__exit_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r1_normal()
+					self.__enter_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r1_moving_default()
+					transitioned_after = 1
+		return transitioned_after
+	
+	
+	def __main_region_system_moving_moving_r1_move_and_turn_back_r1_moving_react(self, transitioned_before):
+		"""Implementation of __main_region_system_moving_moving_r1_move_and_turn_back_r1_moving_react function.
+		"""
+		#The reactions of state moving.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 1:
+				if ((((self.odom.x - self.user_var.xmem)) * ((self.odom.x - self.user_var.xmem))) + (((self.odom.y - self.user_var.ymem)) * ((self.odom.y - self.user_var.ymem)))) > (self.user_var.move * self.user_var.move):
+					self.__exit_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r1_moving()
+					self.output.speed = 0.0
+					self.__enter_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r1_normal_default()
+					transitioned_after = 1
+		return transitioned_after
+	
+	
+	def __main_region_system_moving_moving_r1_move_and_turn_back_r2_normal_react(self, transitioned_before):
+		"""Implementation of __main_region_system_moving_moving_r1_move_and_turn_back_r2_normal_react function.
+		"""
+		#The reactions of state normal.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 2:
+				if self.user_var.turn_back:
+					self.__exit_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r2_normal()
+					self.__enter_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r2_turning_default()
+					self.__main_region_system_moving_moving_r1_move_and_turn_back_react(1)
+					transitioned_after = 2
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__main_region_system_moving_moving_r1_move_and_turn_back_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __main_region_system_moving_moving_r1_move_and_turn_back_r2_turning_react(self, transitioned_before):
+		"""Implementation of __main_region_system_moving_moving_r1_move_and_turn_back_r2_turning_react function.
+		"""
+		#The reactions of state turning.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 2:
+				if ((((self.imu.yaw - self.user_var.angle_mem) + 360)) % 360) >= 180.0:
+					self.__exit_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r2_turning()
+					self.__enter_sequence_main_region_system_moving_moving_r1_move_and_turn_back_r2_normal_default()
+					self.__main_region_system_moving_moving_r1_move_and_turn_back_react(1)
+					transitioned_after = 2
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__main_region_system_moving_moving_r1_move_and_turn_back_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __main_region_system_moving_moving_r2_turn_left_and_right_react(self, transitioned_before):
+		"""Implementation of __main_region_system_moving_moving_r2_turn_left_and_right_react function.
+		"""
+		#The reactions of state turn left and right.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			#Always execute local reactions.
+			transitioned_after = self.__main_region_system_moving_moving_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __main_region_system_moving_moving_r2_turn_left_and_right_r1_turning_react(self, transitioned_before):
+		"""Implementation of __main_region_system_moving_moving_r2_turn_left_and_right_r1_turning_react function.
+		"""
+		#The reactions of state turning.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 3:
+				if ((((self.imu.yaw - self.user_var.angle_mem) + 360)) % 360) >= 90.0:
+					self.__exit_sequence_main_region_system_moving_moving_r2_turn_left_and_right_r1_turning()
+					self.__enter_sequence_main_region_system_moving_moving_r2_turn_left_and_right_r1_normal_default()
+					transitioned_after = 3
+		return transitioned_after
+	
+	
+	def __main_region_system_moving_moving_r2_turn_left_and_right_r1_normal_react(self, transitioned_before):
+		"""Implementation of __main_region_system_moving_moving_r2_turn_left_and_right_r1_normal_react function.
+		"""
+		#The reactions of state normal.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 3:
+				if self.user_var.turn_left:
+					self.__exit_sequence_main_region_system_moving_moving_r2_turn_left_and_right_r1_normal()
+					self.__enter_sequence_main_region_system_moving_moving_r2_turn_left_and_right_r1_turning_default()
+					transitioned_after = 3
+		return transitioned_after
+	
+	
+	def __main_region_system_moving_moving_r2_turn_left_and_right_r2_normal_react(self, transitioned_before):
+		"""Implementation of __main_region_system_moving_moving_r2_turn_left_and_right_r2_normal_react function.
+		"""
+		#The reactions of state normal.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 4:
+				if self.user_var.turn_right:
+					self.__exit_sequence_main_region_system_moving_moving_r2_turn_left_and_right_r2_normal()
+					self.__enter_sequence_main_region_system_moving_moving_r2_turn_left_and_right_r2_turning_default()
+					self.__main_region_system_moving_moving_r2_turn_left_and_right_react(3)
+					transitioned_after = 4
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__main_region_system_moving_moving_r2_turn_left_and_right_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __main_region_system_moving_moving_r2_turn_left_and_right_r2_turning_react(self, transitioned_before):
+		"""Implementation of __main_region_system_moving_moving_r2_turn_left_and_right_r2_turning_react function.
+		"""
+		#The reactions of state turning.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 4:
+				if ((((self.user_var.angle_mem - self.imu.yaw) + 360)) % 360) >= 90.0:
+					self.__exit_sequence_main_region_system_moving_moving_r2_turn_left_and_right_r2_turning()
+					self.__enter_sequence_main_region_system_moving_moving_r2_turn_left_and_right_r2_normal_default()
+					self.__main_region_system_moving_moving_r2_turn_left_and_right_react(3)
+					transitioned_after = 4
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__main_region_system_moving_moving_r2_turn_left_and_right_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __main_region_system_moving_wait_react(self, transitioned_before):
+		"""Implementation of __main_region_system_moving_wait_react function.
+		"""
+		#The reactions of state wait.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 1:
+				if self.__time_events[2]:
+					self.__exit_sequence_main_region_system_moving_wait()
+					self.__time_events[2] = False
+					self.__enter_sequence_main_region_system_moving_moving_default()
+					self.__main_region_system_react(0)
+					transitioned_after = 1
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__main_region_system_react(transitioned_before)
 		return transitioned_after
 	
 	
@@ -1041,38 +2240,96 @@ class Model:
 		self.computer.s_press = False
 		self.computer.d_press = False
 		self.computer.x_press = False
+		self.__time_events[0] = False
+		self.__time_events[1] = False
+		self.__time_events[2] = False
 	
 	
 	def __micro_step(self):
 		"""Implementation of __micro_step function.
 		"""
+		transitioned = -1
+		self.__state_conf_vector_position = 0
 		state = self.__state_vector[0]
-		if state == self.State.main_region_do_stop_manual_control_manual_control_region_1idle:
-			self.__main_region_do_stop_manual_control_manual_control_region_1_idle_react(-1)
-		elif state == self.State.main_region_do_stop_manual_control_manual_control_region_1going_forward:
-			self.__main_region_do_stop_manual_control_manual_control_region_1_going_forward_react(-1)
-		elif state == self.State.main_region_do_stop_manual_control_manual_control_region_1turning_left:
-			self.__main_region_do_stop_manual_control_manual_control_region_1_turning_left_react(-1)
-		elif state == self.State.main_region_do_stop_manual_control_manual_control_region_1turning_right:
-			self.__main_region_do_stop_manual_control_manual_control_region_1_turning_right_react(-1)
-		elif state == self.State.main_region_continuous_manual_control_manual_control_region_2idle:
-			self.__main_region_continuous_manual_control_manual_control_region_2_idle_react(-1)
-		elif state == self.State.main_region_continuous_manual_control_manual_control_region_2in_action:
-			self.__main_region_continuous_manual_control_manual_control_region_2_in_action_react(-1)
-		elif state == self.State.main_region_continuous_manual_control_manual_control_region_2decreasing_speed:
-			self.__main_region_continuous_manual_control_manual_control_region_2_decreasing_speed_react(-1)
-		elif state == self.State.main_region_continuous_manual_control_manual_control_region_2increasing_speed:
-			self.__main_region_continuous_manual_control_manual_control_region_2_increasing_speed_react(-1)
-		elif state == self.State.main_region_continuous_manual_control_manual_control_region_2turning_right:
-			self.__main_region_continuous_manual_control_manual_control_region_2_turning_right_react(-1)
-		elif state == self.State.main_region_continuous_manual_control_manual_control_region_2turning_left:
-			self.__main_region_continuous_manual_control_manual_control_region_2_turning_left_react(-1)
+		if state == self.State.main_region_calibration_process_r1idle:
+			transitioned = self.__main_region_calibration_process_r1_idle_react(transitioned)
+		elif state == self.State.main_region_calibration_process_r1offset_calibration:
+			transitioned = self.__main_region_calibration_process_r1_offset_calibration_react(transitioned)
+		elif state == self.State.main_region_calibration_process_r1offset_correction:
+			transitioned = self.__main_region_calibration_process_r1_offset_correction_react(transitioned)
+		elif state == self.State.main_region_calibration_process_r1aligned:
+			transitioned = self.__main_region_calibration_process_r1_aligned_react(transitioned)
+		elif state == self.State.main_region_calibration_process_r1calibration_completeted:
+			transitioned = self.__main_region_calibration_process_r1_calibration_completeted_react(transitioned)
+		elif state == self.State.main_region_manual_control_manual_control_region_idle:
+			transitioned = self.__main_region_manual_control_manual_control_region_idle_react(transitioned)
+		elif state == self.State.main_region_manual_control_manual_control_region_in_action:
+			transitioned = self.__main_region_manual_control_manual_control_region_in_action_react(transitioned)
+		elif state == self.State.main_region_manual_control_manual_control_region_decreasing_speed:
+			transitioned = self.__main_region_manual_control_manual_control_region_decreasing_speed_react(transitioned)
+		elif state == self.State.main_region_manual_control_manual_control_region_increasing_speed:
+			transitioned = self.__main_region_manual_control_manual_control_region_increasing_speed_react(transitioned)
+		elif state == self.State.main_region_manual_control_manual_control_region_turning_right:
+			transitioned = self.__main_region_manual_control_manual_control_region_turning_right_react(transitioned)
+		elif state == self.State.main_region_manual_control_manual_control_region_turning_left:
+			transitioned = self.__main_region_manual_control_manual_control_region_turning_left_react(transitioned)
+		elif state == self.State.main_region_system_general_normal_moving:
+			transitioned = self.__main_region_system_general_normal_moving_react(transitioned)
+		elif state == self.State.main_region_system_general_left_wall_disappeared:
+			transitioned = self.__main_region_system_general_left_wall_disappeared_react(transitioned)
+		elif state == self.State.main_region_system_general_wall_in_front:
+			transitioned = self.__main_region_system_general_wall_in_front_react(transitioned)
+		elif state == self.State.main_region_system_general_turn_left:
+			transitioned = self.__main_region_system_general_turn_left_react(transitioned)
+		elif state == self.State.main_region_system_general_move_forward:
+			transitioned = self.__main_region_system_general_move_forward_react(transitioned)
+		elif state == self.State.main_region_system_general_turn_and_go:
+			transitioned = self.__main_region_system_general_turn_and_go_react(transitioned)
+		elif state == self.State.main_region_system_general_go:
+			transitioned = self.__main_region_system_general_go_react(transitioned)
+		elif state == self.State.main_region_system_general_return:
+			transitioned = self.__main_region_system_general_return_react(transitioned)
+		elif state == self.State.main_region_system_general_to_right:
+			transitioned = self.__main_region_system_general_to_right_react(transitioned)
+		elif state == self.State.main_region_system_general_go2:
+			transitioned = self.__main_region_system_general_go2_react(transitioned)
+		elif state == self.State.main_region_system_general_wait:
+			transitioned = self.__main_region_system_general_wait_react(transitioned)
+		if self.__state_conf_vector_position < 1:
+			state = self.__state_vector[1]
+			if state == self.State.main_region_system_moving_moving_r1move_and_turn_back_r1normal:
+				transitioned = self.__main_region_system_moving_moving_r1_move_and_turn_back_r1_normal_react(transitioned)
+			elif state == self.State.main_region_system_moving_moving_r1move_and_turn_back_r1moving:
+				transitioned = self.__main_region_system_moving_moving_r1_move_and_turn_back_r1_moving_react(transitioned)
+			elif state == self.State.main_region_system_moving_wait:
+				transitioned = self.__main_region_system_moving_wait_react(transitioned)
+		if self.__state_conf_vector_position < 2:
+			state = self.__state_vector[2]
+			if state == self.State.main_region_system_moving_moving_r1move_and_turn_back_r2normal:
+				transitioned = self.__main_region_system_moving_moving_r1_move_and_turn_back_r2_normal_react(transitioned)
+			elif state == self.State.main_region_system_moving_moving_r1move_and_turn_back_r2turning:
+				transitioned = self.__main_region_system_moving_moving_r1_move_and_turn_back_r2_turning_react(transitioned)
+		if self.__state_conf_vector_position < 3:
+			state = self.__state_vector[3]
+			if state == self.State.main_region_system_moving_moving_r2turn_left_and_right_r1turning:
+				transitioned = self.__main_region_system_moving_moving_r2_turn_left_and_right_r1_turning_react(transitioned)
+			elif state == self.State.main_region_system_moving_moving_r2turn_left_and_right_r1normal:
+				transitioned = self.__main_region_system_moving_moving_r2_turn_left_and_right_r1_normal_react(transitioned)
+		if self.__state_conf_vector_position < 4:
+			state = self.__state_vector[4]
+			if state == self.State.main_region_system_moving_moving_r2turn_left_and_right_r2normal:
+				self.__main_region_system_moving_moving_r2_turn_left_and_right_r2_normal_react(transitioned)
+			elif state == self.State.main_region_system_moving_moving_r2turn_left_and_right_r2turning:
+				self.__main_region_system_moving_moving_r2_turn_left_and_right_r2_turning_react(transitioned)
 	
 	
 	def run_cycle(self):
 		"""Implementation of run_cycle function.
 		"""
 		#Performs a 'run to completion' step.
+		if self.timer_service is None:
+			raise ValueError('Timer service must be set.')
+		
 		if self.__is_executing:
 			return
 		self.__is_executing = True
@@ -1103,6 +2360,9 @@ class Model:
 		"""Implementation of enter function.
 		"""
 		#Activates the state machine.
+		if self.timer_service is None:
+			raise ValueError('Timer service must be set.')
+		
 		if self.__is_executing:
 			return
 		self.__is_executing = True
@@ -1130,6 +2390,7 @@ class Model:
 		#Default exit sequence for statechart model
 		self.__exit_sequence_main_region()
 		self.__state_vector[0] = self.State.null_state
+		self.__state_conf_vector_position = 0
 		self.__is_executing = False
 	
 	
