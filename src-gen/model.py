@@ -14,52 +14,61 @@ class Model:
 		""" State Enum
 		"""
 		(
-			main_region_calibration_process,
-			main_region_calibration_process_r1idle,
-			main_region_calibration_process_r1offset_calibration,
-			main_region_calibration_process_r1offset_correction,
-			main_region_calibration_process_r1aligned,
-			main_region_calibration_process_r1calibration_completeted,
-			main_region_manual_control,
-			main_region_manual_control_manual_control_region_idle,
-			main_region_manual_control_manual_control_region_in_action,
-			main_region_manual_control_manual_control_region_decreasing_speed,
-			main_region_manual_control_manual_control_region_increasing_speed,
-			main_region_manual_control_manual_control_region_turning_right,
-			main_region_manual_control_manual_control_region_turning_left,
-			main_region_automatic_exploration,
-			main_region_automatic_exploration_general_normal_moving,
-			main_region_automatic_exploration_general_left_wall_disappeared,
-			main_region_automatic_exploration_general_wall_in_front,
-			main_region_automatic_exploration_general_turn_left,
-			main_region_automatic_exploration_general_move_forward,
-			main_region_automatic_exploration_general_turn_and_go,
-			main_region_automatic_exploration_general_go,
-			main_region_automatic_exploration_general_return,
-			main_region_automatic_exploration_general_to_right,
-			main_region_automatic_exploration_general_go2,
-			main_region_automatic_exploration_moving_moving,
-			main_region_automatic_exploration_moving_moving_r1move_and_turn_back,
-			main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r1normal,
-			main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r1moving,
-			main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2normal,
-			main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2turn_left,
-			main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2turn_right,
-			main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2turn_back,
-			main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle,
-			main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2plus,
-			main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2minus,
-			main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle2,
-			main_region_automatic_exploration_moving_moving_r2turn_impl,
-			main_region_automatic_exploration_moving_moving_r2turn_impl_r1normal,
-			main_region_automatic_exploration_moving_moving_r2turn_impl_r1negative_rotation,
-			main_region_automatic_exploration_moving_moving_r2turn_impl_r1positive_rotation,
-			main_region_automatic_exploration_moving_moving_r2turn_impl_r1pr2,
-			main_region_automatic_exploration_moving_moving_r2turn_impl_r1pr3,
-			main_region_automatic_exploration_moving_moving_r2turn_impl_r1nr2,
-			main_region_automatic_exploration_moving_moving_r2turn_impl_r1nr3,
+			scalibration_process,
+			scalibration_process_r1detect_walls,
+			scalibration_process_r1set_zero_position,
+			scalibration_process_r1calibration_complete,
+			scalibration_process_r1align_right_wall,
+			scalibration_process_r1align_left_wall,
+			scalibration_process_r1align_both_walls,
+			scalibration_process_r1align_front_wall,
+			scalibration_process_r1state1,
+			scalibration_process_r1need_to_go_closer_to_left,
+			scalibration_process_r1need_to_get_away_from_left,
+			scalibration_process_r1pointing_away_from_left_wall__it_is_now_behind_us_,
+			scalibration_process_r1pointing_towards_left_wall__it_is_in_front_of_us_,
+			scalibration_process_r1lets_turn_right_to_pint_north,
+			scalibration_process_r1lets_turn_left_to_point_north,
+			smanual_control,
+			smanual_control_manual_control_region_idle,
+			smanual_control_manual_control_region_in_action,
+			smanual_control_manual_control_region_decreasing_speed,
+			smanual_control_manual_control_region_increasing_speed,
+			smanual_control_manual_control_region_turning_right,
+			smanual_control_manual_control_region_turning_left,
+			sautomatic_exploration,
+			sautomatic_exploration_general_normal_moving,
+			sautomatic_exploration_general_left_wall_disappeared,
+			sautomatic_exploration_general_wall_in_front,
+			sautomatic_exploration_general_turn_left,
+			sautomatic_exploration_general_move_forward,
+			sautomatic_exploration_general_turn_and_go,
+			sautomatic_exploration_general_go,
+			sautomatic_exploration_general_return,
+			sautomatic_exploration_general_to_right,
+			sautomatic_exploration_general_go2,
+			sautomatic_exploration_moving_moving,
+			sautomatic_exploration_moving_moving_r1move_and_turn_back,
+			sautomatic_exploration_moving_moving_r1move_and_turn_back_r1normal,
+			sautomatic_exploration_moving_moving_r1move_and_turn_back_r1moving,
+			sautomatic_exploration_moving_moving_r1move_and_turn_back_r2normal,
+			sautomatic_exploration_moving_moving_r1move_and_turn_back_r2turn_left,
+			sautomatic_exploration_moving_moving_r1move_and_turn_back_r2turn_right,
+			sautomatic_exploration_moving_moving_r1move_and_turn_back_r2turn_back,
+			sautomatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle,
+			sautomatic_exploration_moving_moving_r1move_and_turn_back_r2plus,
+			sautomatic_exploration_moving_moving_r1move_and_turn_back_r2minus,
+			sautomatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle2,
+			sautomatic_exploration_moving_moving_r2turn_impl,
+			sautomatic_exploration_moving_moving_r2turn_impl_r1normal,
+			sautomatic_exploration_moving_moving_r2turn_impl_r1negative_rotation,
+			sautomatic_exploration_moving_moving_r2turn_impl_r1positive_rotation,
+			sautomatic_exploration_moving_moving_r2turn_impl_r1pr2,
+			sautomatic_exploration_moving_moving_r2turn_impl_r1pr3,
+			sautomatic_exploration_moving_moving_r2turn_impl_r1nr2,
+			sautomatic_exploration_moving_moving_r2turn_impl_r1nr3,
 			null_state
-		) = range(45)
+		) = range(54)
 	
 	
 	class UserVar:
@@ -330,9 +339,7 @@ class Model:
 		
 		self.__internal_event_queue = queue.Queue()
 		self.in_event_queue = queue.Queue()
-		self.__aligned = None
-		self.__laser_offset = None
-		self.__calculate_laser_offset = None
+		self.__is_calibrated = None
 		self.__ct_sp1 = None
 		self.__ct_thr1 = None
 		self.__ct_sp2 = None
@@ -350,13 +357,11 @@ class Model:
 		
 		# for timed statechart:
 		self.timer_service = None
-		self.__time_events = [None] * 4
+		self.__time_events = [None] * 3
 		
 		# initializations:
 		#Default init sequence for statechart model
-		self.__aligned = False
-		self.__laser_offset = 0.0
-		self.__calculate_laser_offset = 0.0
+		self.__is_calibrated = False
 		self.__ct_sp1 = 0.2
 		self.__ct_thr1 = 4.0
 		self.__ct_sp2 = 0.02
@@ -472,106 +477,124 @@ class Model:
 		"""Checks if the state is currently active.
 		"""
 		s = state
-		if s == self.__State.main_region_calibration_process:
-			return (self.__state_vector[0] >= self.__State.main_region_calibration_process)\
-				and (self.__state_vector[0] <= self.__State.main_region_calibration_process_r1calibration_completeted)
-		if s == self.__State.main_region_calibration_process_r1idle:
-			return self.__state_vector[0] == self.__State.main_region_calibration_process_r1idle
-		if s == self.__State.main_region_calibration_process_r1offset_calibration:
-			return self.__state_vector[0] == self.__State.main_region_calibration_process_r1offset_calibration
-		if s == self.__State.main_region_calibration_process_r1offset_correction:
-			return self.__state_vector[0] == self.__State.main_region_calibration_process_r1offset_correction
-		if s == self.__State.main_region_calibration_process_r1aligned:
-			return self.__state_vector[0] == self.__State.main_region_calibration_process_r1aligned
-		if s == self.__State.main_region_calibration_process_r1calibration_completeted:
-			return self.__state_vector[0] == self.__State.main_region_calibration_process_r1calibration_completeted
-		if s == self.__State.main_region_manual_control:
-			return (self.__state_vector[0] >= self.__State.main_region_manual_control)\
-				and (self.__state_vector[0] <= self.__State.main_region_manual_control_manual_control_region_turning_left)
-		if s == self.__State.main_region_manual_control_manual_control_region_idle:
-			return self.__state_vector[0] == self.__State.main_region_manual_control_manual_control_region_idle
-		if s == self.__State.main_region_manual_control_manual_control_region_in_action:
-			return self.__state_vector[0] == self.__State.main_region_manual_control_manual_control_region_in_action
-		if s == self.__State.main_region_manual_control_manual_control_region_decreasing_speed:
-			return self.__state_vector[0] == self.__State.main_region_manual_control_manual_control_region_decreasing_speed
-		if s == self.__State.main_region_manual_control_manual_control_region_increasing_speed:
-			return self.__state_vector[0] == self.__State.main_region_manual_control_manual_control_region_increasing_speed
-		if s == self.__State.main_region_manual_control_manual_control_region_turning_right:
-			return self.__state_vector[0] == self.__State.main_region_manual_control_manual_control_region_turning_right
-		if s == self.__State.main_region_manual_control_manual_control_region_turning_left:
-			return self.__state_vector[0] == self.__State.main_region_manual_control_manual_control_region_turning_left
-		if s == self.__State.main_region_automatic_exploration:
-			return (self.__state_vector[0] >= self.__State.main_region_automatic_exploration)\
-				and (self.__state_vector[0] <= self.__State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1nr3)
-		if s == self.__State.main_region_automatic_exploration_general_normal_moving:
-			return self.__state_vector[0] == self.__State.main_region_automatic_exploration_general_normal_moving
-		if s == self.__State.main_region_automatic_exploration_general_left_wall_disappeared:
-			return self.__state_vector[0] == self.__State.main_region_automatic_exploration_general_left_wall_disappeared
-		if s == self.__State.main_region_automatic_exploration_general_wall_in_front:
-			return self.__state_vector[0] == self.__State.main_region_automatic_exploration_general_wall_in_front
-		if s == self.__State.main_region_automatic_exploration_general_turn_left:
-			return self.__state_vector[0] == self.__State.main_region_automatic_exploration_general_turn_left
-		if s == self.__State.main_region_automatic_exploration_general_move_forward:
-			return self.__state_vector[0] == self.__State.main_region_automatic_exploration_general_move_forward
-		if s == self.__State.main_region_automatic_exploration_general_turn_and_go:
-			return self.__state_vector[0] == self.__State.main_region_automatic_exploration_general_turn_and_go
-		if s == self.__State.main_region_automatic_exploration_general_go:
-			return self.__state_vector[0] == self.__State.main_region_automatic_exploration_general_go
-		if s == self.__State.main_region_automatic_exploration_general_return:
-			return self.__state_vector[0] == self.__State.main_region_automatic_exploration_general_return
-		if s == self.__State.main_region_automatic_exploration_general_to_right:
-			return self.__state_vector[0] == self.__State.main_region_automatic_exploration_general_to_right
-		if s == self.__State.main_region_automatic_exploration_general_go2:
-			return self.__state_vector[0] == self.__State.main_region_automatic_exploration_general_go2
-		if s == self.__State.main_region_automatic_exploration_moving_moving:
-			return (self.__state_vector[1] >= self.__State.main_region_automatic_exploration_moving_moving)\
-				and (self.__state_vector[1] <= self.__State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1nr3)
-		if s == self.__State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back:
-			return (self.__state_vector[1] >= self.__State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back)\
-				and (self.__state_vector[1] <= self.__State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle2)
-		if s == self.__State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r1normal:
-			return self.__state_vector[1] == self.__State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r1normal
-		if s == self.__State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r1moving:
-			return self.__state_vector[1] == self.__State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r1moving
-		if s == self.__State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2normal:
-			return self.__state_vector[2] == self.__State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2normal
-		if s == self.__State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2turn_left:
-			return self.__state_vector[2] == self.__State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2turn_left
-		if s == self.__State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2turn_right:
-			return self.__state_vector[2] == self.__State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2turn_right
-		if s == self.__State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2turn_back:
-			return self.__state_vector[2] == self.__State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2turn_back
-		if s == self.__State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle:
-			return self.__state_vector[2] == self.__State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle
-		if s == self.__State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2plus:
-			return self.__state_vector[2] == self.__State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2plus
-		if s == self.__State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2minus:
-			return self.__state_vector[2] == self.__State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2minus
-		if s == self.__State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle2:
-			return self.__state_vector[2] == self.__State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle2
-		if s == self.__State.main_region_automatic_exploration_moving_moving_r2turn_impl:
-			return (self.__state_vector[3] >= self.__State.main_region_automatic_exploration_moving_moving_r2turn_impl)\
-				and (self.__state_vector[3] <= self.__State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1nr3)
-		if s == self.__State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1normal:
-			return self.__state_vector[3] == self.__State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1normal
-		if s == self.__State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1negative_rotation:
-			return self.__state_vector[3] == self.__State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1negative_rotation
-		if s == self.__State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1positive_rotation:
-			return self.__state_vector[3] == self.__State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1positive_rotation
-		if s == self.__State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1pr2:
-			return self.__state_vector[3] == self.__State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1pr2
-		if s == self.__State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1pr3:
-			return self.__state_vector[3] == self.__State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1pr3
-		if s == self.__State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1nr2:
-			return self.__state_vector[3] == self.__State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1nr2
-		if s == self.__State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1nr3:
-			return self.__state_vector[3] == self.__State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1nr3
+		if s == self.__State.scalibration_process:
+			return (self.__state_vector[0] >= self.__State.scalibration_process)\
+				and (self.__state_vector[0] <= self.__State.scalibration_process_r1lets_turn_left_to_point_north)
+		if s == self.__State.scalibration_process_r1detect_walls:
+			return self.__state_vector[0] == self.__State.scalibration_process_r1detect_walls
+		if s == self.__State.scalibration_process_r1set_zero_position:
+			return self.__state_vector[0] == self.__State.scalibration_process_r1set_zero_position
+		if s == self.__State.scalibration_process_r1calibration_complete:
+			return self.__state_vector[0] == self.__State.scalibration_process_r1calibration_complete
+		if s == self.__State.scalibration_process_r1align_right_wall:
+			return self.__state_vector[0] == self.__State.scalibration_process_r1align_right_wall
+		if s == self.__State.scalibration_process_r1align_left_wall:
+			return self.__state_vector[0] == self.__State.scalibration_process_r1align_left_wall
+		if s == self.__State.scalibration_process_r1align_both_walls:
+			return self.__state_vector[0] == self.__State.scalibration_process_r1align_both_walls
+		if s == self.__State.scalibration_process_r1align_front_wall:
+			return self.__state_vector[0] == self.__State.scalibration_process_r1align_front_wall
+		if s == self.__State.scalibration_process_r1state1:
+			return self.__state_vector[0] == self.__State.scalibration_process_r1state1
+		if s == self.__State.scalibration_process_r1need_to_go_closer_to_left:
+			return self.__state_vector[0] == self.__State.scalibration_process_r1need_to_go_closer_to_left
+		if s == self.__State.scalibration_process_r1need_to_get_away_from_left:
+			return self.__state_vector[0] == self.__State.scalibration_process_r1need_to_get_away_from_left
+		if s == self.__State.scalibration_process_r1pointing_away_from_left_wall__it_is_now_behind_us_:
+			return self.__state_vector[0] == self.__State.scalibration_process_r1pointing_away_from_left_wall__it_is_now_behind_us_
+		if s == self.__State.scalibration_process_r1pointing_towards_left_wall__it_is_in_front_of_us_:
+			return self.__state_vector[0] == self.__State.scalibration_process_r1pointing_towards_left_wall__it_is_in_front_of_us_
+		if s == self.__State.scalibration_process_r1lets_turn_right_to_pint_north:
+			return self.__state_vector[0] == self.__State.scalibration_process_r1lets_turn_right_to_pint_north
+		if s == self.__State.scalibration_process_r1lets_turn_left_to_point_north:
+			return self.__state_vector[0] == self.__State.scalibration_process_r1lets_turn_left_to_point_north
+		if s == self.__State.smanual_control:
+			return (self.__state_vector[0] >= self.__State.smanual_control)\
+				and (self.__state_vector[0] <= self.__State.smanual_control_manual_control_region_turning_left)
+		if s == self.__State.smanual_control_manual_control_region_idle:
+			return self.__state_vector[0] == self.__State.smanual_control_manual_control_region_idle
+		if s == self.__State.smanual_control_manual_control_region_in_action:
+			return self.__state_vector[0] == self.__State.smanual_control_manual_control_region_in_action
+		if s == self.__State.smanual_control_manual_control_region_decreasing_speed:
+			return self.__state_vector[0] == self.__State.smanual_control_manual_control_region_decreasing_speed
+		if s == self.__State.smanual_control_manual_control_region_increasing_speed:
+			return self.__state_vector[0] == self.__State.smanual_control_manual_control_region_increasing_speed
+		if s == self.__State.smanual_control_manual_control_region_turning_right:
+			return self.__state_vector[0] == self.__State.smanual_control_manual_control_region_turning_right
+		if s == self.__State.smanual_control_manual_control_region_turning_left:
+			return self.__state_vector[0] == self.__State.smanual_control_manual_control_region_turning_left
+		if s == self.__State.sautomatic_exploration:
+			return (self.__state_vector[0] >= self.__State.sautomatic_exploration)\
+				and (self.__state_vector[0] <= self.__State.sautomatic_exploration_moving_moving_r2turn_impl_r1nr3)
+		if s == self.__State.sautomatic_exploration_general_normal_moving:
+			return self.__state_vector[0] == self.__State.sautomatic_exploration_general_normal_moving
+		if s == self.__State.sautomatic_exploration_general_left_wall_disappeared:
+			return self.__state_vector[0] == self.__State.sautomatic_exploration_general_left_wall_disappeared
+		if s == self.__State.sautomatic_exploration_general_wall_in_front:
+			return self.__state_vector[0] == self.__State.sautomatic_exploration_general_wall_in_front
+		if s == self.__State.sautomatic_exploration_general_turn_left:
+			return self.__state_vector[0] == self.__State.sautomatic_exploration_general_turn_left
+		if s == self.__State.sautomatic_exploration_general_move_forward:
+			return self.__state_vector[0] == self.__State.sautomatic_exploration_general_move_forward
+		if s == self.__State.sautomatic_exploration_general_turn_and_go:
+			return self.__state_vector[0] == self.__State.sautomatic_exploration_general_turn_and_go
+		if s == self.__State.sautomatic_exploration_general_go:
+			return self.__state_vector[0] == self.__State.sautomatic_exploration_general_go
+		if s == self.__State.sautomatic_exploration_general_return:
+			return self.__state_vector[0] == self.__State.sautomatic_exploration_general_return
+		if s == self.__State.sautomatic_exploration_general_to_right:
+			return self.__state_vector[0] == self.__State.sautomatic_exploration_general_to_right
+		if s == self.__State.sautomatic_exploration_general_go2:
+			return self.__state_vector[0] == self.__State.sautomatic_exploration_general_go2
+		if s == self.__State.sautomatic_exploration_moving_moving:
+			return (self.__state_vector[1] >= self.__State.sautomatic_exploration_moving_moving)\
+				and (self.__state_vector[1] <= self.__State.sautomatic_exploration_moving_moving_r2turn_impl_r1nr3)
+		if s == self.__State.sautomatic_exploration_moving_moving_r1move_and_turn_back:
+			return (self.__state_vector[1] >= self.__State.sautomatic_exploration_moving_moving_r1move_and_turn_back)\
+				and (self.__state_vector[1] <= self.__State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle2)
+		if s == self.__State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r1normal:
+			return self.__state_vector[1] == self.__State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r1normal
+		if s == self.__State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r1moving:
+			return self.__state_vector[1] == self.__State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r1moving
+		if s == self.__State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2normal:
+			return self.__state_vector[2] == self.__State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2normal
+		if s == self.__State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2turn_left:
+			return self.__state_vector[2] == self.__State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2turn_left
+		if s == self.__State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2turn_right:
+			return self.__state_vector[2] == self.__State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2turn_right
+		if s == self.__State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2turn_back:
+			return self.__state_vector[2] == self.__State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2turn_back
+		if s == self.__State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle:
+			return self.__state_vector[2] == self.__State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle
+		if s == self.__State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2plus:
+			return self.__state_vector[2] == self.__State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2plus
+		if s == self.__State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2minus:
+			return self.__state_vector[2] == self.__State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2minus
+		if s == self.__State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle2:
+			return self.__state_vector[2] == self.__State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle2
+		if s == self.__State.sautomatic_exploration_moving_moving_r2turn_impl:
+			return (self.__state_vector[3] >= self.__State.sautomatic_exploration_moving_moving_r2turn_impl)\
+				and (self.__state_vector[3] <= self.__State.sautomatic_exploration_moving_moving_r2turn_impl_r1nr3)
+		if s == self.__State.sautomatic_exploration_moving_moving_r2turn_impl_r1normal:
+			return self.__state_vector[3] == self.__State.sautomatic_exploration_moving_moving_r2turn_impl_r1normal
+		if s == self.__State.sautomatic_exploration_moving_moving_r2turn_impl_r1negative_rotation:
+			return self.__state_vector[3] == self.__State.sautomatic_exploration_moving_moving_r2turn_impl_r1negative_rotation
+		if s == self.__State.sautomatic_exploration_moving_moving_r2turn_impl_r1positive_rotation:
+			return self.__state_vector[3] == self.__State.sautomatic_exploration_moving_moving_r2turn_impl_r1positive_rotation
+		if s == self.__State.sautomatic_exploration_moving_moving_r2turn_impl_r1pr2:
+			return self.__state_vector[3] == self.__State.sautomatic_exploration_moving_moving_r2turn_impl_r1pr2
+		if s == self.__State.sautomatic_exploration_moving_moving_r2turn_impl_r1pr3:
+			return self.__state_vector[3] == self.__State.sautomatic_exploration_moving_moving_r2turn_impl_r1pr3
+		if s == self.__State.sautomatic_exploration_moving_moving_r2turn_impl_r1nr2:
+			return self.__state_vector[3] == self.__State.sautomatic_exploration_moving_moving_r2turn_impl_r1nr2
+		if s == self.__State.sautomatic_exploration_moving_moving_r2turn_impl_r1nr3:
+			return self.__state_vector[3] == self.__State.sautomatic_exploration_moving_moving_r2turn_impl_r1nr3
 		return False
 		
 	def time_elapsed(self, event_id):
 		"""Add time events to in event queue
 		"""
-		if event_id in range(4):
+		if event_id in range(3):
 			self.in_event_queue.put(lambda: self.raise_time_event(event_id))
 			self.run_cycle()
 	
@@ -611,156 +634,209 @@ class Model:
 		"""
 		self.finished_turn = True
 	
-	def __entry_action_main_region_calibration_process_r1_idle(self):
-		""".
+	def __entry_action_s_calibration_process_r1_detect_walls(self):
+		"""Entry action for state 'Detect Walls'..
 		"""
-		#Entry action for state 'Idle'.
+		#Entry action for state 'Detect Walls'.
 		self.output.speed = 0.0
 		self.output.rotation = 0.0
-		self.__completed = True
 		
-	def __entry_action_main_region_calibration_process_r1_offset_calibration(self):
-		"""Entry action for state 'Offset Calibration'..
-		"""
-		#Entry action for state 'Offset Calibration'.
-		self.__laser_offset = self.__calculate_laser_offset
-		
-	def __entry_action_main_region_calibration_process_r1_offset_correction(self):
+	def __entry_action_s_calibration_process_r1_set_zero_position(self):
 		""".
 		"""
-		#Entry action for state 'Offset Correction'.
-		self.output.rotation = self.user_var.base_rotation if (self.__laser_offset > 0.0) else -(self.user_var.base_rotation)
-		self.__completed = True
-		
-	def __entry_action_main_region_calibration_process_r1_aligned(self):
-		""".
-		"""
-		#Entry action for state 'Aligned'.
-		self.output.rotation = 0.0
+		#Entry action for state 'Set Zero Position'.
 		self.start_pos.set_zero = True
 		self.start_pos.zero_x = self.odom.x
 		self.start_pos.zero_y = self.odom.y
 		self.start_pos.zero_south_degree = self.imu.yaw
-		self.start_pos.laser_deg_offset = 0
+		self.output.rotation = 0.0
+		self.output.speed = 0.0
 		self.__completed = True
 		
-	def __entry_action_main_region_calibration_process_r1_calibration_completeted(self):
-		"""Entry action for state 'Calibration Completeted'..
+	def __entry_action_s_calibration_process_r1_calibration_complete(self):
+		"""Entry action for state 'Calibration Complete'..
 		"""
-		#Entry action for state 'Calibration Completeted'.
-		self.output.finish = 1
+		#Entry action for state 'Calibration Complete'.
+		self.__is_calibrated = True
 		
-	def __entry_action_main_region_manual_control(self):
-		"""Entry action for state 'Manual Control'..
+	def __entry_action_s_calibration_process_r1_align_right_wall(self):
+		"""Entry action for state 'Align Right Wall'..
 		"""
-		#Entry action for state 'Manual Control'.
-		self.timer_service.set_timer(self, 0, (1000 * 1000), False)
+		#Entry action for state 'Align Right Wall'.
+		self.output.rotation = -(0.05) if self.imu.yaw >= 0.0 else 0.05
 		
-	def __entry_action_main_region_manual_control_manual_control_region_idle(self):
+	def __entry_action_s_calibration_process_r1_align_left_wall(self):
+		"""Entry action for state 'Align Left Wall'..
+		"""
+		#Entry action for state 'Align Left Wall'.
+		self.output.rotation = -(0.05) if self.imu.yaw >= 0.0 else 0.05
+		
+	def __entry_action_s_calibration_process_r1_align_both_walls(self):
+		"""Entry action for state 'Align Both Walls'..
+		"""
+		#Entry action for state 'Align Both Walls'.
+		self.output.rotation = -(0.05) if self.imu.yaw >= 0.0 else 0.05
+		
+	def __entry_action_s_calibration_process_r1_align_front_wall(self):
+		"""Entry action for state 'Align Front Wall'..
+		"""
+		#Entry action for state 'Align Front Wall'.
+		self.output.rotation = -(0.05) if self.imu.yaw >= 0.0 else 0.05
+		self.output.rotation = -(0.05) if self.imu.yaw >= 0.0 else 0.05
+		
+	def __entry_action_s_calibration_process_r1_state1(self):
+		"""Entry action for state 'state1'..
+		"""
+		#Entry action for state 'state1'.
+		self.output.rotation = 0.0
+		self.output.speed = 0.0
+		
+	def __entry_action_s_calibration_process_r1_need_to_go_closer_to_left(self):
+		"""Entry action for state 'NeedToGoCloserToLeft'..
+		"""
+		#Entry action for state 'NeedToGoCloserToLeft'.
+		self.output.rotation = +(0.1)
+		
+	def __entry_action_s_calibration_process_r1_need_to_get_away_from_left(self):
+		"""Entry action for state 'NeedToGetAwayFromLeft'..
+		"""
+		#Entry action for state 'NeedToGetAwayFromLeft'.
+		self.output.rotation = -(0.1)
+		
+	def __entry_action_s_calibration_process_r1_pointing_away_from_left_wall__it_is_now_behind_us_(self):
+		"""Entry action for state 'Pointing Away From Left wall (it is now behind us)'..
+		"""
+		#Entry action for state 'Pointing Away From Left wall (it is now behind us)'.
+		self.output.rotation = 0.0
+		self.output.speed = 0.02
+		
+	def __entry_action_s_calibration_process_r1_pointing_towards_left_wall__it_is_in_front_of_us_(self):
+		"""Entry action for state 'Pointing towards left wall (it is in front of us)'..
+		"""
+		#Entry action for state 'Pointing towards left wall (it is in front of us)'.
+		self.output.rotation = 0.0
+		self.output.speed = 0.01
+		
+	def __entry_action_s_calibration_process_r1_lets_turn_right_to_pint_north(self):
+		"""Entry action for state 'LetsTurnRightToPintNorth'..
+		"""
+		#Entry action for state 'LetsTurnRightToPintNorth'.
+		self.output.rotation = -(0.1)
+		self.output.speed = 0.0
+		
+	def __entry_action_s_calibration_process_r1_lets_turn_left_to_point_north(self):
+		"""Entry action for state 'LetsTurnLeftToPointNorth'..
+		"""
+		#Entry action for state 'LetsTurnLeftToPointNorth'.
+		self.output.rotation = 0.1
+		self.output.speed = 0.0
+		
+	def __entry_action_s_manual_control_manual_control_region_idle(self):
 		"""Entry action for state 'Idle'..
 		"""
 		#Entry action for state 'Idle'.
 		self.output.speed = 0.0
 		self.output.rotation = 0.0
+		self.__is_calibrated = False
 		
-	def __entry_action_main_region_manual_control_manual_control_region_decreasing_speed(self):
+	def __entry_action_s_manual_control_manual_control_region_decreasing_speed(self):
 		""".
 		"""
 		#Entry action for state 'Decreasing speed'.
 		self.output.speed = (self.output.speed - 0.02) if self.output.speed > 0.02 else 0.0
 		self.__completed = True
 		
-	def __entry_action_main_region_manual_control_manual_control_region_increasing_speed(self):
+	def __entry_action_s_manual_control_manual_control_region_increasing_speed(self):
 		""".
 		"""
 		#Entry action for state 'Increasing speed'.
 		self.output.speed = (self.output.speed + 0.02) if self.output.speed < 0.2 else 0.22
 		self.__completed = True
 		
-	def __entry_action_main_region_manual_control_manual_control_region_turning_right(self):
+	def __entry_action_s_manual_control_manual_control_region_turning_right(self):
 		""".
 		"""
 		#Entry action for state 'Turning right'.
 		self.output.rotation = (self.output.rotation - 0.02) if self.output.rotation > -(2.82) else -(2.84)
 		self.__completed = True
 		
-	def __entry_action_main_region_manual_control_manual_control_region_turning_left(self):
+	def __entry_action_s_manual_control_manual_control_region_turning_left(self):
 		""".
 		"""
 		#Entry action for state 'Turning left'.
 		self.output.rotation = (self.output.rotation + 0.02) if self.output.rotation < 2.82 else 2.84
 		self.__completed = True
 		
-	def __entry_action_main_region_automatic_exploration_general_normal_moving(self):
+	def __entry_action_s_automatic_exploration_general_normal_moving(self):
 		"""Entry action for state 'normal_moving'..
 		"""
 		#Entry action for state 'normal_moving'.
 		self.output.speed = 0.05
 		self.output.rotation = 0.0
 		
-	def __entry_action_main_region_automatic_exploration_general_left_wall_disappeared(self):
+	def __entry_action_s_automatic_exploration_general_left_wall_disappeared(self):
 		"""Entry action for state 'left_wall_disappeared'..
 		"""
 		#Entry action for state 'left_wall_disappeared'.
 		self.user_var.move = (self.grid.grid_size / 2.0)
 		
-	def __entry_action_main_region_automatic_exploration_general_wall_in_front(self):
+	def __entry_action_s_automatic_exploration_general_wall_in_front(self):
 		"""Entry action for state 'wall_in_front'..
 		"""
 		#Entry action for state 'wall_in_front'.
+		self.timer_service.set_timer(self, 0, (2 * 1000), False)
 		self.timer_service.set_timer(self, 1, (2 * 1000), False)
-		self.timer_service.set_timer(self, 2, (2 * 1000), False)
 		self.output.speed = 0.0
 		
-	def __entry_action_main_region_automatic_exploration_general_turn_left(self):
+	def __entry_action_s_automatic_exploration_general_turn_left(self):
 		"""Entry action for state 'turn left'..
 		"""
 		#Entry action for state 'turn left'.
 		self.user_var.turn_left = True
 		
-	def __entry_action_main_region_automatic_exploration_general_move_forward(self):
+	def __entry_action_s_automatic_exploration_general_move_forward(self):
 		"""Entry action for state 'move forward'..
 		"""
 		#Entry action for state 'move forward'.
 		self.user_var.move = 0.5
 		
-	def __entry_action_main_region_automatic_exploration_general_turn_and_go(self):
+	def __entry_action_s_automatic_exploration_general_turn_and_go(self):
 		"""Entry action for state 'turn and go'..
 		"""
 		#Entry action for state 'turn and go'.
 		self.user_var.turn_left = True
 		
-	def __entry_action_main_region_automatic_exploration_general_go(self):
+	def __entry_action_s_automatic_exploration_general_go(self):
 		"""Entry action for state 'go'..
 		"""
 		#Entry action for state 'go'.
 		self.user_var.move = self.grid.grid_size
 		
-	def __entry_action_main_region_automatic_exploration_general_return(self):
+	def __entry_action_s_automatic_exploration_general_return(self):
 		"""Entry action for state 'return'..
 		"""
 		#Entry action for state 'return'.
 		self.user_var.turn_back = True
 		
-	def __entry_action_main_region_automatic_exploration_general_to_right(self):
+	def __entry_action_s_automatic_exploration_general_to_right(self):
 		"""Entry action for state 'to right'..
 		"""
 		#Entry action for state 'to right'.
 		self.user_var.turn_right = True
 		
-	def __entry_action_main_region_automatic_exploration_general_go2(self):
+	def __entry_action_s_automatic_exploration_general_go2(self):
 		"""Entry action for state 'go2'..
 		"""
 		#Entry action for state 'go2'.
 		self.user_var.move = self.grid.grid_size
 		
-	def __entry_action_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_normal(self):
+	def __entry_action_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_normal(self):
 		"""Entry action for state 'normal'..
 		"""
 		#Entry action for state 'normal'.
 		self.user_var.move = -(1.0)
 		
-	def __entry_action_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_moving(self):
+	def __entry_action_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_moving(self):
 		"""Entry action for state 'moving'..
 		"""
 		#Entry action for state 'moving'.
@@ -768,7 +844,7 @@ class Model:
 		self.user_var.xmem = self.odom.x
 		self.user_var.ymem = self.odom.y
 		
-	def __entry_action_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_normal(self):
+	def __entry_action_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_normal(self):
 		"""Entry action for state 'normal'..
 		"""
 		#Entry action for state 'normal'.
@@ -777,1120 +853,1281 @@ class Model:
 		self.user_var.turn_right = False
 		self.user_var.turn_left = False
 		
-	def __entry_action_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_left(self):
+	def __entry_action_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_left(self):
 		""".
 		"""
 		#Entry action for state 'turnLeft'.
 		self.user_var.angle_targ = (self.imu.yaw + 90)
 		self.__completed = True
 		
-	def __entry_action_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_right(self):
+	def __entry_action_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_right(self):
 		""".
 		"""
 		#Entry action for state 'turnRight'.
 		self.user_var.angle_targ = (self.imu.yaw - 90)
 		self.__completed = True
 		
-	def __entry_action_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_back(self):
+	def __entry_action_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_back(self):
 		""".
 		"""
 		#Entry action for state 'turnBack'.
 		self.user_var.angle_targ = (self.imu.yaw + 180)
 		self.__completed = True
 		
-	def __entry_action_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle(self):
+	def __entry_action_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle(self):
 		"""Entry action for state 'processingAngle'..
 		"""
 		#Entry action for state 'processingAngle'.
-		self.timer_service.set_timer(self, 3, (1 * 1000), False)
+		self.timer_service.set_timer(self, 2, (1 * 1000), False)
 		
-	def __entry_action_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_plus(self):
+	def __entry_action_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_plus(self):
 		""".
 		"""
 		#Entry action for state 'plus'.
 		self.user_var.angle_targ = self.user_var.angle_targ + 360
 		self.__completed = True
 		
-	def __entry_action_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_minus(self):
+	def __entry_action_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_minus(self):
 		""".
 		"""
 		#Entry action for state 'minus'.
 		self.user_var.angle_targ = self.user_var.angle_targ - 360
 		self.__completed = True
 		
-	def __entry_action_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle2(self):
+	def __entry_action_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle2(self):
 		"""Entry action for state 'processingAngle2'..
 		"""
 		#Entry action for state 'processingAngle2'.
 		self.raise_start_turn()
 		
-	def __entry_action_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_normal(self):
+	def __entry_action_s_automatic_exploration_moving_moving_r2_turn_impl_r1_normal(self):
 		"""Entry action for state 'normal'..
 		"""
 		#Entry action for state 'normal'.
 		self.output.rotation = 0.0
 		self.raise_finished_turn()
 		
-	def __entry_action_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_negative_rotation(self):
+	def __entry_action_s_automatic_exploration_moving_moving_r2_turn_impl_r1_negative_rotation(self):
 		"""Entry action for state 'negativeRotation'..
 		"""
 		#Entry action for state 'negativeRotation'.
 		self.output.rotation = -(self.__ct_sp1)
 		
-	def __entry_action_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_positive_rotation(self):
+	def __entry_action_s_automatic_exploration_moving_moving_r2_turn_impl_r1_positive_rotation(self):
 		"""Entry action for state 'positiveRotation'..
 		"""
 		#Entry action for state 'positiveRotation'.
 		self.output.rotation = self.__ct_sp1
 		
-	def __entry_action_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r2(self):
+	def __entry_action_s_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r2(self):
 		"""Entry action for state 'pR2'..
 		"""
 		#Entry action for state 'pR2'.
 		self.output.rotation = self.__ct_sp2
 		
-	def __entry_action_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r3(self):
+	def __entry_action_s_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r3(self):
 		"""Entry action for state 'pR3'..
 		"""
 		#Entry action for state 'pR3'.
 		self.output.rotation = self.__ct_sp3
 		
-	def __entry_action_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r2(self):
+	def __entry_action_s_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r2(self):
 		"""Entry action for state 'nR2'..
 		"""
 		#Entry action for state 'nR2'.
 		self.output.rotation = -(self.__ct_sp2)
 		
-	def __entry_action_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r3(self):
+	def __entry_action_s_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r3(self):
 		"""Entry action for state 'nR3'..
 		"""
 		#Entry action for state 'nR3'.
 		self.output.rotation = -(self.__ct_sp3)
 		
-	def __exit_action_main_region_calibration_process_r1_offset_calibration(self):
-		"""Exit action for state 'Offset Calibration'..
-		"""
-		#Exit action for state 'Offset Calibration'.
-		self.__aligned = ((self.__laser_offset * self.__laser_offset)) <= ((0.05 * 0.05))
-		
-	def __exit_action_main_region_calibration_process_r1_offset_correction(self):
-		"""Exit action for state 'Offset Correction'..
-		"""
-		#Exit action for state 'Offset Correction'.
-		self.__laser_offset = self.__calculate_laser_offset
-		
-	def __exit_action_main_region_manual_control(self):
-		"""Exit action for state 'Manual Control'..
-		"""
-		#Exit action for state 'Manual Control'.
-		self.timer_service.unset_timer(self, 0)
-		
-	def __exit_action_main_region_automatic_exploration_general_wall_in_front(self):
+	def __exit_action_s_automatic_exploration_general_wall_in_front(self):
 		"""Exit action for state 'wall_in_front'..
 		"""
 		#Exit action for state 'wall_in_front'.
+		self.timer_service.unset_timer(self, 0)
 		self.timer_service.unset_timer(self, 1)
-		self.timer_service.unset_timer(self, 2)
 		
-	def __exit_action_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle(self):
+	def __exit_action_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle(self):
 		"""Exit action for state 'processingAngle'..
 		"""
 		#Exit action for state 'processingAngle'.
-		self.timer_service.unset_timer(self, 3)
+		self.timer_service.unset_timer(self, 2)
 		
-	def __enter_sequence_main_region_calibration_process_default(self):
+	def __enter_sequence_s_calibration_process_default(self):
 		"""'default' enter sequence for state Calibration Process.
 		"""
 		#'default' enter sequence for state Calibration Process
-		self.__enter_sequence_main_region_calibration_process_r1_default()
+		self.__enter_sequence_s_calibration_process_r1_default()
 		
-	def __enter_sequence_main_region_calibration_process_r1_idle_default(self):
-		"""'default' enter sequence for state Idle.
+	def __enter_sequence_s_calibration_process_r1_detect_walls_default(self):
+		"""'default' enter sequence for state Detect Walls.
 		"""
-		#'default' enter sequence for state Idle
-		self.__entry_action_main_region_calibration_process_r1_idle()
-		self.__state_vector[0] = self.State.main_region_calibration_process_r1idle
+		#'default' enter sequence for state Detect Walls
+		self.__entry_action_s_calibration_process_r1_detect_walls()
+		self.__state_vector[0] = self.State.scalibration_process_r1detect_walls
 		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_calibration_process_r1_offset_correction_default(self):
-		"""'default' enter sequence for state Offset Correction.
+	def __enter_sequence_s_calibration_process_r1_set_zero_position_default(self):
+		"""'default' enter sequence for state Set Zero Position.
 		"""
-		#'default' enter sequence for state Offset Correction
-		self.__entry_action_main_region_calibration_process_r1_offset_correction()
-		self.__state_vector[0] = self.State.main_region_calibration_process_r1offset_correction
+		#'default' enter sequence for state Set Zero Position
+		self.__entry_action_s_calibration_process_r1_set_zero_position()
+		self.__state_vector[0] = self.State.scalibration_process_r1set_zero_position
 		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_calibration_process_r1_aligned_default(self):
-		"""'default' enter sequence for state Aligned.
+	def __enter_sequence_s_calibration_process_r1_align_right_wall_default(self):
+		"""'default' enter sequence for state Align Right Wall.
 		"""
-		#'default' enter sequence for state Aligned
-		self.__entry_action_main_region_calibration_process_r1_aligned()
-		self.__state_vector[0] = self.State.main_region_calibration_process_r1aligned
+		#'default' enter sequence for state Align Right Wall
+		self.__entry_action_s_calibration_process_r1_align_right_wall()
+		self.__state_vector[0] = self.State.scalibration_process_r1align_right_wall
 		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_manual_control_default(self):
+	def __enter_sequence_s_calibration_process_r1_align_left_wall_default(self):
+		"""'default' enter sequence for state Align Left Wall.
+		"""
+		#'default' enter sequence for state Align Left Wall
+		self.__entry_action_s_calibration_process_r1_align_left_wall()
+		self.__state_vector[0] = self.State.scalibration_process_r1align_left_wall
+		self.__state_conf_vector_position = 0
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_s_calibration_process_r1_align_both_walls_default(self):
+		"""'default' enter sequence for state Align Both Walls.
+		"""
+		#'default' enter sequence for state Align Both Walls
+		self.__entry_action_s_calibration_process_r1_align_both_walls()
+		self.__state_vector[0] = self.State.scalibration_process_r1align_both_walls
+		self.__state_conf_vector_position = 0
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_s_calibration_process_r1_align_front_wall_default(self):
+		"""'default' enter sequence for state Align Front Wall.
+		"""
+		#'default' enter sequence for state Align Front Wall
+		self.__entry_action_s_calibration_process_r1_align_front_wall()
+		self.__state_vector[0] = self.State.scalibration_process_r1align_front_wall
+		self.__state_conf_vector_position = 0
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_s_calibration_process_r1_state1_default(self):
+		"""'default' enter sequence for state state1.
+		"""
+		#'default' enter sequence for state state1
+		self.__entry_action_s_calibration_process_r1_state1()
+		self.__state_vector[0] = self.State.scalibration_process_r1state1
+		self.__state_conf_vector_position = 0
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_s_calibration_process_r1_need_to_go_closer_to_left_default(self):
+		"""'default' enter sequence for state NeedToGoCloserToLeft.
+		"""
+		#'default' enter sequence for state NeedToGoCloserToLeft
+		self.__entry_action_s_calibration_process_r1_need_to_go_closer_to_left()
+		self.__state_vector[0] = self.State.scalibration_process_r1need_to_go_closer_to_left
+		self.__state_conf_vector_position = 0
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_s_calibration_process_r1_need_to_get_away_from_left_default(self):
+		"""'default' enter sequence for state NeedToGetAwayFromLeft.
+		"""
+		#'default' enter sequence for state NeedToGetAwayFromLeft
+		self.__entry_action_s_calibration_process_r1_need_to_get_away_from_left()
+		self.__state_vector[0] = self.State.scalibration_process_r1need_to_get_away_from_left
+		self.__state_conf_vector_position = 0
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_s_calibration_process_r1_pointing_away_from_left_wall__it_is_now_behind_us__default(self):
+		"""'default' enter sequence for state Pointing Away From Left wall (it is now behind us).
+		"""
+		#'default' enter sequence for state Pointing Away From Left wall (it is now behind us)
+		self.__entry_action_s_calibration_process_r1_pointing_away_from_left_wall__it_is_now_behind_us_()
+		self.__state_vector[0] = self.State.scalibration_process_r1pointing_away_from_left_wall__it_is_now_behind_us_
+		self.__state_conf_vector_position = 0
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_s_calibration_process_r1_pointing_towards_left_wall__it_is_in_front_of_us__default(self):
+		"""'default' enter sequence for state Pointing towards left wall (it is in front of us).
+		"""
+		#'default' enter sequence for state Pointing towards left wall (it is in front of us)
+		self.__entry_action_s_calibration_process_r1_pointing_towards_left_wall__it_is_in_front_of_us_()
+		self.__state_vector[0] = self.State.scalibration_process_r1pointing_towards_left_wall__it_is_in_front_of_us_
+		self.__state_conf_vector_position = 0
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_s_calibration_process_r1_lets_turn_right_to_pint_north_default(self):
+		"""'default' enter sequence for state LetsTurnRightToPintNorth.
+		"""
+		#'default' enter sequence for state LetsTurnRightToPintNorth
+		self.__entry_action_s_calibration_process_r1_lets_turn_right_to_pint_north()
+		self.__state_vector[0] = self.State.scalibration_process_r1lets_turn_right_to_pint_north
+		self.__state_conf_vector_position = 0
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_s_calibration_process_r1_lets_turn_left_to_point_north_default(self):
+		"""'default' enter sequence for state LetsTurnLeftToPointNorth.
+		"""
+		#'default' enter sequence for state LetsTurnLeftToPointNorth
+		self.__entry_action_s_calibration_process_r1_lets_turn_left_to_point_north()
+		self.__state_vector[0] = self.State.scalibration_process_r1lets_turn_left_to_point_north
+		self.__state_conf_vector_position = 0
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_s_manual_control_default(self):
 		"""'default' enter sequence for state Manual Control.
 		"""
 		#'default' enter sequence for state Manual Control
-		self.__entry_action_main_region_manual_control()
-		self.__enter_sequence_main_region_manual_control_manual_control_region_default()
+		self.__enter_sequence_s_manual_control_manual_control_region_default()
 		
-	def __enter_sequence_main_region_manual_control_manual_control_region_idle_default(self):
+	def __enter_sequence_s_manual_control_manual_control_region_idle_default(self):
 		"""'default' enter sequence for state Idle.
 		"""
 		#'default' enter sequence for state Idle
-		self.__entry_action_main_region_manual_control_manual_control_region_idle()
-		self.__state_vector[0] = self.State.main_region_manual_control_manual_control_region_idle
+		self.__entry_action_s_manual_control_manual_control_region_idle()
+		self.__state_vector[0] = self.State.smanual_control_manual_control_region_idle
 		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_manual_control_manual_control_region_decreasing_speed_default(self):
+	def __enter_sequence_s_manual_control_manual_control_region_decreasing_speed_default(self):
 		"""'default' enter sequence for state Decreasing speed.
 		"""
 		#'default' enter sequence for state Decreasing speed
-		self.__entry_action_main_region_manual_control_manual_control_region_decreasing_speed()
-		self.__state_vector[0] = self.State.main_region_manual_control_manual_control_region_decreasing_speed
+		self.__entry_action_s_manual_control_manual_control_region_decreasing_speed()
+		self.__state_vector[0] = self.State.smanual_control_manual_control_region_decreasing_speed
 		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_manual_control_manual_control_region_increasing_speed_default(self):
+	def __enter_sequence_s_manual_control_manual_control_region_increasing_speed_default(self):
 		"""'default' enter sequence for state Increasing speed.
 		"""
 		#'default' enter sequence for state Increasing speed
-		self.__entry_action_main_region_manual_control_manual_control_region_increasing_speed()
-		self.__state_vector[0] = self.State.main_region_manual_control_manual_control_region_increasing_speed
+		self.__entry_action_s_manual_control_manual_control_region_increasing_speed()
+		self.__state_vector[0] = self.State.smanual_control_manual_control_region_increasing_speed
 		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_manual_control_manual_control_region_turning_right_default(self):
+	def __enter_sequence_s_manual_control_manual_control_region_turning_right_default(self):
 		"""'default' enter sequence for state Turning right.
 		"""
 		#'default' enter sequence for state Turning right
-		self.__entry_action_main_region_manual_control_manual_control_region_turning_right()
-		self.__state_vector[0] = self.State.main_region_manual_control_manual_control_region_turning_right
+		self.__entry_action_s_manual_control_manual_control_region_turning_right()
+		self.__state_vector[0] = self.State.smanual_control_manual_control_region_turning_right
 		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_manual_control_manual_control_region_turning_left_default(self):
+	def __enter_sequence_s_manual_control_manual_control_region_turning_left_default(self):
 		"""'default' enter sequence for state Turning left.
 		"""
 		#'default' enter sequence for state Turning left
-		self.__entry_action_main_region_manual_control_manual_control_region_turning_left()
-		self.__state_vector[0] = self.State.main_region_manual_control_manual_control_region_turning_left
+		self.__entry_action_s_manual_control_manual_control_region_turning_left()
+		self.__state_vector[0] = self.State.smanual_control_manual_control_region_turning_left
 		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_automatic_exploration_default(self):
+	def __enter_sequence_s_automatic_exploration_default(self):
 		"""'default' enter sequence for state automatic exploration.
 		"""
 		#'default' enter sequence for state automatic exploration
-		self.__enter_sequence_main_region_automatic_exploration_general_default()
-		self.__enter_sequence_main_region_automatic_exploration_moving_default()
+		self.__enter_sequence_s_automatic_exploration_general_default()
+		self.__enter_sequence_s_automatic_exploration_moving_default()
 		
-	def __enter_sequence_main_region_automatic_exploration_general_normal_moving_default(self):
+	def __enter_sequence_s_automatic_exploration_general_normal_moving_default(self):
 		"""'default' enter sequence for state normal_moving.
 		"""
 		#'default' enter sequence for state normal_moving
-		self.__entry_action_main_region_automatic_exploration_general_normal_moving()
-		self.__state_vector[0] = self.State.main_region_automatic_exploration_general_normal_moving
+		self.__entry_action_s_automatic_exploration_general_normal_moving()
+		self.__state_vector[0] = self.State.sautomatic_exploration_general_normal_moving
 		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_automatic_exploration_general_left_wall_disappeared_default(self):
+	def __enter_sequence_s_automatic_exploration_general_left_wall_disappeared_default(self):
 		"""'default' enter sequence for state left_wall_disappeared.
 		"""
 		#'default' enter sequence for state left_wall_disappeared
-		self.__entry_action_main_region_automatic_exploration_general_left_wall_disappeared()
-		self.__state_vector[0] = self.State.main_region_automatic_exploration_general_left_wall_disappeared
+		self.__entry_action_s_automatic_exploration_general_left_wall_disappeared()
+		self.__state_vector[0] = self.State.sautomatic_exploration_general_left_wall_disappeared
 		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_automatic_exploration_general_wall_in_front_default(self):
+	def __enter_sequence_s_automatic_exploration_general_wall_in_front_default(self):
 		"""'default' enter sequence for state wall_in_front.
 		"""
 		#'default' enter sequence for state wall_in_front
-		self.__entry_action_main_region_automatic_exploration_general_wall_in_front()
-		self.__state_vector[0] = self.State.main_region_automatic_exploration_general_wall_in_front
+		self.__entry_action_s_automatic_exploration_general_wall_in_front()
+		self.__state_vector[0] = self.State.sautomatic_exploration_general_wall_in_front
 		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_automatic_exploration_general_turn_left_default(self):
+	def __enter_sequence_s_automatic_exploration_general_turn_left_default(self):
 		"""'default' enter sequence for state turn left.
 		"""
 		#'default' enter sequence for state turn left
-		self.__entry_action_main_region_automatic_exploration_general_turn_left()
-		self.__state_vector[0] = self.State.main_region_automatic_exploration_general_turn_left
+		self.__entry_action_s_automatic_exploration_general_turn_left()
+		self.__state_vector[0] = self.State.sautomatic_exploration_general_turn_left
 		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_automatic_exploration_general_move_forward_default(self):
+	def __enter_sequence_s_automatic_exploration_general_move_forward_default(self):
 		"""'default' enter sequence for state move forward.
 		"""
 		#'default' enter sequence for state move forward
-		self.__entry_action_main_region_automatic_exploration_general_move_forward()
-		self.__state_vector[0] = self.State.main_region_automatic_exploration_general_move_forward
+		self.__entry_action_s_automatic_exploration_general_move_forward()
+		self.__state_vector[0] = self.State.sautomatic_exploration_general_move_forward
 		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_automatic_exploration_general_turn_and_go_default(self):
+	def __enter_sequence_s_automatic_exploration_general_turn_and_go_default(self):
 		"""'default' enter sequence for state turn and go.
 		"""
 		#'default' enter sequence for state turn and go
-		self.__entry_action_main_region_automatic_exploration_general_turn_and_go()
-		self.__state_vector[0] = self.State.main_region_automatic_exploration_general_turn_and_go
+		self.__entry_action_s_automatic_exploration_general_turn_and_go()
+		self.__state_vector[0] = self.State.sautomatic_exploration_general_turn_and_go
 		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_automatic_exploration_general_go_default(self):
+	def __enter_sequence_s_automatic_exploration_general_go_default(self):
 		"""'default' enter sequence for state go.
 		"""
 		#'default' enter sequence for state go
-		self.__entry_action_main_region_automatic_exploration_general_go()
-		self.__state_vector[0] = self.State.main_region_automatic_exploration_general_go
+		self.__entry_action_s_automatic_exploration_general_go()
+		self.__state_vector[0] = self.State.sautomatic_exploration_general_go
 		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_automatic_exploration_general_return_default(self):
+	def __enter_sequence_s_automatic_exploration_general_return_default(self):
 		"""'default' enter sequence for state return.
 		"""
 		#'default' enter sequence for state return
-		self.__entry_action_main_region_automatic_exploration_general_return()
-		self.__state_vector[0] = self.State.main_region_automatic_exploration_general_return
+		self.__entry_action_s_automatic_exploration_general_return()
+		self.__state_vector[0] = self.State.sautomatic_exploration_general_return
 		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_automatic_exploration_general_to_right_default(self):
+	def __enter_sequence_s_automatic_exploration_general_to_right_default(self):
 		"""'default' enter sequence for state to right.
 		"""
 		#'default' enter sequence for state to right
-		self.__entry_action_main_region_automatic_exploration_general_to_right()
-		self.__state_vector[0] = self.State.main_region_automatic_exploration_general_to_right
+		self.__entry_action_s_automatic_exploration_general_to_right()
+		self.__state_vector[0] = self.State.sautomatic_exploration_general_to_right
 		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_automatic_exploration_general_go2_default(self):
+	def __enter_sequence_s_automatic_exploration_general_go2_default(self):
 		"""'default' enter sequence for state go2.
 		"""
 		#'default' enter sequence for state go2
-		self.__entry_action_main_region_automatic_exploration_general_go2()
-		self.__state_vector[0] = self.State.main_region_automatic_exploration_general_go2
+		self.__entry_action_s_automatic_exploration_general_go2()
+		self.__state_vector[0] = self.State.sautomatic_exploration_general_go2
 		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_automatic_exploration_moving_moving_default(self):
+	def __enter_sequence_s_automatic_exploration_moving_moving_default(self):
 		"""'default' enter sequence for state moving.
 		"""
 		#'default' enter sequence for state moving
-		self.__enter_sequence_main_region_automatic_exploration_moving_moving_r1_default()
-		self.__enter_sequence_main_region_automatic_exploration_moving_moving_r2_default()
+		self.__enter_sequence_s_automatic_exploration_moving_moving_r1_default()
+		self.__enter_sequence_s_automatic_exploration_moving_moving_r2_default()
 		
-	def __enter_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_default(self):
+	def __enter_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_default(self):
 		"""'default' enter sequence for state move and turn back.
 		"""
 		#'default' enter sequence for state move and turn back
-		self.__enter_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_default()
-		self.__enter_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_default()
+		self.__enter_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_default()
+		self.__enter_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_default()
 		
-	def __enter_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_normal_default(self):
+	def __enter_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_normal_default(self):
 		"""'default' enter sequence for state normal.
 		"""
 		#'default' enter sequence for state normal
-		self.__entry_action_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_normal()
-		self.__state_vector[1] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r1normal
+		self.__entry_action_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_normal()
+		self.__state_vector[1] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r1normal
 		self.__state_conf_vector_position = 1
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_moving_default(self):
+	def __enter_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_moving_default(self):
 		"""'default' enter sequence for state moving.
 		"""
 		#'default' enter sequence for state moving
-		self.__entry_action_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_moving()
-		self.__state_vector[1] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r1moving
+		self.__entry_action_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_moving()
+		self.__state_vector[1] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r1moving
 		self.__state_conf_vector_position = 1
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_normal_default(self):
+	def __enter_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_normal_default(self):
 		"""'default' enter sequence for state normal.
 		"""
 		#'default' enter sequence for state normal
-		self.__entry_action_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_normal()
-		self.__state_vector[2] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2normal
+		self.__entry_action_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_normal()
+		self.__state_vector[2] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2normal
 		self.__state_conf_vector_position = 2
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_left_default(self):
+	def __enter_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_left_default(self):
 		"""'default' enter sequence for state turnLeft.
 		"""
 		#'default' enter sequence for state turnLeft
-		self.__entry_action_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_left()
-		self.__state_vector[2] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2turn_left
+		self.__entry_action_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_left()
+		self.__state_vector[2] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2turn_left
 		self.__state_conf_vector_position = 2
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_right_default(self):
+	def __enter_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_right_default(self):
 		"""'default' enter sequence for state turnRight.
 		"""
 		#'default' enter sequence for state turnRight
-		self.__entry_action_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_right()
-		self.__state_vector[2] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2turn_right
+		self.__entry_action_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_right()
+		self.__state_vector[2] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2turn_right
 		self.__state_conf_vector_position = 2
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_back_default(self):
+	def __enter_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_back_default(self):
 		"""'default' enter sequence for state turnBack.
 		"""
 		#'default' enter sequence for state turnBack
-		self.__entry_action_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_back()
-		self.__state_vector[2] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2turn_back
+		self.__entry_action_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_back()
+		self.__state_vector[2] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2turn_back
 		self.__state_conf_vector_position = 2
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_plus_default(self):
+	def __enter_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_plus_default(self):
 		"""'default' enter sequence for state plus.
 		"""
 		#'default' enter sequence for state plus
-		self.__entry_action_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_plus()
-		self.__state_vector[2] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2plus
+		self.__entry_action_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_plus()
+		self.__state_vector[2] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2plus
 		self.__state_conf_vector_position = 2
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_minus_default(self):
+	def __enter_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_minus_default(self):
 		"""'default' enter sequence for state minus.
 		"""
 		#'default' enter sequence for state minus
-		self.__entry_action_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_minus()
-		self.__state_vector[2] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2minus
+		self.__entry_action_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_minus()
+		self.__state_vector[2] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2minus
 		self.__state_conf_vector_position = 2
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle2_default(self):
+	def __enter_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle2_default(self):
 		"""'default' enter sequence for state processingAngle2.
 		"""
 		#'default' enter sequence for state processingAngle2
-		self.__entry_action_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle2()
-		self.__state_vector[2] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle2
+		self.__entry_action_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle2()
+		self.__state_vector[2] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle2
 		self.__state_conf_vector_position = 2
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_default(self):
+	def __enter_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_default(self):
 		"""'default' enter sequence for state turnImpl.
 		"""
 		#'default' enter sequence for state turnImpl
-		self.__enter_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_default()
+		self.__enter_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_default()
 		
-	def __enter_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_normal_default(self):
+	def __enter_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_normal_default(self):
 		"""'default' enter sequence for state normal.
 		"""
 		#'default' enter sequence for state normal
-		self.__entry_action_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_normal()
-		self.__state_vector[3] = self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1normal
+		self.__entry_action_s_automatic_exploration_moving_moving_r2_turn_impl_r1_normal()
+		self.__state_vector[3] = self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1normal
 		self.__state_conf_vector_position = 3
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_negative_rotation_default(self):
+	def __enter_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_negative_rotation_default(self):
 		"""'default' enter sequence for state negativeRotation.
 		"""
 		#'default' enter sequence for state negativeRotation
-		self.__entry_action_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_negative_rotation()
-		self.__state_vector[3] = self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1negative_rotation
+		self.__entry_action_s_automatic_exploration_moving_moving_r2_turn_impl_r1_negative_rotation()
+		self.__state_vector[3] = self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1negative_rotation
 		self.__state_conf_vector_position = 3
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_positive_rotation_default(self):
+	def __enter_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_positive_rotation_default(self):
 		"""'default' enter sequence for state positiveRotation.
 		"""
 		#'default' enter sequence for state positiveRotation
-		self.__entry_action_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_positive_rotation()
-		self.__state_vector[3] = self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1positive_rotation
+		self.__entry_action_s_automatic_exploration_moving_moving_r2_turn_impl_r1_positive_rotation()
+		self.__state_vector[3] = self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1positive_rotation
 		self.__state_conf_vector_position = 3
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r2_default(self):
+	def __enter_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r2_default(self):
 		"""'default' enter sequence for state pR2.
 		"""
 		#'default' enter sequence for state pR2
-		self.__entry_action_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r2()
-		self.__state_vector[3] = self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1pr2
+		self.__entry_action_s_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r2()
+		self.__state_vector[3] = self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1pr2
 		self.__state_conf_vector_position = 3
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r3_default(self):
+	def __enter_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r3_default(self):
 		"""'default' enter sequence for state pR3.
 		"""
 		#'default' enter sequence for state pR3
-		self.__entry_action_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r3()
-		self.__state_vector[3] = self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1pr3
+		self.__entry_action_s_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r3()
+		self.__state_vector[3] = self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1pr3
 		self.__state_conf_vector_position = 3
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r2_default(self):
+	def __enter_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r2_default(self):
 		"""'default' enter sequence for state nR2.
 		"""
 		#'default' enter sequence for state nR2
-		self.__entry_action_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r2()
-		self.__state_vector[3] = self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1nr2
+		self.__entry_action_s_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r2()
+		self.__state_vector[3] = self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1nr2
 		self.__state_conf_vector_position = 3
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r3_default(self):
+	def __enter_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r3_default(self):
 		"""'default' enter sequence for state nR3.
 		"""
 		#'default' enter sequence for state nR3
-		self.__entry_action_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r3()
-		self.__state_vector[3] = self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1nr3
+		self.__entry_action_s_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r3()
+		self.__state_vector[3] = self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1nr3
 		self.__state_conf_vector_position = 3
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_default(self):
-		"""'default' enter sequence for region main region.
+	def __enter_sequence_s_default(self):
+		"""'default' enter sequence for region s.
 		"""
-		#'default' enter sequence for region main region
-		self.__react_main_region__entry_default()
+		#'default' enter sequence for region s
+		self.__react_s__entry_default()
 		
-	def __enter_sequence_main_region_calibration_process_r1_default(self):
+	def __enter_sequence_s_calibration_process_r1_default(self):
 		"""'default' enter sequence for region r1.
 		"""
 		#'default' enter sequence for region r1
-		self.__react_main_region_calibration_process_r1__entry_default()
+		self.__react_s_calibration_process_r1__entry_default()
 		
-	def __enter_sequence_main_region_manual_control_manual_control_region_default(self):
+	def __enter_sequence_s_manual_control_manual_control_region_default(self):
 		"""'default' enter sequence for region manual control region.
 		"""
 		#'default' enter sequence for region manual control region
-		self.__react_main_region_manual_control_manual_control_region__entry_default()
+		self.__react_s_manual_control_manual_control_region__entry_default()
 		
-	def __enter_sequence_main_region_automatic_exploration_general_default(self):
+	def __enter_sequence_s_automatic_exploration_general_default(self):
 		"""'default' enter sequence for region general.
 		"""
 		#'default' enter sequence for region general
-		self.__react_main_region_automatic_exploration_general__entry_default()
+		self.__react_s_automatic_exploration_general__entry_default()
 		
-	def __enter_sequence_main_region_automatic_exploration_moving_default(self):
+	def __enter_sequence_s_automatic_exploration_moving_default(self):
 		"""'default' enter sequence for region moving.
 		"""
 		#'default' enter sequence for region moving
-		self.__react_main_region_automatic_exploration_moving__entry_default()
+		self.__react_s_automatic_exploration_moving__entry_default()
 		
-	def __enter_sequence_main_region_automatic_exploration_moving_moving_r1_default(self):
+	def __enter_sequence_s_automatic_exploration_moving_moving_r1_default(self):
 		"""'default' enter sequence for region r1.
 		"""
 		#'default' enter sequence for region r1
-		self.__react_main_region_automatic_exploration_moving_moving_r1__entry_default()
+		self.__react_s_automatic_exploration_moving_moving_r1__entry_default()
 		
-	def __enter_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_default(self):
+	def __enter_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_default(self):
 		"""'default' enter sequence for region r1.
 		"""
 		#'default' enter sequence for region r1
-		self.__react_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r1__entry_default()
+		self.__react_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r1__entry_default()
 		
-	def __enter_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_default(self):
+	def __enter_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_default(self):
 		"""'default' enter sequence for region r2.
 		"""
 		#'default' enter sequence for region r2
-		self.__react_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2__entry_default()
+		self.__react_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2__entry_default()
 		
-	def __enter_sequence_main_region_automatic_exploration_moving_moving_r2_default(self):
+	def __enter_sequence_s_automatic_exploration_moving_moving_r2_default(self):
 		"""'default' enter sequence for region r2.
 		"""
 		#'default' enter sequence for region r2
-		self.__react_main_region_automatic_exploration_moving_moving_r2__entry_default()
+		self.__react_s_automatic_exploration_moving_moving_r2__entry_default()
 		
-	def __enter_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_default(self):
+	def __enter_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_default(self):
 		"""'default' enter sequence for region r1.
 		"""
 		#'default' enter sequence for region r1
-		self.__react_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1__entry_default()
+		self.__react_s_automatic_exploration_moving_moving_r2_turn_impl_r1__entry_default()
 		
-	def __exit_sequence_main_region_calibration_process(self):
+	def __exit_sequence_s_calibration_process(self):
 		"""Default exit sequence for state Calibration Process.
 		"""
 		#Default exit sequence for state Calibration Process
-		self.__exit_sequence_main_region_calibration_process_r1()
+		self.__exit_sequence_s_calibration_process_r1()
 		self.__state_vector[0] = self.State.null_state
 		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_main_region_calibration_process_r1_idle(self):
-		"""Default exit sequence for state Idle.
+	def __exit_sequence_s_calibration_process_r1_detect_walls(self):
+		"""Default exit sequence for state Detect Walls.
 		"""
-		#Default exit sequence for state Idle
-		self.__state_vector[0] = self.State.main_region_calibration_process
+		#Default exit sequence for state Detect Walls
+		self.__state_vector[0] = self.State.scalibration_process
 		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_main_region_calibration_process_r1_offset_calibration(self):
-		"""Default exit sequence for state Offset Calibration.
+	def __exit_sequence_s_calibration_process_r1_set_zero_position(self):
+		"""Default exit sequence for state Set Zero Position.
 		"""
-		#Default exit sequence for state Offset Calibration
-		self.__state_vector[0] = self.State.main_region_calibration_process
-		self.__state_conf_vector_position = 0
-		self.__exit_action_main_region_calibration_process_r1_offset_calibration()
-		
-	def __exit_sequence_main_region_calibration_process_r1_offset_correction(self):
-		"""Default exit sequence for state Offset Correction.
-		"""
-		#Default exit sequence for state Offset Correction
-		self.__state_vector[0] = self.State.main_region_calibration_process
-		self.__state_conf_vector_position = 0
-		self.__exit_action_main_region_calibration_process_r1_offset_correction()
-		
-	def __exit_sequence_main_region_calibration_process_r1_aligned(self):
-		"""Default exit sequence for state Aligned.
-		"""
-		#Default exit sequence for state Aligned
-		self.__state_vector[0] = self.State.main_region_calibration_process
+		#Default exit sequence for state Set Zero Position
+		self.__state_vector[0] = self.State.scalibration_process
 		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_main_region_calibration_process_r1_calibration_completeted(self):
-		"""Default exit sequence for state Calibration Completeted.
+	def __exit_sequence_s_calibration_process_r1_calibration_complete(self):
+		"""Default exit sequence for state Calibration Complete.
 		"""
-		#Default exit sequence for state Calibration Completeted
-		self.__state_vector[0] = self.State.main_region_calibration_process
+		#Default exit sequence for state Calibration Complete
+		self.__state_vector[0] = self.State.scalibration_process
 		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_main_region_manual_control(self):
+	def __exit_sequence_s_calibration_process_r1_align_right_wall(self):
+		"""Default exit sequence for state Align Right Wall.
+		"""
+		#Default exit sequence for state Align Right Wall
+		self.__state_vector[0] = self.State.scalibration_process
+		self.__state_conf_vector_position = 0
+		
+	def __exit_sequence_s_calibration_process_r1_align_left_wall(self):
+		"""Default exit sequence for state Align Left Wall.
+		"""
+		#Default exit sequence for state Align Left Wall
+		self.__state_vector[0] = self.State.scalibration_process
+		self.__state_conf_vector_position = 0
+		
+	def __exit_sequence_s_calibration_process_r1_align_both_walls(self):
+		"""Default exit sequence for state Align Both Walls.
+		"""
+		#Default exit sequence for state Align Both Walls
+		self.__state_vector[0] = self.State.scalibration_process
+		self.__state_conf_vector_position = 0
+		
+	def __exit_sequence_s_calibration_process_r1_align_front_wall(self):
+		"""Default exit sequence for state Align Front Wall.
+		"""
+		#Default exit sequence for state Align Front Wall
+		self.__state_vector[0] = self.State.scalibration_process
+		self.__state_conf_vector_position = 0
+		
+	def __exit_sequence_s_calibration_process_r1_state1(self):
+		"""Default exit sequence for state state1.
+		"""
+		#Default exit sequence for state state1
+		self.__state_vector[0] = self.State.scalibration_process
+		self.__state_conf_vector_position = 0
+		
+	def __exit_sequence_s_calibration_process_r1_need_to_go_closer_to_left(self):
+		"""Default exit sequence for state NeedToGoCloserToLeft.
+		"""
+		#Default exit sequence for state NeedToGoCloserToLeft
+		self.__state_vector[0] = self.State.scalibration_process
+		self.__state_conf_vector_position = 0
+		
+	def __exit_sequence_s_calibration_process_r1_need_to_get_away_from_left(self):
+		"""Default exit sequence for state NeedToGetAwayFromLeft.
+		"""
+		#Default exit sequence for state NeedToGetAwayFromLeft
+		self.__state_vector[0] = self.State.scalibration_process
+		self.__state_conf_vector_position = 0
+		
+	def __exit_sequence_s_calibration_process_r1_pointing_away_from_left_wall__it_is_now_behind_us_(self):
+		"""Default exit sequence for state Pointing Away From Left wall (it is now behind us).
+		"""
+		#Default exit sequence for state Pointing Away From Left wall (it is now behind us)
+		self.__state_vector[0] = self.State.scalibration_process
+		self.__state_conf_vector_position = 0
+		
+	def __exit_sequence_s_calibration_process_r1_pointing_towards_left_wall__it_is_in_front_of_us_(self):
+		"""Default exit sequence for state Pointing towards left wall (it is in front of us).
+		"""
+		#Default exit sequence for state Pointing towards left wall (it is in front of us)
+		self.__state_vector[0] = self.State.scalibration_process
+		self.__state_conf_vector_position = 0
+		
+	def __exit_sequence_s_calibration_process_r1_lets_turn_right_to_pint_north(self):
+		"""Default exit sequence for state LetsTurnRightToPintNorth.
+		"""
+		#Default exit sequence for state LetsTurnRightToPintNorth
+		self.__state_vector[0] = self.State.scalibration_process
+		self.__state_conf_vector_position = 0
+		
+	def __exit_sequence_s_calibration_process_r1_lets_turn_left_to_point_north(self):
+		"""Default exit sequence for state LetsTurnLeftToPointNorth.
+		"""
+		#Default exit sequence for state LetsTurnLeftToPointNorth
+		self.__state_vector[0] = self.State.scalibration_process
+		self.__state_conf_vector_position = 0
+		
+	def __exit_sequence_s_manual_control(self):
 		"""Default exit sequence for state Manual Control.
 		"""
 		#Default exit sequence for state Manual Control
-		self.__exit_sequence_main_region_manual_control_manual_control_region()
+		self.__exit_sequence_s_manual_control_manual_control_region()
 		self.__state_vector[0] = self.State.null_state
 		self.__state_conf_vector_position = 0
-		self.__exit_action_main_region_manual_control()
 		
-	def __exit_sequence_main_region_manual_control_manual_control_region_idle(self):
+	def __exit_sequence_s_manual_control_manual_control_region_idle(self):
 		"""Default exit sequence for state Idle.
 		"""
 		#Default exit sequence for state Idle
-		self.__state_vector[0] = self.State.main_region_manual_control
+		self.__state_vector[0] = self.State.smanual_control
 		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_main_region_manual_control_manual_control_region_in_action(self):
+	def __exit_sequence_s_manual_control_manual_control_region_in_action(self):
 		"""Default exit sequence for state In action.
 		"""
 		#Default exit sequence for state In action
-		self.__state_vector[0] = self.State.main_region_manual_control
+		self.__state_vector[0] = self.State.smanual_control
 		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_main_region_manual_control_manual_control_region_decreasing_speed(self):
+	def __exit_sequence_s_manual_control_manual_control_region_decreasing_speed(self):
 		"""Default exit sequence for state Decreasing speed.
 		"""
 		#Default exit sequence for state Decreasing speed
-		self.__state_vector[0] = self.State.main_region_manual_control
+		self.__state_vector[0] = self.State.smanual_control
 		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_main_region_manual_control_manual_control_region_increasing_speed(self):
+	def __exit_sequence_s_manual_control_manual_control_region_increasing_speed(self):
 		"""Default exit sequence for state Increasing speed.
 		"""
 		#Default exit sequence for state Increasing speed
-		self.__state_vector[0] = self.State.main_region_manual_control
+		self.__state_vector[0] = self.State.smanual_control
 		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_main_region_manual_control_manual_control_region_turning_right(self):
+	def __exit_sequence_s_manual_control_manual_control_region_turning_right(self):
 		"""Default exit sequence for state Turning right.
 		"""
 		#Default exit sequence for state Turning right
-		self.__state_vector[0] = self.State.main_region_manual_control
+		self.__state_vector[0] = self.State.smanual_control
 		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_main_region_manual_control_manual_control_region_turning_left(self):
+	def __exit_sequence_s_manual_control_manual_control_region_turning_left(self):
 		"""Default exit sequence for state Turning left.
 		"""
 		#Default exit sequence for state Turning left
-		self.__state_vector[0] = self.State.main_region_manual_control
+		self.__state_vector[0] = self.State.smanual_control
 		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_main_region_automatic_exploration(self):
+	def __exit_sequence_s_automatic_exploration(self):
 		"""Default exit sequence for state automatic exploration.
 		"""
 		#Default exit sequence for state automatic exploration
-		self.__exit_sequence_main_region_automatic_exploration_general()
-		self.__exit_sequence_main_region_automatic_exploration_moving()
+		self.__exit_sequence_s_automatic_exploration_general()
+		self.__exit_sequence_s_automatic_exploration_moving()
 		self.__state_vector[0] = self.State.null_state
 		self.__state_vector[1] = self.State.null_state
 		self.__state_vector[2] = self.State.null_state
 		self.__state_vector[3] = self.State.null_state
 		self.__state_conf_vector_position = 3
 		
-	def __exit_sequence_main_region_automatic_exploration_general_normal_moving(self):
+	def __exit_sequence_s_automatic_exploration_general_normal_moving(self):
 		"""Default exit sequence for state normal_moving.
 		"""
 		#Default exit sequence for state normal_moving
-		self.__state_vector[0] = self.State.main_region_automatic_exploration
+		self.__state_vector[0] = self.State.sautomatic_exploration
 		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_main_region_automatic_exploration_general_left_wall_disappeared(self):
+	def __exit_sequence_s_automatic_exploration_general_left_wall_disappeared(self):
 		"""Default exit sequence for state left_wall_disappeared.
 		"""
 		#Default exit sequence for state left_wall_disappeared
-		self.__state_vector[0] = self.State.main_region_automatic_exploration
+		self.__state_vector[0] = self.State.sautomatic_exploration
 		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_main_region_automatic_exploration_general_wall_in_front(self):
+	def __exit_sequence_s_automatic_exploration_general_wall_in_front(self):
 		"""Default exit sequence for state wall_in_front.
 		"""
 		#Default exit sequence for state wall_in_front
-		self.__state_vector[0] = self.State.main_region_automatic_exploration
+		self.__state_vector[0] = self.State.sautomatic_exploration
 		self.__state_conf_vector_position = 0
-		self.__exit_action_main_region_automatic_exploration_general_wall_in_front()
+		self.__exit_action_s_automatic_exploration_general_wall_in_front()
 		
-	def __exit_sequence_main_region_automatic_exploration_general_turn_left(self):
+	def __exit_sequence_s_automatic_exploration_general_turn_left(self):
 		"""Default exit sequence for state turn left.
 		"""
 		#Default exit sequence for state turn left
-		self.__state_vector[0] = self.State.main_region_automatic_exploration
+		self.__state_vector[0] = self.State.sautomatic_exploration
 		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_main_region_automatic_exploration_general_move_forward(self):
+	def __exit_sequence_s_automatic_exploration_general_move_forward(self):
 		"""Default exit sequence for state move forward.
 		"""
 		#Default exit sequence for state move forward
-		self.__state_vector[0] = self.State.main_region_automatic_exploration
+		self.__state_vector[0] = self.State.sautomatic_exploration
 		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_main_region_automatic_exploration_general_turn_and_go(self):
+	def __exit_sequence_s_automatic_exploration_general_turn_and_go(self):
 		"""Default exit sequence for state turn and go.
 		"""
 		#Default exit sequence for state turn and go
-		self.__state_vector[0] = self.State.main_region_automatic_exploration
+		self.__state_vector[0] = self.State.sautomatic_exploration
 		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_main_region_automatic_exploration_general_go(self):
+	def __exit_sequence_s_automatic_exploration_general_go(self):
 		"""Default exit sequence for state go.
 		"""
 		#Default exit sequence for state go
-		self.__state_vector[0] = self.State.main_region_automatic_exploration
+		self.__state_vector[0] = self.State.sautomatic_exploration
 		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_main_region_automatic_exploration_general_return(self):
+	def __exit_sequence_s_automatic_exploration_general_return(self):
 		"""Default exit sequence for state return.
 		"""
 		#Default exit sequence for state return
-		self.__state_vector[0] = self.State.main_region_automatic_exploration
+		self.__state_vector[0] = self.State.sautomatic_exploration
 		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_main_region_automatic_exploration_general_to_right(self):
+	def __exit_sequence_s_automatic_exploration_general_to_right(self):
 		"""Default exit sequence for state to right.
 		"""
 		#Default exit sequence for state to right
-		self.__state_vector[0] = self.State.main_region_automatic_exploration
+		self.__state_vector[0] = self.State.sautomatic_exploration
 		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_main_region_automatic_exploration_general_go2(self):
+	def __exit_sequence_s_automatic_exploration_general_go2(self):
 		"""Default exit sequence for state go2.
 		"""
 		#Default exit sequence for state go2
-		self.__state_vector[0] = self.State.main_region_automatic_exploration
+		self.__state_vector[0] = self.State.sautomatic_exploration
 		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_normal(self):
+	def __exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_normal(self):
 		"""Default exit sequence for state normal.
 		"""
 		#Default exit sequence for state normal
-		self.__state_vector[1] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back
+		self.__state_vector[1] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back
 		self.__state_conf_vector_position = 1
 		
-	def __exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_moving(self):
+	def __exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_moving(self):
 		"""Default exit sequence for state moving.
 		"""
 		#Default exit sequence for state moving
-		self.__state_vector[1] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back
+		self.__state_vector[1] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back
 		self.__state_conf_vector_position = 1
 		
-	def __exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_normal(self):
+	def __exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_normal(self):
 		"""Default exit sequence for state normal.
 		"""
 		#Default exit sequence for state normal
-		self.__state_vector[2] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back
+		self.__state_vector[2] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back
 		self.__state_conf_vector_position = 2
 		
-	def __exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_left(self):
+	def __exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_left(self):
 		"""Default exit sequence for state turnLeft.
 		"""
 		#Default exit sequence for state turnLeft
-		self.__state_vector[2] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back
+		self.__state_vector[2] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back
 		self.__state_conf_vector_position = 2
 		
-	def __exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_right(self):
+	def __exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_right(self):
 		"""Default exit sequence for state turnRight.
 		"""
 		#Default exit sequence for state turnRight
-		self.__state_vector[2] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back
+		self.__state_vector[2] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back
 		self.__state_conf_vector_position = 2
 		
-	def __exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_back(self):
+	def __exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_back(self):
 		"""Default exit sequence for state turnBack.
 		"""
 		#Default exit sequence for state turnBack
-		self.__state_vector[2] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back
+		self.__state_vector[2] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back
 		self.__state_conf_vector_position = 2
 		
-	def __exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle(self):
+	def __exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle(self):
 		"""Default exit sequence for state processingAngle.
 		"""
 		#Default exit sequence for state processingAngle
-		self.__state_vector[2] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back
+		self.__state_vector[2] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back
 		self.__state_conf_vector_position = 2
-		self.__exit_action_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle()
+		self.__exit_action_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle()
 		
-	def __exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_plus(self):
+	def __exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_plus(self):
 		"""Default exit sequence for state plus.
 		"""
 		#Default exit sequence for state plus
-		self.__state_vector[2] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back
+		self.__state_vector[2] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back
 		self.__state_conf_vector_position = 2
 		
-	def __exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_minus(self):
+	def __exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_minus(self):
 		"""Default exit sequence for state minus.
 		"""
 		#Default exit sequence for state minus
-		self.__state_vector[2] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back
+		self.__state_vector[2] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back
 		self.__state_conf_vector_position = 2
 		
-	def __exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle2(self):
+	def __exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle2(self):
 		"""Default exit sequence for state processingAngle2.
 		"""
 		#Default exit sequence for state processingAngle2
-		self.__state_vector[2] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back
+		self.__state_vector[2] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back
 		self.__state_conf_vector_position = 2
 		
-	def __exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl(self):
+	def __exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl(self):
 		"""Default exit sequence for state turnImpl.
 		"""
 		#Default exit sequence for state turnImpl
-		self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1()
-		self.__state_vector[3] = self.State.main_region_automatic_exploration_moving_moving
+		self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1()
+		self.__state_vector[3] = self.State.sautomatic_exploration_moving_moving
 		self.__state_conf_vector_position = 3
 		
-	def __exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_normal(self):
+	def __exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_normal(self):
 		"""Default exit sequence for state normal.
 		"""
 		#Default exit sequence for state normal
-		self.__state_vector[3] = self.State.main_region_automatic_exploration_moving_moving_r2turn_impl
+		self.__state_vector[3] = self.State.sautomatic_exploration_moving_moving_r2turn_impl
 		self.__state_conf_vector_position = 3
 		
-	def __exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_negative_rotation(self):
+	def __exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_negative_rotation(self):
 		"""Default exit sequence for state negativeRotation.
 		"""
 		#Default exit sequence for state negativeRotation
-		self.__state_vector[3] = self.State.main_region_automatic_exploration_moving_moving_r2turn_impl
+		self.__state_vector[3] = self.State.sautomatic_exploration_moving_moving_r2turn_impl
 		self.__state_conf_vector_position = 3
 		
-	def __exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_positive_rotation(self):
+	def __exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_positive_rotation(self):
 		"""Default exit sequence for state positiveRotation.
 		"""
 		#Default exit sequence for state positiveRotation
-		self.__state_vector[3] = self.State.main_region_automatic_exploration_moving_moving_r2turn_impl
+		self.__state_vector[3] = self.State.sautomatic_exploration_moving_moving_r2turn_impl
 		self.__state_conf_vector_position = 3
 		
-	def __exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r2(self):
+	def __exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r2(self):
 		"""Default exit sequence for state pR2.
 		"""
 		#Default exit sequence for state pR2
-		self.__state_vector[3] = self.State.main_region_automatic_exploration_moving_moving_r2turn_impl
+		self.__state_vector[3] = self.State.sautomatic_exploration_moving_moving_r2turn_impl
 		self.__state_conf_vector_position = 3
 		
-	def __exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r3(self):
+	def __exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r3(self):
 		"""Default exit sequence for state pR3.
 		"""
 		#Default exit sequence for state pR3
-		self.__state_vector[3] = self.State.main_region_automatic_exploration_moving_moving_r2turn_impl
+		self.__state_vector[3] = self.State.sautomatic_exploration_moving_moving_r2turn_impl
 		self.__state_conf_vector_position = 3
 		
-	def __exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r2(self):
+	def __exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r2(self):
 		"""Default exit sequence for state nR2.
 		"""
 		#Default exit sequence for state nR2
-		self.__state_vector[3] = self.State.main_region_automatic_exploration_moving_moving_r2turn_impl
+		self.__state_vector[3] = self.State.sautomatic_exploration_moving_moving_r2turn_impl
 		self.__state_conf_vector_position = 3
 		
-	def __exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r3(self):
+	def __exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r3(self):
 		"""Default exit sequence for state nR3.
 		"""
 		#Default exit sequence for state nR3
-		self.__state_vector[3] = self.State.main_region_automatic_exploration_moving_moving_r2turn_impl
+		self.__state_vector[3] = self.State.sautomatic_exploration_moving_moving_r2turn_impl
 		self.__state_conf_vector_position = 3
 		
-	def __exit_sequence_main_region(self):
-		"""Default exit sequence for region main region.
+	def __exit_sequence_s(self):
+		"""Default exit sequence for region s.
 		"""
-		#Default exit sequence for region main region
+		#Default exit sequence for region s
 		state = self.__state_vector[0]
-		if state == self.State.main_region_calibration_process:
-			self.__exit_sequence_main_region_calibration_process()
-		elif state == self.State.main_region_calibration_process_r1idle:
-			self.__exit_sequence_main_region_calibration_process_r1_idle()
-		elif state == self.State.main_region_calibration_process_r1offset_calibration:
-			self.__exit_sequence_main_region_calibration_process_r1_offset_calibration()
-		elif state == self.State.main_region_calibration_process_r1offset_correction:
-			self.__exit_sequence_main_region_calibration_process_r1_offset_correction()
-		elif state == self.State.main_region_calibration_process_r1aligned:
-			self.__exit_sequence_main_region_calibration_process_r1_aligned()
-		elif state == self.State.main_region_calibration_process_r1calibration_completeted:
-			self.__exit_sequence_main_region_calibration_process_r1_calibration_completeted()
-		elif state == self.State.main_region_manual_control:
-			self.__exit_sequence_main_region_manual_control()
-		elif state == self.State.main_region_manual_control_manual_control_region_idle:
-			self.__exit_sequence_main_region_manual_control_manual_control_region_idle()
-			self.__exit_action_main_region_manual_control()
-		elif state == self.State.main_region_manual_control_manual_control_region_in_action:
-			self.__exit_sequence_main_region_manual_control_manual_control_region_in_action()
-			self.__exit_action_main_region_manual_control()
-		elif state == self.State.main_region_manual_control_manual_control_region_decreasing_speed:
-			self.__exit_sequence_main_region_manual_control_manual_control_region_decreasing_speed()
-			self.__exit_action_main_region_manual_control()
-		elif state == self.State.main_region_manual_control_manual_control_region_increasing_speed:
-			self.__exit_sequence_main_region_manual_control_manual_control_region_increasing_speed()
-			self.__exit_action_main_region_manual_control()
-		elif state == self.State.main_region_manual_control_manual_control_region_turning_right:
-			self.__exit_sequence_main_region_manual_control_manual_control_region_turning_right()
-			self.__exit_action_main_region_manual_control()
-		elif state == self.State.main_region_manual_control_manual_control_region_turning_left:
-			self.__exit_sequence_main_region_manual_control_manual_control_region_turning_left()
-			self.__exit_action_main_region_manual_control()
-		elif state == self.State.main_region_automatic_exploration_general_normal_moving:
-			self.__exit_sequence_main_region_automatic_exploration_general_normal_moving()
-		elif state == self.State.main_region_automatic_exploration_general_left_wall_disappeared:
-			self.__exit_sequence_main_region_automatic_exploration_general_left_wall_disappeared()
-		elif state == self.State.main_region_automatic_exploration_general_wall_in_front:
-			self.__exit_sequence_main_region_automatic_exploration_general_wall_in_front()
-		elif state == self.State.main_region_automatic_exploration_general_turn_left:
-			self.__exit_sequence_main_region_automatic_exploration_general_turn_left()
-		elif state == self.State.main_region_automatic_exploration_general_move_forward:
-			self.__exit_sequence_main_region_automatic_exploration_general_move_forward()
-		elif state == self.State.main_region_automatic_exploration_general_turn_and_go:
-			self.__exit_sequence_main_region_automatic_exploration_general_turn_and_go()
-		elif state == self.State.main_region_automatic_exploration_general_go:
-			self.__exit_sequence_main_region_automatic_exploration_general_go()
-		elif state == self.State.main_region_automatic_exploration_general_return:
-			self.__exit_sequence_main_region_automatic_exploration_general_return()
-		elif state == self.State.main_region_automatic_exploration_general_to_right:
-			self.__exit_sequence_main_region_automatic_exploration_general_to_right()
-		elif state == self.State.main_region_automatic_exploration_general_go2:
-			self.__exit_sequence_main_region_automatic_exploration_general_go2()
+		if state == self.State.scalibration_process:
+			self.__exit_sequence_s_calibration_process()
+		elif state == self.State.scalibration_process_r1detect_walls:
+			self.__exit_sequence_s_calibration_process_r1_detect_walls()
+		elif state == self.State.scalibration_process_r1set_zero_position:
+			self.__exit_sequence_s_calibration_process_r1_set_zero_position()
+		elif state == self.State.scalibration_process_r1calibration_complete:
+			self.__exit_sequence_s_calibration_process_r1_calibration_complete()
+		elif state == self.State.scalibration_process_r1align_right_wall:
+			self.__exit_sequence_s_calibration_process_r1_align_right_wall()
+		elif state == self.State.scalibration_process_r1align_left_wall:
+			self.__exit_sequence_s_calibration_process_r1_align_left_wall()
+		elif state == self.State.scalibration_process_r1align_both_walls:
+			self.__exit_sequence_s_calibration_process_r1_align_both_walls()
+		elif state == self.State.scalibration_process_r1align_front_wall:
+			self.__exit_sequence_s_calibration_process_r1_align_front_wall()
+		elif state == self.State.scalibration_process_r1state1:
+			self.__exit_sequence_s_calibration_process_r1_state1()
+		elif state == self.State.scalibration_process_r1need_to_go_closer_to_left:
+			self.__exit_sequence_s_calibration_process_r1_need_to_go_closer_to_left()
+		elif state == self.State.scalibration_process_r1need_to_get_away_from_left:
+			self.__exit_sequence_s_calibration_process_r1_need_to_get_away_from_left()
+		elif state == self.State.scalibration_process_r1pointing_away_from_left_wall__it_is_now_behind_us_:
+			self.__exit_sequence_s_calibration_process_r1_pointing_away_from_left_wall__it_is_now_behind_us_()
+		elif state == self.State.scalibration_process_r1pointing_towards_left_wall__it_is_in_front_of_us_:
+			self.__exit_sequence_s_calibration_process_r1_pointing_towards_left_wall__it_is_in_front_of_us_()
+		elif state == self.State.scalibration_process_r1lets_turn_right_to_pint_north:
+			self.__exit_sequence_s_calibration_process_r1_lets_turn_right_to_pint_north()
+		elif state == self.State.scalibration_process_r1lets_turn_left_to_point_north:
+			self.__exit_sequence_s_calibration_process_r1_lets_turn_left_to_point_north()
+		elif state == self.State.smanual_control:
+			self.__exit_sequence_s_manual_control()
+		elif state == self.State.smanual_control_manual_control_region_idle:
+			self.__exit_sequence_s_manual_control_manual_control_region_idle()
+		elif state == self.State.smanual_control_manual_control_region_in_action:
+			self.__exit_sequence_s_manual_control_manual_control_region_in_action()
+		elif state == self.State.smanual_control_manual_control_region_decreasing_speed:
+			self.__exit_sequence_s_manual_control_manual_control_region_decreasing_speed()
+		elif state == self.State.smanual_control_manual_control_region_increasing_speed:
+			self.__exit_sequence_s_manual_control_manual_control_region_increasing_speed()
+		elif state == self.State.smanual_control_manual_control_region_turning_right:
+			self.__exit_sequence_s_manual_control_manual_control_region_turning_right()
+		elif state == self.State.smanual_control_manual_control_region_turning_left:
+			self.__exit_sequence_s_manual_control_manual_control_region_turning_left()
+		elif state == self.State.sautomatic_exploration_general_normal_moving:
+			self.__exit_sequence_s_automatic_exploration_general_normal_moving()
+		elif state == self.State.sautomatic_exploration_general_left_wall_disappeared:
+			self.__exit_sequence_s_automatic_exploration_general_left_wall_disappeared()
+		elif state == self.State.sautomatic_exploration_general_wall_in_front:
+			self.__exit_sequence_s_automatic_exploration_general_wall_in_front()
+		elif state == self.State.sautomatic_exploration_general_turn_left:
+			self.__exit_sequence_s_automatic_exploration_general_turn_left()
+		elif state == self.State.sautomatic_exploration_general_move_forward:
+			self.__exit_sequence_s_automatic_exploration_general_move_forward()
+		elif state == self.State.sautomatic_exploration_general_turn_and_go:
+			self.__exit_sequence_s_automatic_exploration_general_turn_and_go()
+		elif state == self.State.sautomatic_exploration_general_go:
+			self.__exit_sequence_s_automatic_exploration_general_go()
+		elif state == self.State.sautomatic_exploration_general_return:
+			self.__exit_sequence_s_automatic_exploration_general_return()
+		elif state == self.State.sautomatic_exploration_general_to_right:
+			self.__exit_sequence_s_automatic_exploration_general_to_right()
+		elif state == self.State.sautomatic_exploration_general_go2:
+			self.__exit_sequence_s_automatic_exploration_general_go2()
 		state = self.__state_vector[1]
-		if state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r1normal:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_normal()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r1moving:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_moving()
+		if state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r1normal:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_normal()
+		elif state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r1moving:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_moving()
 		state = self.__state_vector[2]
-		if state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2normal:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_normal()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2turn_left:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_left()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2turn_right:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_right()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2turn_back:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_back()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2plus:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_plus()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2minus:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_minus()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle2:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle2()
+		if state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2normal:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_normal()
+		elif state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2turn_left:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_left()
+		elif state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2turn_right:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_right()
+		elif state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2turn_back:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_back()
+		elif state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle()
+		elif state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2plus:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_plus()
+		elif state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2minus:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_minus()
+		elif state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle2:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle2()
 		state = self.__state_vector[3]
-		if state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1normal:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_normal()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1negative_rotation:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_negative_rotation()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1positive_rotation:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_positive_rotation()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1pr2:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r2()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1pr3:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r3()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1nr2:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r2()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1nr3:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r3()
+		if state == self.State.sautomatic_exploration_moving_moving_r2turn_impl:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl()
+		elif state == self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1normal:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_normal()
+		elif state == self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1negative_rotation:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_negative_rotation()
+		elif state == self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1positive_rotation:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_positive_rotation()
+		elif state == self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1pr2:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r2()
+		elif state == self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1pr3:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r3()
+		elif state == self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1nr2:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r2()
+		elif state == self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1nr3:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r3()
 		
-	def __exit_sequence_main_region_calibration_process_r1(self):
+	def __exit_sequence_s_calibration_process_r1(self):
 		"""Default exit sequence for region r1.
 		"""
 		#Default exit sequence for region r1
 		state = self.__state_vector[0]
-		if state == self.State.main_region_calibration_process_r1idle:
-			self.__exit_sequence_main_region_calibration_process_r1_idle()
-		elif state == self.State.main_region_calibration_process_r1offset_calibration:
-			self.__exit_sequence_main_region_calibration_process_r1_offset_calibration()
-		elif state == self.State.main_region_calibration_process_r1offset_correction:
-			self.__exit_sequence_main_region_calibration_process_r1_offset_correction()
-		elif state == self.State.main_region_calibration_process_r1aligned:
-			self.__exit_sequence_main_region_calibration_process_r1_aligned()
-		elif state == self.State.main_region_calibration_process_r1calibration_completeted:
-			self.__exit_sequence_main_region_calibration_process_r1_calibration_completeted()
+		if state == self.State.scalibration_process_r1detect_walls:
+			self.__exit_sequence_s_calibration_process_r1_detect_walls()
+		elif state == self.State.scalibration_process_r1set_zero_position:
+			self.__exit_sequence_s_calibration_process_r1_set_zero_position()
+		elif state == self.State.scalibration_process_r1calibration_complete:
+			self.__exit_sequence_s_calibration_process_r1_calibration_complete()
+		elif state == self.State.scalibration_process_r1align_right_wall:
+			self.__exit_sequence_s_calibration_process_r1_align_right_wall()
+		elif state == self.State.scalibration_process_r1align_left_wall:
+			self.__exit_sequence_s_calibration_process_r1_align_left_wall()
+		elif state == self.State.scalibration_process_r1align_both_walls:
+			self.__exit_sequence_s_calibration_process_r1_align_both_walls()
+		elif state == self.State.scalibration_process_r1align_front_wall:
+			self.__exit_sequence_s_calibration_process_r1_align_front_wall()
+		elif state == self.State.scalibration_process_r1state1:
+			self.__exit_sequence_s_calibration_process_r1_state1()
+		elif state == self.State.scalibration_process_r1need_to_go_closer_to_left:
+			self.__exit_sequence_s_calibration_process_r1_need_to_go_closer_to_left()
+		elif state == self.State.scalibration_process_r1need_to_get_away_from_left:
+			self.__exit_sequence_s_calibration_process_r1_need_to_get_away_from_left()
+		elif state == self.State.scalibration_process_r1pointing_away_from_left_wall__it_is_now_behind_us_:
+			self.__exit_sequence_s_calibration_process_r1_pointing_away_from_left_wall__it_is_now_behind_us_()
+		elif state == self.State.scalibration_process_r1pointing_towards_left_wall__it_is_in_front_of_us_:
+			self.__exit_sequence_s_calibration_process_r1_pointing_towards_left_wall__it_is_in_front_of_us_()
+		elif state == self.State.scalibration_process_r1lets_turn_right_to_pint_north:
+			self.__exit_sequence_s_calibration_process_r1_lets_turn_right_to_pint_north()
+		elif state == self.State.scalibration_process_r1lets_turn_left_to_point_north:
+			self.__exit_sequence_s_calibration_process_r1_lets_turn_left_to_point_north()
 		
-	def __exit_sequence_main_region_manual_control_manual_control_region(self):
+	def __exit_sequence_s_manual_control_manual_control_region(self):
 		"""Default exit sequence for region manual control region.
 		"""
 		#Default exit sequence for region manual control region
 		state = self.__state_vector[0]
-		if state == self.State.main_region_manual_control_manual_control_region_idle:
-			self.__exit_sequence_main_region_manual_control_manual_control_region_idle()
-		elif state == self.State.main_region_manual_control_manual_control_region_in_action:
-			self.__exit_sequence_main_region_manual_control_manual_control_region_in_action()
-		elif state == self.State.main_region_manual_control_manual_control_region_decreasing_speed:
-			self.__exit_sequence_main_region_manual_control_manual_control_region_decreasing_speed()
-		elif state == self.State.main_region_manual_control_manual_control_region_increasing_speed:
-			self.__exit_sequence_main_region_manual_control_manual_control_region_increasing_speed()
-		elif state == self.State.main_region_manual_control_manual_control_region_turning_right:
-			self.__exit_sequence_main_region_manual_control_manual_control_region_turning_right()
-		elif state == self.State.main_region_manual_control_manual_control_region_turning_left:
-			self.__exit_sequence_main_region_manual_control_manual_control_region_turning_left()
+		if state == self.State.smanual_control_manual_control_region_idle:
+			self.__exit_sequence_s_manual_control_manual_control_region_idle()
+		elif state == self.State.smanual_control_manual_control_region_in_action:
+			self.__exit_sequence_s_manual_control_manual_control_region_in_action()
+		elif state == self.State.smanual_control_manual_control_region_decreasing_speed:
+			self.__exit_sequence_s_manual_control_manual_control_region_decreasing_speed()
+		elif state == self.State.smanual_control_manual_control_region_increasing_speed:
+			self.__exit_sequence_s_manual_control_manual_control_region_increasing_speed()
+		elif state == self.State.smanual_control_manual_control_region_turning_right:
+			self.__exit_sequence_s_manual_control_manual_control_region_turning_right()
+		elif state == self.State.smanual_control_manual_control_region_turning_left:
+			self.__exit_sequence_s_manual_control_manual_control_region_turning_left()
 		
-	def __exit_sequence_main_region_automatic_exploration_general(self):
+	def __exit_sequence_s_automatic_exploration_general(self):
 		"""Default exit sequence for region general.
 		"""
 		#Default exit sequence for region general
 		state = self.__state_vector[0]
-		if state == self.State.main_region_automatic_exploration_general_normal_moving:
-			self.__exit_sequence_main_region_automatic_exploration_general_normal_moving()
-		elif state == self.State.main_region_automatic_exploration_general_left_wall_disappeared:
-			self.__exit_sequence_main_region_automatic_exploration_general_left_wall_disappeared()
-		elif state == self.State.main_region_automatic_exploration_general_wall_in_front:
-			self.__exit_sequence_main_region_automatic_exploration_general_wall_in_front()
-		elif state == self.State.main_region_automatic_exploration_general_turn_left:
-			self.__exit_sequence_main_region_automatic_exploration_general_turn_left()
-		elif state == self.State.main_region_automatic_exploration_general_move_forward:
-			self.__exit_sequence_main_region_automatic_exploration_general_move_forward()
-		elif state == self.State.main_region_automatic_exploration_general_turn_and_go:
-			self.__exit_sequence_main_region_automatic_exploration_general_turn_and_go()
-		elif state == self.State.main_region_automatic_exploration_general_go:
-			self.__exit_sequence_main_region_automatic_exploration_general_go()
-		elif state == self.State.main_region_automatic_exploration_general_return:
-			self.__exit_sequence_main_region_automatic_exploration_general_return()
-		elif state == self.State.main_region_automatic_exploration_general_to_right:
-			self.__exit_sequence_main_region_automatic_exploration_general_to_right()
-		elif state == self.State.main_region_automatic_exploration_general_go2:
-			self.__exit_sequence_main_region_automatic_exploration_general_go2()
+		if state == self.State.sautomatic_exploration_general_normal_moving:
+			self.__exit_sequence_s_automatic_exploration_general_normal_moving()
+		elif state == self.State.sautomatic_exploration_general_left_wall_disappeared:
+			self.__exit_sequence_s_automatic_exploration_general_left_wall_disappeared()
+		elif state == self.State.sautomatic_exploration_general_wall_in_front:
+			self.__exit_sequence_s_automatic_exploration_general_wall_in_front()
+		elif state == self.State.sautomatic_exploration_general_turn_left:
+			self.__exit_sequence_s_automatic_exploration_general_turn_left()
+		elif state == self.State.sautomatic_exploration_general_move_forward:
+			self.__exit_sequence_s_automatic_exploration_general_move_forward()
+		elif state == self.State.sautomatic_exploration_general_turn_and_go:
+			self.__exit_sequence_s_automatic_exploration_general_turn_and_go()
+		elif state == self.State.sautomatic_exploration_general_go:
+			self.__exit_sequence_s_automatic_exploration_general_go()
+		elif state == self.State.sautomatic_exploration_general_return:
+			self.__exit_sequence_s_automatic_exploration_general_return()
+		elif state == self.State.sautomatic_exploration_general_to_right:
+			self.__exit_sequence_s_automatic_exploration_general_to_right()
+		elif state == self.State.sautomatic_exploration_general_go2:
+			self.__exit_sequence_s_automatic_exploration_general_go2()
 		
-	def __exit_sequence_main_region_automatic_exploration_moving(self):
+	def __exit_sequence_s_automatic_exploration_moving(self):
 		"""Default exit sequence for region moving.
 		"""
 		#Default exit sequence for region moving
 		state = self.__state_vector[1]
-		if state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r1normal:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_normal()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r1moving:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_moving()
+		if state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r1normal:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_normal()
+		elif state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r1moving:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_moving()
 		state = self.__state_vector[2]
-		if state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2normal:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_normal()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2turn_left:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_left()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2turn_right:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_right()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2turn_back:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_back()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2plus:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_plus()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2minus:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_minus()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle2:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle2()
+		if state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2normal:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_normal()
+		elif state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2turn_left:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_left()
+		elif state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2turn_right:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_right()
+		elif state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2turn_back:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_back()
+		elif state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle()
+		elif state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2plus:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_plus()
+		elif state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2minus:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_minus()
+		elif state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle2:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle2()
 		state = self.__state_vector[3]
-		if state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1normal:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_normal()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1negative_rotation:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_negative_rotation()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1positive_rotation:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_positive_rotation()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1pr2:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r2()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1pr3:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r3()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1nr2:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r2()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1nr3:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r3()
+		if state == self.State.sautomatic_exploration_moving_moving_r2turn_impl:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl()
+		elif state == self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1normal:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_normal()
+		elif state == self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1negative_rotation:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_negative_rotation()
+		elif state == self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1positive_rotation:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_positive_rotation()
+		elif state == self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1pr2:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r2()
+		elif state == self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1pr3:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r3()
+		elif state == self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1nr2:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r2()
+		elif state == self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1nr3:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r3()
 		
-	def __exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1(self):
+	def __exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1(self):
 		"""Default exit sequence for region r1.
 		"""
 		#Default exit sequence for region r1
 		state = self.__state_vector[3]
-		if state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1normal:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_normal()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1negative_rotation:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_negative_rotation()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1positive_rotation:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_positive_rotation()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1pr2:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r2()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1pr3:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r3()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1nr2:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r2()
-		elif state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1nr3:
-			self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r3()
+		if state == self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1normal:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_normal()
+		elif state == self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1negative_rotation:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_negative_rotation()
+		elif state == self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1positive_rotation:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_positive_rotation()
+		elif state == self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1pr2:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r2()
+		elif state == self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1pr3:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r3()
+		elif state == self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1nr2:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r2()
+		elif state == self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1nr3:
+			self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r3()
 		
-	def __react_main_region_calibration_process_r1__entry_default(self):
+	def __react_s_calibration_process_r1__entry_default(self):
 		"""Default react sequence for initial entry .
 		"""
 		#Default react sequence for initial entry 
-		self.__enter_sequence_main_region_calibration_process_r1_idle_default()
+		self.__enter_sequence_s_calibration_process_r1_detect_walls_default()
 		
-	def __react_main_region_manual_control_manual_control_region__entry_default(self):
+	def __react_s_manual_control_manual_control_region__entry_default(self):
 		"""Default react sequence for initial entry .
 		"""
 		#Default react sequence for initial entry 
-		self.__enter_sequence_main_region_manual_control_manual_control_region_idle_default()
+		self.__enter_sequence_s_manual_control_manual_control_region_idle_default()
 		
-	def __react_main_region__entry_default(self):
+	def __react_s__entry_default(self):
 		"""Default react sequence for initial entry .
 		"""
 		#Default react sequence for initial entry 
-		self.__enter_sequence_main_region_manual_control_default()
+		self.__enter_sequence_s_manual_control_default()
 		
-	def __react_main_region_automatic_exploration_general__entry_default(self):
+	def __react_s_automatic_exploration_general__entry_default(self):
 		"""Default react sequence for initial entry .
 		"""
 		#Default react sequence for initial entry 
-		self.__enter_sequence_main_region_automatic_exploration_general_normal_moving_default()
+		self.__enter_sequence_s_automatic_exploration_general_normal_moving_default()
 		
-	def __react_main_region_automatic_exploration_moving__entry_default(self):
+	def __react_s_automatic_exploration_moving__entry_default(self):
 		"""Default react sequence for initial entry .
 		"""
 		#Default react sequence for initial entry 
-		self.__enter_sequence_main_region_automatic_exploration_moving_moving_default()
+		self.__enter_sequence_s_automatic_exploration_moving_moving_default()
 		
-	def __react_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r1__entry_default(self):
+	def __react_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r1__entry_default(self):
 		"""Default react sequence for initial entry .
 		"""
 		#Default react sequence for initial entry 
-		self.__enter_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_normal_default()
+		self.__enter_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_normal_default()
 		
-	def __react_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2__entry_default(self):
+	def __react_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2__entry_default(self):
 		"""Default react sequence for initial entry .
 		"""
 		#Default react sequence for initial entry 
-		self.__enter_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_normal_default()
+		self.__enter_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_normal_default()
 		
-	def __react_main_region_automatic_exploration_moving_moving_r1__entry_default(self):
+	def __react_s_automatic_exploration_moving_moving_r1__entry_default(self):
 		"""Default react sequence for initial entry .
 		"""
 		#Default react sequence for initial entry 
-		self.__enter_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_default()
+		self.__enter_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_default()
 		
-	def __react_main_region_automatic_exploration_moving_moving_r2__entry_default(self):
+	def __react_s_automatic_exploration_moving_moving_r2__entry_default(self):
 		"""Default react sequence for initial entry .
 		"""
 		#Default react sequence for initial entry 
-		self.__enter_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_default()
+		self.__enter_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_default()
 		
-	def __react_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1__entry_default(self):
+	def __react_s_automatic_exploration_moving_moving_r2_turn_impl_r1__entry_default(self):
 		"""Default react sequence for initial entry .
 		"""
 		#Default react sequence for initial entry 
-		self.__enter_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_normal_default()
+		self.__enter_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_normal_default()
 		
 	def __react(self, transitioned_before):
 		"""Implementation of __react function.
@@ -1899,132 +2136,16 @@ class Model:
 		return transitioned_before
 	
 	
-	def __main_region_calibration_process_react(self, transitioned_before):
-		"""Implementation of __main_region_calibration_process_react function.
+	def __s_calibration_process_react(self, transitioned_before):
+		"""Implementation of __s_calibration_process_react function.
 		"""
 		#The reactions of state Calibration Process.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
-			#Always execute local reactions.
-			transitioned_after = self.__react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __main_region_calibration_process_r1_idle_react(self, transitioned_before):
-		"""Implementation of __main_region_calibration_process_r1_idle_react function.
-		"""
-		#The reactions of state Idle.
-		transitioned_after = transitioned_before
-		if self.__do_completion:
-			#Default exit sequence for state Idle
-			self.__state_vector[0] = self.State.main_region_calibration_process
-			self.__state_conf_vector_position = 0
-			#'default' enter sequence for state Offset Calibration
-			self.__entry_action_main_region_calibration_process_r1_offset_calibration()
-			self.__state_vector[0] = self.State.main_region_calibration_process_r1offset_calibration
-			self.__state_conf_vector_position = 0
-			self.__state_conf_vector_changed = True
-			self.__main_region_calibration_process_react(0)
-		else:
-			#Always execute local reactions.
-			transitioned_after = self.__main_region_calibration_process_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __main_region_calibration_process_r1_offset_calibration_react(self, transitioned_before):
-		"""Implementation of __main_region_calibration_process_r1_offset_calibration_react function.
-		"""
-		#The reactions of state Offset Calibration.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
 			if transitioned_after < 0:
-				if not self.__aligned:
-					self.__exit_sequence_main_region_calibration_process_r1_offset_calibration()
-					self.__enter_sequence_main_region_calibration_process_r1_offset_correction_default()
-					self.__main_region_calibration_process_react(0)
-					transitioned_after = 0
-				elif self.__aligned:
-					self.__exit_sequence_main_region_calibration_process_r1_offset_calibration()
-					self.__enter_sequence_main_region_calibration_process_r1_aligned_default()
-					self.__main_region_calibration_process_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__main_region_calibration_process_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __main_region_calibration_process_r1_offset_correction_react(self, transitioned_before):
-		"""Implementation of __main_region_calibration_process_r1_offset_correction_react function.
-		"""
-		#The reactions of state Offset Correction.
-		transitioned_after = transitioned_before
-		if self.__do_completion:
-			#Default exit sequence for state Offset Correction
-			self.__state_vector[0] = self.State.main_region_calibration_process
-			self.__state_conf_vector_position = 0
-			self.__exit_action_main_region_calibration_process_r1_offset_correction()
-			#'default' enter sequence for state Offset Calibration
-			self.__entry_action_main_region_calibration_process_r1_offset_calibration()
-			self.__state_vector[0] = self.State.main_region_calibration_process_r1offset_calibration
-			self.__state_conf_vector_position = 0
-			self.__state_conf_vector_changed = True
-			self.__main_region_calibration_process_react(0)
-		else:
-			#Always execute local reactions.
-			transitioned_after = self.__main_region_calibration_process_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __main_region_calibration_process_r1_aligned_react(self, transitioned_before):
-		"""Implementation of __main_region_calibration_process_r1_aligned_react function.
-		"""
-		#The reactions of state Aligned.
-		transitioned_after = transitioned_before
-		if self.__do_completion:
-			#Default exit sequence for state Aligned
-			self.__state_vector[0] = self.State.main_region_calibration_process
-			self.__state_conf_vector_position = 0
-			#'default' enter sequence for state Calibration Completeted
-			self.__entry_action_main_region_calibration_process_r1_calibration_completeted()
-			self.__state_vector[0] = self.State.main_region_calibration_process_r1calibration_completeted
-			self.__state_conf_vector_position = 0
-			self.__state_conf_vector_changed = True
-			self.__main_region_calibration_process_react(0)
-		else:
-			#Always execute local reactions.
-			transitioned_after = self.__main_region_calibration_process_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __main_region_calibration_process_r1_calibration_completeted_react(self, transitioned_before):
-		"""Implementation of __main_region_calibration_process_r1_calibration_completeted_react function.
-		"""
-		#The reactions of state Calibration Completeted.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			#Always execute local reactions.
-			transitioned_after = self.__main_region_calibration_process_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __main_region_manual_control_react(self, transitioned_before):
-		"""Implementation of __main_region_manual_control_react function.
-		"""
-		#The reactions of state Manual Control.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.__time_events[0]:
-					self.__exit_sequence_main_region_manual_control()
-					self.__time_events[0] = False
-					self.__enter_sequence_main_region_calibration_process_default()
-					self.__react(0)
-					transitioned_after = 0
-				elif self.computer.m_press:
-					self.__exit_sequence_main_region_manual_control()
-					self.__enter_sequence_main_region_automatic_exploration_default()
+				if self.computer.m_press:
+					self.__exit_sequence_s_calibration_process()
+					self.__enter_sequence_s_manual_control_default()
 					self.__react(0)
 					transitioned_after = 0
 			#If no transition was taken
@@ -2034,172 +2155,490 @@ class Model:
 		return transitioned_after
 	
 	
-	def __main_region_manual_control_manual_control_region_idle_react(self, transitioned_before):
-		"""Implementation of __main_region_manual_control_manual_control_region_idle_react function.
+	def __s_calibration_process_r1_detect_walls_react(self, transitioned_before):
+		"""Implementation of __s_calibration_process_r1_detect_walls_react function.
+		"""
+		#The reactions of state Detect Walls.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 0:
+				if self.laser_distance.dm90 < self.grid.grid_size and self.laser_distance.d90 > (self.grid.grid_size * 2):
+					self.__exit_sequence_s_calibration_process_r1_detect_walls()
+					self.__enter_sequence_s_calibration_process_r1_align_left_wall_default()
+					self.__s_calibration_process_react(0)
+					transitioned_after = 0
+				elif self.laser_distance.d90 < self.grid.grid_size and self.laser_distance.dm90 > (self.grid.grid_size * 2):
+					self.__exit_sequence_s_calibration_process_r1_detect_walls()
+					self.__enter_sequence_s_calibration_process_r1_align_right_wall_default()
+					self.__s_calibration_process_react(0)
+					transitioned_after = 0
+				elif self.laser_distance.d90 < self.grid.grid_size and self.laser_distance.dm90 < self.grid.grid_size:
+					self.__exit_sequence_s_calibration_process_r1_detect_walls()
+					self.__enter_sequence_s_calibration_process_r1_align_both_walls_default()
+					self.__s_calibration_process_react(0)
+					transitioned_after = 0
+				else:
+					self.__exit_sequence_s_calibration_process_r1_detect_walls()
+					self.__enter_sequence_s_calibration_process_r1_align_front_wall_default()
+					self.__s_calibration_process_react(0)
+					transitioned_after = 0
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__s_calibration_process_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __s_calibration_process_r1_set_zero_position_react(self, transitioned_before):
+		"""Implementation of __s_calibration_process_r1_set_zero_position_react function.
+		"""
+		#The reactions of state Set Zero Position.
+		transitioned_after = transitioned_before
+		if self.__do_completion:
+			#Default exit sequence for state Set Zero Position
+			self.__state_vector[0] = self.State.scalibration_process
+			self.__state_conf_vector_position = 0
+			#'default' enter sequence for state Calibration Complete
+			self.__entry_action_s_calibration_process_r1_calibration_complete()
+			self.__state_vector[0] = self.State.scalibration_process_r1calibration_complete
+			self.__state_conf_vector_position = 0
+			self.__state_conf_vector_changed = True
+			self.__s_calibration_process_react(0)
+		else:
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__s_calibration_process_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __s_calibration_process_r1_calibration_complete_react(self, transitioned_before):
+		"""Implementation of __s_calibration_process_r1_calibration_complete_react function.
+		"""
+		#The reactions of state Calibration Complete.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 0:
+				if self.__is_calibrated:
+					self.__exit_sequence_s_calibration_process()
+					self.__enter_sequence_s_automatic_exploration_default()
+					self.__react(0)
+					transitioned_after = 0
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__s_calibration_process_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __s_calibration_process_r1_align_right_wall_react(self, transitioned_before):
+		"""Implementation of __s_calibration_process_r1_align_right_wall_react function.
+		"""
+		#The reactions of state Align Right Wall.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 0:
+				if self.imu.yaw > -(0.1) and self.imu.yaw < 0.1:
+					self.__exit_sequence_s_calibration_process_r1_align_right_wall()
+					self.__enter_sequence_s_calibration_process_r1_state1_default()
+					self.__s_calibration_process_react(0)
+					transitioned_after = 0
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__s_calibration_process_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __s_calibration_process_r1_align_left_wall_react(self, transitioned_before):
+		"""Implementation of __s_calibration_process_r1_align_left_wall_react function.
+		"""
+		#The reactions of state Align Left Wall.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 0:
+				if self.imu.yaw > -(0.1) and self.imu.yaw < 0.1:
+					self.__exit_sequence_s_calibration_process_r1_align_left_wall()
+					self.__enter_sequence_s_calibration_process_r1_state1_default()
+					self.__s_calibration_process_react(0)
+					transitioned_after = 0
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__s_calibration_process_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __s_calibration_process_r1_align_both_walls_react(self, transitioned_before):
+		"""Implementation of __s_calibration_process_r1_align_both_walls_react function.
+		"""
+		#The reactions of state Align Both Walls.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 0:
+				if self.imu.yaw > -(0.1) and self.imu.yaw < 0.1:
+					self.__exit_sequence_s_calibration_process_r1_align_both_walls()
+					self.__enter_sequence_s_calibration_process_r1_state1_default()
+					self.__s_calibration_process_react(0)
+					transitioned_after = 0
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__s_calibration_process_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __s_calibration_process_r1_align_front_wall_react(self, transitioned_before):
+		"""Implementation of __s_calibration_process_r1_align_front_wall_react function.
+		"""
+		#The reactions of state Align Front Wall.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 0:
+				self.__exit_sequence_s_calibration_process_r1_align_front_wall()
+				self.__enter_sequence_s_calibration_process_r1_state1_default()
+				self.__s_calibration_process_react(0)
+				transitioned_after = 0
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__s_calibration_process_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __s_calibration_process_r1_state1_react(self, transitioned_before):
+		"""Implementation of __s_calibration_process_r1_state1_react function.
+		"""
+		#The reactions of state state1.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 0:
+				if self.laser_distance.d90 < 0.25 and self.laser_distance.d90 > 0.23:
+					self.__exit_sequence_s_calibration_process_r1_state1()
+					self.__enter_sequence_s_calibration_process_r1_set_zero_position_default()
+					self.__s_calibration_process_react(0)
+					transitioned_after = 0
+				elif self.laser_distance.d90 > 0.25:
+					self.__exit_sequence_s_calibration_process_r1_state1()
+					self.__enter_sequence_s_calibration_process_r1_need_to_go_closer_to_left_default()
+					self.__s_calibration_process_react(0)
+					transitioned_after = 0
+				elif self.laser_distance.d90 < 0.23:
+					self.__exit_sequence_s_calibration_process_r1_state1()
+					self.__enter_sequence_s_calibration_process_r1_need_to_get_away_from_left_default()
+					self.__s_calibration_process_react(0)
+					transitioned_after = 0
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__s_calibration_process_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __s_calibration_process_r1_need_to_go_closer_to_left_react(self, transitioned_before):
+		"""Implementation of __s_calibration_process_r1_need_to_go_closer_to_left_react function.
+		"""
+		#The reactions of state NeedToGoCloserToLeft.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 0:
+				if self.imu.yaw > 89.5 and self.imu.yaw < 90.5:
+					self.__exit_sequence_s_calibration_process_r1_need_to_go_closer_to_left()
+					self.__enter_sequence_s_calibration_process_r1_pointing_towards_left_wall__it_is_in_front_of_us__default()
+					self.__s_calibration_process_react(0)
+					transitioned_after = 0
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__s_calibration_process_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __s_calibration_process_r1_need_to_get_away_from_left_react(self, transitioned_before):
+		"""Implementation of __s_calibration_process_r1_need_to_get_away_from_left_react function.
+		"""
+		#The reactions of state NeedToGetAwayFromLeft.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 0:
+				if self.imu.yaw < -(89.5) and self.imu.yaw > -(90.5):
+					self.__exit_sequence_s_calibration_process_r1_need_to_get_away_from_left()
+					self.__enter_sequence_s_calibration_process_r1_pointing_away_from_left_wall__it_is_now_behind_us__default()
+					self.__s_calibration_process_react(0)
+					transitioned_after = 0
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__s_calibration_process_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __s_calibration_process_r1_pointing_away_from_left_wall__it_is_now_behind_us__react(self, transitioned_before):
+		"""Implementation of __s_calibration_process_r1_pointing_away_from_left_wall__it_is_now_behind_us__react function.
+		"""
+		#The reactions of state Pointing Away From Left wall (it is now behind us).
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 0:
+				if self.laser_distance.d180 < 0.25 and self.laser_distance.d180 > 0.23:
+					self.__exit_sequence_s_calibration_process_r1_pointing_away_from_left_wall__it_is_now_behind_us_()
+					self.__enter_sequence_s_calibration_process_r1_lets_turn_left_to_point_north_default()
+					self.__s_calibration_process_react(0)
+					transitioned_after = 0
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__s_calibration_process_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __s_calibration_process_r1_pointing_towards_left_wall__it_is_in_front_of_us__react(self, transitioned_before):
+		"""Implementation of __s_calibration_process_r1_pointing_towards_left_wall__it_is_in_front_of_us__react function.
+		"""
+		#The reactions of state Pointing towards left wall (it is in front of us).
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 0:
+				if self.laser_distance.d0 < 0.25 and self.laser_distance.d0 > 0.23:
+					self.__exit_sequence_s_calibration_process_r1_pointing_towards_left_wall__it_is_in_front_of_us_()
+					self.__enter_sequence_s_calibration_process_r1_lets_turn_right_to_pint_north_default()
+					self.__s_calibration_process_react(0)
+					transitioned_after = 0
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__s_calibration_process_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __s_calibration_process_r1_lets_turn_right_to_pint_north_react(self, transitioned_before):
+		"""Implementation of __s_calibration_process_r1_lets_turn_right_to_pint_north_react function.
+		"""
+		#The reactions of state LetsTurnRightToPintNorth.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 0:
+				if self.imu.yaw > -(0.3) and self.imu.yaw < 0.3:
+					self.__exit_sequence_s_calibration_process_r1_lets_turn_right_to_pint_north()
+					self.__enter_sequence_s_calibration_process_r1_state1_default()
+					self.__s_calibration_process_react(0)
+					transitioned_after = 0
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__s_calibration_process_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __s_calibration_process_r1_lets_turn_left_to_point_north_react(self, transitioned_before):
+		"""Implementation of __s_calibration_process_r1_lets_turn_left_to_point_north_react function.
+		"""
+		#The reactions of state LetsTurnLeftToPointNorth.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 0:
+				if self.imu.yaw > -(0.3) and self.imu.yaw < 0.3:
+					self.__exit_sequence_s_calibration_process_r1_lets_turn_left_to_point_north()
+					self.__enter_sequence_s_calibration_process_r1_state1_default()
+					self.__s_calibration_process_react(0)
+					transitioned_after = 0
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__s_calibration_process_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __s_manual_control_react(self, transitioned_before):
+		"""Implementation of __s_manual_control_react function.
+		"""
+		#The reactions of state Manual Control.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 0:
+				if self.computer.m_press:
+					self.__exit_sequence_s_manual_control()
+					self.__enter_sequence_s_calibration_process_default()
+					self.__react(0)
+					transitioned_after = 0
+				elif self.__is_calibrated:
+					self.__exit_sequence_s_manual_control()
+					self.__enter_sequence_s_automatic_exploration_default()
+					self.__react(0)
+					transitioned_after = 0
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __s_manual_control_manual_control_region_idle_react(self, transitioned_before):
+		"""Implementation of __s_manual_control_manual_control_region_idle_react function.
 		"""
 		#The reactions of state Idle.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
 				if self.computer.a_press:
-					self.__exit_sequence_main_region_manual_control_manual_control_region_idle()
-					self.__enter_sequence_main_region_manual_control_manual_control_region_turning_left_default()
-					self.__main_region_manual_control_react(0)
+					self.__exit_sequence_s_manual_control_manual_control_region_idle()
+					self.__enter_sequence_s_manual_control_manual_control_region_turning_left_default()
+					self.__s_manual_control_react(0)
 					transitioned_after = 0
 				elif self.computer.d_press:
-					self.__exit_sequence_main_region_manual_control_manual_control_region_idle()
-					self.__enter_sequence_main_region_manual_control_manual_control_region_turning_right_default()
-					self.__main_region_manual_control_react(0)
+					self.__exit_sequence_s_manual_control_manual_control_region_idle()
+					self.__enter_sequence_s_manual_control_manual_control_region_turning_right_default()
+					self.__s_manual_control_react(0)
 					transitioned_after = 0
 				elif self.computer.w_press:
-					self.__exit_sequence_main_region_manual_control_manual_control_region_idle()
-					self.__enter_sequence_main_region_manual_control_manual_control_region_increasing_speed_default()
-					self.__main_region_manual_control_react(0)
+					self.__exit_sequence_s_manual_control_manual_control_region_idle()
+					self.__enter_sequence_s_manual_control_manual_control_region_increasing_speed_default()
+					self.__s_manual_control_react(0)
 					transitioned_after = 0
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__main_region_manual_control_react(transitioned_before)
+				transitioned_after = self.__s_manual_control_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_manual_control_manual_control_region_in_action_react(self, transitioned_before):
-		"""Implementation of __main_region_manual_control_manual_control_region_in_action_react function.
+	def __s_manual_control_manual_control_region_in_action_react(self, transitioned_before):
+		"""Implementation of __s_manual_control_manual_control_region_in_action_react function.
 		"""
 		#The reactions of state In action.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
 				if self.computer.w_press:
-					self.__exit_sequence_main_region_manual_control_manual_control_region_in_action()
-					self.__enter_sequence_main_region_manual_control_manual_control_region_increasing_speed_default()
-					self.__main_region_manual_control_react(0)
+					self.__exit_sequence_s_manual_control_manual_control_region_in_action()
+					self.__enter_sequence_s_manual_control_manual_control_region_increasing_speed_default()
+					self.__s_manual_control_react(0)
 					transitioned_after = 0
 				elif self.computer.x_press:
-					self.__exit_sequence_main_region_manual_control_manual_control_region_in_action()
-					self.__enter_sequence_main_region_manual_control_manual_control_region_decreasing_speed_default()
-					self.__main_region_manual_control_react(0)
+					self.__exit_sequence_s_manual_control_manual_control_region_in_action()
+					self.__enter_sequence_s_manual_control_manual_control_region_decreasing_speed_default()
+					self.__s_manual_control_react(0)
 					transitioned_after = 0
 				elif self.computer.s_press:
-					self.__exit_sequence_main_region_manual_control_manual_control_region_in_action()
-					self.__enter_sequence_main_region_manual_control_manual_control_region_idle_default()
-					self.__main_region_manual_control_react(0)
+					self.__exit_sequence_s_manual_control_manual_control_region_in_action()
+					self.__enter_sequence_s_manual_control_manual_control_region_idle_default()
+					self.__s_manual_control_react(0)
 					transitioned_after = 0
 				elif self.computer.d_press:
-					self.__exit_sequence_main_region_manual_control_manual_control_region_in_action()
-					self.__enter_sequence_main_region_manual_control_manual_control_region_turning_right_default()
-					self.__main_region_manual_control_react(0)
+					self.__exit_sequence_s_manual_control_manual_control_region_in_action()
+					self.__enter_sequence_s_manual_control_manual_control_region_turning_right_default()
+					self.__s_manual_control_react(0)
 					transitioned_after = 0
 				elif self.computer.a_press:
-					self.__exit_sequence_main_region_manual_control_manual_control_region_in_action()
-					self.__enter_sequence_main_region_manual_control_manual_control_region_turning_left_default()
-					self.__main_region_manual_control_react(0)
+					self.__exit_sequence_s_manual_control_manual_control_region_in_action()
+					self.__enter_sequence_s_manual_control_manual_control_region_turning_left_default()
+					self.__s_manual_control_react(0)
 					transitioned_after = 0
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__main_region_manual_control_react(transitioned_before)
+				transitioned_after = self.__s_manual_control_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_manual_control_manual_control_region_decreasing_speed_react(self, transitioned_before):
-		"""Implementation of __main_region_manual_control_manual_control_region_decreasing_speed_react function.
+	def __s_manual_control_manual_control_region_decreasing_speed_react(self, transitioned_before):
+		"""Implementation of __s_manual_control_manual_control_region_decreasing_speed_react function.
 		"""
 		#The reactions of state Decreasing speed.
 		transitioned_after = transitioned_before
 		if self.__do_completion:
 			#Default exit sequence for state Decreasing speed
-			self.__state_vector[0] = self.State.main_region_manual_control
+			self.__state_vector[0] = self.State.smanual_control
 			self.__state_conf_vector_position = 0
 			#'default' enter sequence for state In action
-			self.__state_vector[0] = self.State.main_region_manual_control_manual_control_region_in_action
+			self.__state_vector[0] = self.State.smanual_control_manual_control_region_in_action
 			self.__state_conf_vector_position = 0
 			self.__state_conf_vector_changed = True
-			self.__main_region_manual_control_react(0)
+			self.__s_manual_control_react(0)
 		else:
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__main_region_manual_control_react(transitioned_before)
+				transitioned_after = self.__s_manual_control_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_manual_control_manual_control_region_increasing_speed_react(self, transitioned_before):
-		"""Implementation of __main_region_manual_control_manual_control_region_increasing_speed_react function.
+	def __s_manual_control_manual_control_region_increasing_speed_react(self, transitioned_before):
+		"""Implementation of __s_manual_control_manual_control_region_increasing_speed_react function.
 		"""
 		#The reactions of state Increasing speed.
 		transitioned_after = transitioned_before
 		if self.__do_completion:
 			#Default exit sequence for state Increasing speed
-			self.__state_vector[0] = self.State.main_region_manual_control
+			self.__state_vector[0] = self.State.smanual_control
 			self.__state_conf_vector_position = 0
 			#'default' enter sequence for state In action
-			self.__state_vector[0] = self.State.main_region_manual_control_manual_control_region_in_action
+			self.__state_vector[0] = self.State.smanual_control_manual_control_region_in_action
 			self.__state_conf_vector_position = 0
 			self.__state_conf_vector_changed = True
-			self.__main_region_manual_control_react(0)
+			self.__s_manual_control_react(0)
 		else:
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__main_region_manual_control_react(transitioned_before)
+				transitioned_after = self.__s_manual_control_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_manual_control_manual_control_region_turning_right_react(self, transitioned_before):
-		"""Implementation of __main_region_manual_control_manual_control_region_turning_right_react function.
+	def __s_manual_control_manual_control_region_turning_right_react(self, transitioned_before):
+		"""Implementation of __s_manual_control_manual_control_region_turning_right_react function.
 		"""
 		#The reactions of state Turning right.
 		transitioned_after = transitioned_before
 		if self.__do_completion:
 			#Default exit sequence for state Turning right
-			self.__state_vector[0] = self.State.main_region_manual_control
+			self.__state_vector[0] = self.State.smanual_control
 			self.__state_conf_vector_position = 0
 			#'default' enter sequence for state In action
-			self.__state_vector[0] = self.State.main_region_manual_control_manual_control_region_in_action
+			self.__state_vector[0] = self.State.smanual_control_manual_control_region_in_action
 			self.__state_conf_vector_position = 0
 			self.__state_conf_vector_changed = True
-			self.__main_region_manual_control_react(0)
+			self.__s_manual_control_react(0)
 		else:
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__main_region_manual_control_react(transitioned_before)
+				transitioned_after = self.__s_manual_control_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_manual_control_manual_control_region_turning_left_react(self, transitioned_before):
-		"""Implementation of __main_region_manual_control_manual_control_region_turning_left_react function.
+	def __s_manual_control_manual_control_region_turning_left_react(self, transitioned_before):
+		"""Implementation of __s_manual_control_manual_control_region_turning_left_react function.
 		"""
 		#The reactions of state Turning left.
 		transitioned_after = transitioned_before
 		if self.__do_completion:
 			#Default exit sequence for state Turning left
-			self.__state_vector[0] = self.State.main_region_manual_control
+			self.__state_vector[0] = self.State.smanual_control
 			self.__state_conf_vector_position = 0
 			#'default' enter sequence for state In action
-			self.__state_vector[0] = self.State.main_region_manual_control_manual_control_region_in_action
+			self.__state_vector[0] = self.State.smanual_control_manual_control_region_in_action
 			self.__state_conf_vector_position = 0
 			self.__state_conf_vector_changed = True
-			self.__main_region_manual_control_react(0)
+			self.__s_manual_control_react(0)
 		else:
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__main_region_manual_control_react(transitioned_before)
+				transitioned_after = self.__s_manual_control_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_react function.
+	def __s_automatic_exploration_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_react function.
 		"""
 		#The reactions of state automatic exploration.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
 				if self.computer.m_press:
-					self.__exit_sequence_main_region_automatic_exploration()
-					self.__enter_sequence_main_region_manual_control_default()
+					self.__exit_sequence_s_automatic_exploration()
+					self.__enter_sequence_s_manual_control_default()
 					self.__react(0)
 					transitioned_after = 3
 			#If no transition was taken
@@ -2209,162 +2648,162 @@ class Model:
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_general_normal_moving_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_general_normal_moving_react function.
+	def __s_automatic_exploration_general_normal_moving_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_general_normal_moving_react function.
 		"""
 		#The reactions of state normal_moving.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
 				if self.laser_distance.d0 < (self.grid.grid_size / 2.0):
-					self.__exit_sequence_main_region_automatic_exploration_general_normal_moving()
-					self.__enter_sequence_main_region_automatic_exploration_general_wall_in_front_default()
+					self.__exit_sequence_s_automatic_exploration_general_normal_moving()
+					self.__enter_sequence_s_automatic_exploration_general_wall_in_front_default()
 					transitioned_after = 0
 				elif self.laser_distance.d90 > self.grid.grid_size:
-					self.__exit_sequence_main_region_automatic_exploration_general_normal_moving()
-					self.__enter_sequence_main_region_automatic_exploration_general_left_wall_disappeared_default()
+					self.__exit_sequence_s_automatic_exploration_general_normal_moving()
+					self.__enter_sequence_s_automatic_exploration_general_left_wall_disappeared_default()
 					transitioned_after = 0
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_general_left_wall_disappeared_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_general_left_wall_disappeared_react function.
+	def __s_automatic_exploration_general_left_wall_disappeared_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_general_left_wall_disappeared_react function.
 		"""
 		#The reactions of state left_wall_disappeared.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
 				if self.user_var.move < 0:
-					self.__exit_sequence_main_region_automatic_exploration_general_left_wall_disappeared()
-					self.__enter_sequence_main_region_automatic_exploration_general_turn_left_default()
+					self.__exit_sequence_s_automatic_exploration_general_left_wall_disappeared()
+					self.__enter_sequence_s_automatic_exploration_general_turn_left_default()
 					transitioned_after = 0
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_general_wall_in_front_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_general_wall_in_front_react function.
+	def __s_automatic_exploration_general_wall_in_front_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_general_wall_in_front_react function.
 		"""
 		#The reactions of state wall_in_front.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
-				if (self.__time_events[1]) and (self.laser_distance.dm90 < self.grid.grid_size):
-					self.__exit_sequence_main_region_automatic_exploration_general_wall_in_front()
-					self.__time_events[1] = False
-					self.__enter_sequence_main_region_automatic_exploration_general_return_default()
+				if (self.__time_events[0]) and (self.laser_distance.dm90 < self.grid.grid_size):
+					self.__exit_sequence_s_automatic_exploration_general_wall_in_front()
+					self.__time_events[0] = False
+					self.__enter_sequence_s_automatic_exploration_general_return_default()
 					transitioned_after = 0
-				elif (self.__time_events[2]) and (self.laser_distance.dm90 > 0.5):
-					self.__exit_sequence_main_region_automatic_exploration_general_wall_in_front()
-					self.__time_events[2] = False
-					self.__enter_sequence_main_region_automatic_exploration_general_to_right_default()
+				elif (self.__time_events[1]) and (self.laser_distance.dm90 > 0.5):
+					self.__exit_sequence_s_automatic_exploration_general_wall_in_front()
+					self.__time_events[1] = False
+					self.__enter_sequence_s_automatic_exploration_general_to_right_default()
 					transitioned_after = 0
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_general_turn_left_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_general_turn_left_react function.
+	def __s_automatic_exploration_general_turn_left_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_general_turn_left_react function.
 		"""
 		#The reactions of state turn left.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
 				if not self.user_var.turn_left:
-					self.__exit_sequence_main_region_automatic_exploration_general_turn_left()
-					self.__enter_sequence_main_region_automatic_exploration_general_move_forward_default()
+					self.__exit_sequence_s_automatic_exploration_general_turn_left()
+					self.__enter_sequence_s_automatic_exploration_general_move_forward_default()
 					transitioned_after = 0
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_general_move_forward_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_general_move_forward_react function.
+	def __s_automatic_exploration_general_move_forward_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_general_move_forward_react function.
 		"""
 		#The reactions of state move forward.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
 				if self.user_var.move < 0.0 and self.laser_distance.d90 > self.grid.grid_size:
-					self.__exit_sequence_main_region_automatic_exploration_general_move_forward()
-					self.__enter_sequence_main_region_automatic_exploration_general_turn_and_go_default()
+					self.__exit_sequence_s_automatic_exploration_general_move_forward()
+					self.__enter_sequence_s_automatic_exploration_general_turn_and_go_default()
 					transitioned_after = 0
 				elif self.user_var.move < 0.0 and self.laser_distance.d90 < self.grid.grid_size:
-					self.__exit_sequence_main_region_automatic_exploration_general_move_forward()
-					self.__enter_sequence_main_region_automatic_exploration_general_normal_moving_default()
+					self.__exit_sequence_s_automatic_exploration_general_move_forward()
+					self.__enter_sequence_s_automatic_exploration_general_normal_moving_default()
 					transitioned_after = 0
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_general_turn_and_go_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_general_turn_and_go_react function.
+	def __s_automatic_exploration_general_turn_and_go_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_general_turn_and_go_react function.
 		"""
 		#The reactions of state turn and go.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
 				if not self.user_var.turn_left:
-					self.__exit_sequence_main_region_automatic_exploration_general_turn_and_go()
-					self.__enter_sequence_main_region_automatic_exploration_general_go_default()
+					self.__exit_sequence_s_automatic_exploration_general_turn_and_go()
+					self.__enter_sequence_s_automatic_exploration_general_go_default()
 					transitioned_after = 0
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_general_go_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_general_go_react function.
+	def __s_automatic_exploration_general_go_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_general_go_react function.
 		"""
 		#The reactions of state go.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
 				if self.user_var.move < 0.0:
-					self.__exit_sequence_main_region_automatic_exploration_general_go()
-					self.__enter_sequence_main_region_automatic_exploration_general_normal_moving_default()
+					self.__exit_sequence_s_automatic_exploration_general_go()
+					self.__enter_sequence_s_automatic_exploration_general_normal_moving_default()
 					transitioned_after = 0
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_general_return_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_general_return_react function.
+	def __s_automatic_exploration_general_return_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_general_return_react function.
 		"""
 		#The reactions of state return.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
 				if not self.user_var.turn_back:
-					self.__exit_sequence_main_region_automatic_exploration_general_return()
-					self.__enter_sequence_main_region_automatic_exploration_general_normal_moving_default()
+					self.__exit_sequence_s_automatic_exploration_general_return()
+					self.__enter_sequence_s_automatic_exploration_general_normal_moving_default()
 					transitioned_after = 0
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_general_to_right_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_general_to_right_react function.
+	def __s_automatic_exploration_general_to_right_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_general_to_right_react function.
 		"""
 		#The reactions of state to right.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
 				if not self.user_var.turn_right:
-					self.__exit_sequence_main_region_automatic_exploration_general_to_right()
-					self.__enter_sequence_main_region_automatic_exploration_general_go2_default()
+					self.__exit_sequence_s_automatic_exploration_general_to_right()
+					self.__enter_sequence_s_automatic_exploration_general_go2_default()
 					transitioned_after = 0
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_general_go2_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_general_go2_react function.
+	def __s_automatic_exploration_general_go2_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_general_go2_react function.
 		"""
 		#The reactions of state go2.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
 				if self.user_var.move < 0.0:
-					self.__exit_sequence_main_region_automatic_exploration_general_go2()
-					self.__enter_sequence_main_region_automatic_exploration_general_normal_moving_default()
+					self.__exit_sequence_s_automatic_exploration_general_go2()
+					self.__enter_sequence_s_automatic_exploration_general_normal_moving_default()
 					transitioned_after = 0
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_moving_moving_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_moving_moving_react function.
+	def __s_automatic_exploration_moving_moving_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_moving_moving_react function.
 		"""
 		#The reactions of state moving.
 		transitioned_after = transitioned_before
@@ -2372,241 +2811,241 @@ class Model:
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__main_region_automatic_exploration_react(transitioned_before)
+				transitioned_after = self.__s_automatic_exploration_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_react function.
+	def __s_automatic_exploration_moving_moving_r1_move_and_turn_back_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_moving_moving_r1_move_and_turn_back_react function.
 		"""
 		#The reactions of state move and turn back.
 		return transitioned_before
 	
 	
-	def __main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_normal_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_normal_react function.
+	def __s_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_normal_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_normal_react function.
 		"""
 		#The reactions of state normal.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 1:
 				if self.user_var.move > 0.0:
-					self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_normal()
-					self.__enter_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_moving_default()
+					self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_normal()
+					self.__enter_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_moving_default()
 					transitioned_after = 1
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_moving_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_moving_react function.
+	def __s_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_moving_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_moving_react function.
 		"""
 		#The reactions of state moving.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 1:
 				if ((((self.odom.x - self.user_var.xmem)) * ((self.odom.x - self.user_var.xmem))) + (((self.odom.y - self.user_var.ymem)) * ((self.odom.y - self.user_var.ymem)))) > (self.user_var.move * self.user_var.move):
-					self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_moving()
+					self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_moving()
 					self.output.speed = 0.0
-					self.__enter_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_normal_default()
+					self.__enter_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_normal_default()
 					transitioned_after = 1
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_normal_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_normal_react function.
+	def __s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_normal_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_normal_react function.
 		"""
 		#The reactions of state normal.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 2:
 				if self.user_var.turn_left:
-					self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_normal()
-					self.__enter_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_left_default()
-					self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_react(1)
+					self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_normal()
+					self.__enter_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_left_default()
+					self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_react(1)
 					transitioned_after = 2
 				elif self.user_var.turn_right:
-					self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_normal()
-					self.__enter_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_right_default()
-					self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_react(1)
+					self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_normal()
+					self.__enter_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_right_default()
+					self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_react(1)
 					transitioned_after = 2
 				elif self.user_var.turn_back:
-					self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_normal()
-					self.__enter_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_back_default()
-					self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_react(1)
+					self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_normal()
+					self.__enter_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_back_default()
+					self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_react(1)
 					transitioned_after = 2
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_react(transitioned_before)
+				transitioned_after = self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_left_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_left_react function.
+	def __s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_left_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_left_react function.
 		"""
 		#The reactions of state turnLeft.
 		transitioned_after = transitioned_before
 		if self.__do_completion:
 			#Default exit sequence for state turnLeft
-			self.__state_vector[2] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back
+			self.__state_vector[2] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back
 			self.__state_conf_vector_position = 2
 			#'default' enter sequence for state processingAngle
-			self.__entry_action_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle()
-			self.__state_vector[2] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle
+			self.__entry_action_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle()
+			self.__state_vector[2] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle
 			self.__state_conf_vector_position = 2
 			self.__state_conf_vector_changed = True
-			self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_react(1)
+			self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_react(1)
 		else:
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_react(transitioned_before)
+				transitioned_after = self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_right_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_right_react function.
+	def __s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_right_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_right_react function.
 		"""
 		#The reactions of state turnRight.
 		transitioned_after = transitioned_before
 		if self.__do_completion:
 			#Default exit sequence for state turnRight
-			self.__state_vector[2] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back
+			self.__state_vector[2] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back
 			self.__state_conf_vector_position = 2
 			#'default' enter sequence for state processingAngle
-			self.__entry_action_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle()
-			self.__state_vector[2] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle
+			self.__entry_action_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle()
+			self.__state_vector[2] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle
 			self.__state_conf_vector_position = 2
 			self.__state_conf_vector_changed = True
-			self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_react(1)
+			self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_react(1)
 		else:
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_react(transitioned_before)
+				transitioned_after = self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_back_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_back_react function.
+	def __s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_back_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_back_react function.
 		"""
 		#The reactions of state turnBack.
 		transitioned_after = transitioned_before
 		if self.__do_completion:
 			#Default exit sequence for state turnBack
-			self.__state_vector[2] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back
+			self.__state_vector[2] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back
 			self.__state_conf_vector_position = 2
 			#'default' enter sequence for state processingAngle
-			self.__entry_action_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle()
-			self.__state_vector[2] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle
+			self.__entry_action_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle()
+			self.__state_vector[2] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle
 			self.__state_conf_vector_position = 2
 			self.__state_conf_vector_changed = True
-			self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_react(1)
+			self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_react(1)
 		else:
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_react(transitioned_before)
+				transitioned_after = self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle_react function.
+	def __s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle_react function.
 		"""
 		#The reactions of state processingAngle.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 2:
 				if self.user_var.angle_targ <= -(180.0):
-					self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle()
-					self.__enter_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_plus_default()
-					self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_react(1)
+					self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle()
+					self.__enter_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_plus_default()
+					self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_react(1)
 					transitioned_after = 2
 				elif self.user_var.angle_targ > 180.0:
-					self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle()
-					self.__enter_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_minus_default()
-					self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_react(1)
+					self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle()
+					self.__enter_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_minus_default()
+					self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_react(1)
 					transitioned_after = 2
-				elif self.__time_events[3]:
-					self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle()
-					self.__time_events[3] = False
-					self.__enter_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle2_default()
-					self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_react(1)
+				elif self.__time_events[2]:
+					self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle()
+					self.__time_events[2] = False
+					self.__enter_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle2_default()
+					self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_react(1)
 					transitioned_after = 2
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_react(transitioned_before)
+				transitioned_after = self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_plus_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_plus_react function.
+	def __s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_plus_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_plus_react function.
 		"""
 		#The reactions of state plus.
 		transitioned_after = transitioned_before
 		if self.__do_completion:
 			#Default exit sequence for state plus
-			self.__state_vector[2] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back
+			self.__state_vector[2] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back
 			self.__state_conf_vector_position = 2
 			#'default' enter sequence for state processingAngle2
-			self.__entry_action_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle2()
-			self.__state_vector[2] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle2
+			self.__entry_action_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle2()
+			self.__state_vector[2] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle2
 			self.__state_conf_vector_position = 2
 			self.__state_conf_vector_changed = True
-			self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_react(1)
+			self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_react(1)
 		else:
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_react(transitioned_before)
+				transitioned_after = self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_minus_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_minus_react function.
+	def __s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_minus_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_minus_react function.
 		"""
 		#The reactions of state minus.
 		transitioned_after = transitioned_before
 		if self.__do_completion:
 			#Default exit sequence for state minus
-			self.__state_vector[2] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back
+			self.__state_vector[2] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back
 			self.__state_conf_vector_position = 2
 			#'default' enter sequence for state processingAngle2
-			self.__entry_action_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle2()
-			self.__state_vector[2] = self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle2
+			self.__entry_action_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle2()
+			self.__state_vector[2] = self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle2
 			self.__state_conf_vector_position = 2
 			self.__state_conf_vector_changed = True
-			self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_react(1)
+			self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_react(1)
 		else:
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_react(transitioned_before)
+				transitioned_after = self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle2_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle2_react function.
+	def __s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle2_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle2_react function.
 		"""
 		#The reactions of state processingAngle2.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 2:
 				if self.finished_turn:
-					self.__exit_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle2()
-					self.__enter_sequence_main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_normal_default()
-					self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_react(1)
+					self.__exit_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle2()
+					self.__enter_sequence_s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_normal_default()
+					self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_react(1)
 					transitioned_after = 2
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_react(transitioned_before)
+				transitioned_after = self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_moving_moving_r2_turn_impl_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_moving_moving_r2_turn_impl_react function.
+	def __s_automatic_exploration_moving_moving_r2_turn_impl_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_moving_moving_r2_turn_impl_react function.
 		"""
 		#The reactions of state turnImpl.
 		transitioned_after = transitioned_before
@@ -2614,145 +3053,145 @@ class Model:
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__main_region_automatic_exploration_moving_moving_react(transitioned_before)
+				transitioned_after = self.__s_automatic_exploration_moving_moving_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_normal_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_normal_react function.
+	def __s_automatic_exploration_moving_moving_r2_turn_impl_r1_normal_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_moving_moving_r2_turn_impl_r1_normal_react function.
 		"""
 		#The reactions of state normal.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 3:
 				if (self.start_turn) and (self.user_var.angle_targ <= 0.0):
-					self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_normal()
-					self.__enter_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_negative_rotation_default()
-					self.__main_region_automatic_exploration_moving_moving_r2_turn_impl_react(3)
+					self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_normal()
+					self.__enter_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_negative_rotation_default()
+					self.__s_automatic_exploration_moving_moving_r2_turn_impl_react(3)
 					transitioned_after = 3
 				elif (self.start_turn) and (self.user_var.angle_targ >= 0.0):
-					self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_normal()
-					self.__enter_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_positive_rotation_default()
-					self.__main_region_automatic_exploration_moving_moving_r2_turn_impl_react(3)
+					self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_normal()
+					self.__enter_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_positive_rotation_default()
+					self.__s_automatic_exploration_moving_moving_r2_turn_impl_react(3)
 					transitioned_after = 3
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__main_region_automatic_exploration_moving_moving_r2_turn_impl_react(transitioned_before)
+				transitioned_after = self.__s_automatic_exploration_moving_moving_r2_turn_impl_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_negative_rotation_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_negative_rotation_react function.
+	def __s_automatic_exploration_moving_moving_r2_turn_impl_r1_negative_rotation_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_moving_moving_r2_turn_impl_r1_negative_rotation_react function.
 		"""
 		#The reactions of state negativeRotation.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 3:
 				if (self.imu.yaw - self.user_var.angle_targ) > 0.0 and (self.imu.yaw - self.user_var.angle_targ) < self.__ct_thr1:
-					self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_negative_rotation()
-					self.__enter_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r2_default()
-					self.__main_region_automatic_exploration_moving_moving_r2_turn_impl_react(3)
+					self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_negative_rotation()
+					self.__enter_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r2_default()
+					self.__s_automatic_exploration_moving_moving_r2_turn_impl_react(3)
 					transitioned_after = 3
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__main_region_automatic_exploration_moving_moving_r2_turn_impl_react(transitioned_before)
+				transitioned_after = self.__s_automatic_exploration_moving_moving_r2_turn_impl_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_positive_rotation_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_positive_rotation_react function.
+	def __s_automatic_exploration_moving_moving_r2_turn_impl_r1_positive_rotation_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_moving_moving_r2_turn_impl_r1_positive_rotation_react function.
 		"""
 		#The reactions of state positiveRotation.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 3:
 				if (self.imu.yaw - self.user_var.angle_targ) < 0.0 and (self.imu.yaw - self.user_var.angle_targ) > -(self.__ct_thr1):
-					self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_positive_rotation()
-					self.__enter_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r2_default()
-					self.__main_region_automatic_exploration_moving_moving_r2_turn_impl_react(3)
+					self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_positive_rotation()
+					self.__enter_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r2_default()
+					self.__s_automatic_exploration_moving_moving_r2_turn_impl_react(3)
 					transitioned_after = 3
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__main_region_automatic_exploration_moving_moving_r2_turn_impl_react(transitioned_before)
+				transitioned_after = self.__s_automatic_exploration_moving_moving_r2_turn_impl_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r2_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r2_react function.
+	def __s_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r2_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r2_react function.
 		"""
 		#The reactions of state pR2.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 3:
 				if (self.imu.yaw - self.user_var.angle_targ) > -(self.__ct_thr2):
-					self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r2()
-					self.__enter_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r3_default()
-					self.__main_region_automatic_exploration_moving_moving_r2_turn_impl_react(3)
+					self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r2()
+					self.__enter_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r3_default()
+					self.__s_automatic_exploration_moving_moving_r2_turn_impl_react(3)
 					transitioned_after = 3
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__main_region_automatic_exploration_moving_moving_r2_turn_impl_react(transitioned_before)
+				transitioned_after = self.__s_automatic_exploration_moving_moving_r2_turn_impl_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r3_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r3_react function.
+	def __s_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r3_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r3_react function.
 		"""
 		#The reactions of state pR3.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 3:
 				if (self.imu.yaw - self.user_var.angle_targ) > 0.0 or self.imu.yaw < -(90.0):
-					self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r3()
-					self.__enter_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_normal_default()
-					self.__main_region_automatic_exploration_moving_moving_r2_turn_impl_react(3)
+					self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r3()
+					self.__enter_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_normal_default()
+					self.__s_automatic_exploration_moving_moving_r2_turn_impl_react(3)
 					transitioned_after = 3
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__main_region_automatic_exploration_moving_moving_r2_turn_impl_react(transitioned_before)
+				transitioned_after = self.__s_automatic_exploration_moving_moving_r2_turn_impl_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r2_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r2_react function.
+	def __s_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r2_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r2_react function.
 		"""
 		#The reactions of state nR2.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 3:
 				if (self.imu.yaw - self.user_var.angle_targ) < self.__ct_thr2:
-					self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r2()
-					self.__enter_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r3_default()
-					self.__main_region_automatic_exploration_moving_moving_r2_turn_impl_react(3)
+					self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r2()
+					self.__enter_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r3_default()
+					self.__s_automatic_exploration_moving_moving_r2_turn_impl_react(3)
 					transitioned_after = 3
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__main_region_automatic_exploration_moving_moving_r2_turn_impl_react(transitioned_before)
+				transitioned_after = self.__s_automatic_exploration_moving_moving_r2_turn_impl_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r3_react(self, transitioned_before):
-		"""Implementation of __main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r3_react function.
+	def __s_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r3_react(self, transitioned_before):
+		"""Implementation of __s_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r3_react function.
 		"""
 		#The reactions of state nR3.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 3:
 				if (self.imu.yaw - self.user_var.angle_targ) < 0.0 or self.imu.yaw > 90.0:
-					self.__exit_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r3()
-					self.__enter_sequence_main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_normal_default()
-					self.__main_region_automatic_exploration_moving_moving_r2_turn_impl_react(3)
+					self.__exit_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r3()
+					self.__enter_sequence_s_automatic_exploration_moving_moving_r2_turn_impl_r1_normal_default()
+					self.__s_automatic_exploration_moving_moving_r2_turn_impl_react(3)
 					transitioned_after = 3
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__main_region_automatic_exploration_moving_moving_r2_turn_impl_react(transitioned_before)
+				transitioned_after = self.__s_automatic_exploration_moving_moving_r2_turn_impl_react(transitioned_before)
 		return transitioned_after
 	
 	
@@ -2768,7 +3207,6 @@ class Model:
 		self.__time_events[0] = False
 		self.__time_events[1] = False
 		self.__time_events[2] = False
-		self.__time_events[3] = False
 	
 	
 	def __clear_internal_events(self):
@@ -2784,88 +3222,106 @@ class Model:
 		transitioned = -1
 		self.__state_conf_vector_position = 0
 		state = self.__state_vector[0]
-		if state == self.State.main_region_calibration_process_r1idle:
-			transitioned = self.__main_region_calibration_process_r1_idle_react(transitioned)
-		elif state == self.State.main_region_calibration_process_r1offset_calibration:
-			transitioned = self.__main_region_calibration_process_r1_offset_calibration_react(transitioned)
-		elif state == self.State.main_region_calibration_process_r1offset_correction:
-			transitioned = self.__main_region_calibration_process_r1_offset_correction_react(transitioned)
-		elif state == self.State.main_region_calibration_process_r1aligned:
-			transitioned = self.__main_region_calibration_process_r1_aligned_react(transitioned)
-		elif state == self.State.main_region_calibration_process_r1calibration_completeted:
-			transitioned = self.__main_region_calibration_process_r1_calibration_completeted_react(transitioned)
-		elif state == self.State.main_region_manual_control_manual_control_region_idle:
-			transitioned = self.__main_region_manual_control_manual_control_region_idle_react(transitioned)
-		elif state == self.State.main_region_manual_control_manual_control_region_in_action:
-			transitioned = self.__main_region_manual_control_manual_control_region_in_action_react(transitioned)
-		elif state == self.State.main_region_manual_control_manual_control_region_decreasing_speed:
-			transitioned = self.__main_region_manual_control_manual_control_region_decreasing_speed_react(transitioned)
-		elif state == self.State.main_region_manual_control_manual_control_region_increasing_speed:
-			transitioned = self.__main_region_manual_control_manual_control_region_increasing_speed_react(transitioned)
-		elif state == self.State.main_region_manual_control_manual_control_region_turning_right:
-			transitioned = self.__main_region_manual_control_manual_control_region_turning_right_react(transitioned)
-		elif state == self.State.main_region_manual_control_manual_control_region_turning_left:
-			transitioned = self.__main_region_manual_control_manual_control_region_turning_left_react(transitioned)
-		elif state == self.State.main_region_automatic_exploration_general_normal_moving:
-			transitioned = self.__main_region_automatic_exploration_general_normal_moving_react(transitioned)
-		elif state == self.State.main_region_automatic_exploration_general_left_wall_disappeared:
-			transitioned = self.__main_region_automatic_exploration_general_left_wall_disappeared_react(transitioned)
-		elif state == self.State.main_region_automatic_exploration_general_wall_in_front:
-			transitioned = self.__main_region_automatic_exploration_general_wall_in_front_react(transitioned)
-		elif state == self.State.main_region_automatic_exploration_general_turn_left:
-			transitioned = self.__main_region_automatic_exploration_general_turn_left_react(transitioned)
-		elif state == self.State.main_region_automatic_exploration_general_move_forward:
-			transitioned = self.__main_region_automatic_exploration_general_move_forward_react(transitioned)
-		elif state == self.State.main_region_automatic_exploration_general_turn_and_go:
-			transitioned = self.__main_region_automatic_exploration_general_turn_and_go_react(transitioned)
-		elif state == self.State.main_region_automatic_exploration_general_go:
-			transitioned = self.__main_region_automatic_exploration_general_go_react(transitioned)
-		elif state == self.State.main_region_automatic_exploration_general_return:
-			transitioned = self.__main_region_automatic_exploration_general_return_react(transitioned)
-		elif state == self.State.main_region_automatic_exploration_general_to_right:
-			transitioned = self.__main_region_automatic_exploration_general_to_right_react(transitioned)
-		elif state == self.State.main_region_automatic_exploration_general_go2:
-			transitioned = self.__main_region_automatic_exploration_general_go2_react(transitioned)
+		if state == self.State.scalibration_process_r1detect_walls:
+			transitioned = self.__s_calibration_process_r1_detect_walls_react(transitioned)
+		elif state == self.State.scalibration_process_r1set_zero_position:
+			transitioned = self.__s_calibration_process_r1_set_zero_position_react(transitioned)
+		elif state == self.State.scalibration_process_r1calibration_complete:
+			transitioned = self.__s_calibration_process_r1_calibration_complete_react(transitioned)
+		elif state == self.State.scalibration_process_r1align_right_wall:
+			transitioned = self.__s_calibration_process_r1_align_right_wall_react(transitioned)
+		elif state == self.State.scalibration_process_r1align_left_wall:
+			transitioned = self.__s_calibration_process_r1_align_left_wall_react(transitioned)
+		elif state == self.State.scalibration_process_r1align_both_walls:
+			transitioned = self.__s_calibration_process_r1_align_both_walls_react(transitioned)
+		elif state == self.State.scalibration_process_r1align_front_wall:
+			transitioned = self.__s_calibration_process_r1_align_front_wall_react(transitioned)
+		elif state == self.State.scalibration_process_r1state1:
+			transitioned = self.__s_calibration_process_r1_state1_react(transitioned)
+		elif state == self.State.scalibration_process_r1need_to_go_closer_to_left:
+			transitioned = self.__s_calibration_process_r1_need_to_go_closer_to_left_react(transitioned)
+		elif state == self.State.scalibration_process_r1need_to_get_away_from_left:
+			transitioned = self.__s_calibration_process_r1_need_to_get_away_from_left_react(transitioned)
+		elif state == self.State.scalibration_process_r1pointing_away_from_left_wall__it_is_now_behind_us_:
+			transitioned = self.__s_calibration_process_r1_pointing_away_from_left_wall__it_is_now_behind_us__react(transitioned)
+		elif state == self.State.scalibration_process_r1pointing_towards_left_wall__it_is_in_front_of_us_:
+			transitioned = self.__s_calibration_process_r1_pointing_towards_left_wall__it_is_in_front_of_us__react(transitioned)
+		elif state == self.State.scalibration_process_r1lets_turn_right_to_pint_north:
+			transitioned = self.__s_calibration_process_r1_lets_turn_right_to_pint_north_react(transitioned)
+		elif state == self.State.scalibration_process_r1lets_turn_left_to_point_north:
+			transitioned = self.__s_calibration_process_r1_lets_turn_left_to_point_north_react(transitioned)
+		elif state == self.State.smanual_control_manual_control_region_idle:
+			transitioned = self.__s_manual_control_manual_control_region_idle_react(transitioned)
+		elif state == self.State.smanual_control_manual_control_region_in_action:
+			transitioned = self.__s_manual_control_manual_control_region_in_action_react(transitioned)
+		elif state == self.State.smanual_control_manual_control_region_decreasing_speed:
+			transitioned = self.__s_manual_control_manual_control_region_decreasing_speed_react(transitioned)
+		elif state == self.State.smanual_control_manual_control_region_increasing_speed:
+			transitioned = self.__s_manual_control_manual_control_region_increasing_speed_react(transitioned)
+		elif state == self.State.smanual_control_manual_control_region_turning_right:
+			transitioned = self.__s_manual_control_manual_control_region_turning_right_react(transitioned)
+		elif state == self.State.smanual_control_manual_control_region_turning_left:
+			transitioned = self.__s_manual_control_manual_control_region_turning_left_react(transitioned)
+		elif state == self.State.sautomatic_exploration_general_normal_moving:
+			transitioned = self.__s_automatic_exploration_general_normal_moving_react(transitioned)
+		elif state == self.State.sautomatic_exploration_general_left_wall_disappeared:
+			transitioned = self.__s_automatic_exploration_general_left_wall_disappeared_react(transitioned)
+		elif state == self.State.sautomatic_exploration_general_wall_in_front:
+			transitioned = self.__s_automatic_exploration_general_wall_in_front_react(transitioned)
+		elif state == self.State.sautomatic_exploration_general_turn_left:
+			transitioned = self.__s_automatic_exploration_general_turn_left_react(transitioned)
+		elif state == self.State.sautomatic_exploration_general_move_forward:
+			transitioned = self.__s_automatic_exploration_general_move_forward_react(transitioned)
+		elif state == self.State.sautomatic_exploration_general_turn_and_go:
+			transitioned = self.__s_automatic_exploration_general_turn_and_go_react(transitioned)
+		elif state == self.State.sautomatic_exploration_general_go:
+			transitioned = self.__s_automatic_exploration_general_go_react(transitioned)
+		elif state == self.State.sautomatic_exploration_general_return:
+			transitioned = self.__s_automatic_exploration_general_return_react(transitioned)
+		elif state == self.State.sautomatic_exploration_general_to_right:
+			transitioned = self.__s_automatic_exploration_general_to_right_react(transitioned)
+		elif state == self.State.sautomatic_exploration_general_go2:
+			transitioned = self.__s_automatic_exploration_general_go2_react(transitioned)
 		if self.__state_conf_vector_position < 1:
 			state = self.__state_vector[1]
-			if state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r1normal:
-				transitioned = self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_normal_react(transitioned)
-			elif state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r1moving:
-				transitioned = self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_moving_react(transitioned)
+			if state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r1normal:
+				transitioned = self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_normal_react(transitioned)
+			elif state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r1moving:
+				transitioned = self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_r1_moving_react(transitioned)
 		if self.__state_conf_vector_position < 2:
 			state = self.__state_vector[2]
-			if state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2normal:
-				transitioned = self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_normal_react(transitioned)
-			elif state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2turn_left:
-				transitioned = self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_left_react(transitioned)
-			elif state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2turn_right:
-				transitioned = self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_right_react(transitioned)
-			elif state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2turn_back:
-				transitioned = self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_back_react(transitioned)
-			elif state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle:
-				transitioned = self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle_react(transitioned)
-			elif state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2plus:
-				transitioned = self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_plus_react(transitioned)
-			elif state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2minus:
-				transitioned = self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_minus_react(transitioned)
-			elif state == self.State.main_region_automatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle2:
-				transitioned = self.__main_region_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle2_react(transitioned)
+			if state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2normal:
+				transitioned = self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_normal_react(transitioned)
+			elif state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2turn_left:
+				transitioned = self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_left_react(transitioned)
+			elif state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2turn_right:
+				transitioned = self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_right_react(transitioned)
+			elif state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2turn_back:
+				transitioned = self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_turn_back_react(transitioned)
+			elif state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle:
+				transitioned = self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle_react(transitioned)
+			elif state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2plus:
+				transitioned = self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_plus_react(transitioned)
+			elif state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2minus:
+				transitioned = self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_minus_react(transitioned)
+			elif state == self.State.sautomatic_exploration_moving_moving_r1move_and_turn_back_r2processing_angle2:
+				transitioned = self.__s_automatic_exploration_moving_moving_r1_move_and_turn_back_r2_processing_angle2_react(transitioned)
 		if self.__state_conf_vector_position < 3:
 			state = self.__state_vector[3]
-			if state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1normal:
-				self.__main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_normal_react(transitioned)
-			elif state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1negative_rotation:
-				self.__main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_negative_rotation_react(transitioned)
-			elif state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1positive_rotation:
-				self.__main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_positive_rotation_react(transitioned)
-			elif state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1pr2:
-				self.__main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r2_react(transitioned)
-			elif state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1pr3:
-				self.__main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r3_react(transitioned)
-			elif state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1nr2:
-				self.__main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r2_react(transitioned)
-			elif state == self.State.main_region_automatic_exploration_moving_moving_r2turn_impl_r1nr3:
-				self.__main_region_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r3_react(transitioned)
+			if state == self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1normal:
+				self.__s_automatic_exploration_moving_moving_r2_turn_impl_r1_normal_react(transitioned)
+			elif state == self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1negative_rotation:
+				self.__s_automatic_exploration_moving_moving_r2_turn_impl_r1_negative_rotation_react(transitioned)
+			elif state == self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1positive_rotation:
+				self.__s_automatic_exploration_moving_moving_r2_turn_impl_r1_positive_rotation_react(transitioned)
+			elif state == self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1pr2:
+				self.__s_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r2_react(transitioned)
+			elif state == self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1pr3:
+				self.__s_automatic_exploration_moving_moving_r2_turn_impl_r1_p_r3_react(transitioned)
+			elif state == self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1nr2:
+				self.__s_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r2_react(transitioned)
+			elif state == self.State.sautomatic_exploration_moving_moving_r2turn_impl_r1nr3:
+				self.__s_automatic_exploration_moving_moving_r2_turn_impl_r1_n_r3_react(transitioned)
 	
 	
 	def run_cycle(self):
@@ -2913,7 +3369,7 @@ class Model:
 			return
 		self.__is_executing = True
 		#Default enter sequence for statechart model
-		self.__enter_sequence_main_region_default()
+		self.__enter_sequence_s_default()
 		self.__do_completion = False
 		condition_0 = True
 		while condition_0:
@@ -2934,7 +3390,7 @@ class Model:
 			return
 		self.__is_executing = True
 		#Default exit sequence for statechart model
-		self.__exit_sequence_main_region()
+		self.__exit_sequence_s()
 		self.__state_vector[0] = self.State.null_state
 		self.__state_conf_vector_position = 0
 		self.__is_executing = False
