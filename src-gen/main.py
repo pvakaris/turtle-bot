@@ -23,7 +23,6 @@ from model import Model
 from TurtleBotNode import TurtleBot
 from grid.Grid import Maze
 
-
 from timer.sct_timer import Timer
 
 import rclpy
@@ -31,7 +30,6 @@ from rclpy.node import Node
 from geometry_msgs.msg import Quaternion
 from geometry_msgs.msg import Twist
 
-from grid.operations import Callback
 
 class SCTConnect():
 
@@ -45,10 +43,6 @@ class SCTConnect():
 
         # Initialize the statecharts
         self.sm = Model()
-
-        # setup callback
-        self.sm.operation_callback = Callback()
-
 
     """
     Setup the statemachine and the ROS 2 node
@@ -72,7 +66,6 @@ class SCTConnect():
     """
     def run(self):
         while not self.sm.output.finish:
-            print("------------------------------------------------------------------")
 
             # Spin the ROS 2 node to get 1 callback
             rclpy.spin_once(self.node)
@@ -84,7 +77,7 @@ class SCTConnect():
                 self.get_data_odom()
             elif self.node.last_callback == 3:
                 self.get_data_imu()
-            print("Callback type:", self.node.last_callback)
+            #print("Callback type:", self.node.last_callback)
             self.node.reset_last()
 
             # Get keyboard input from user
@@ -110,29 +103,40 @@ class SCTConnect():
                 self.maze.draw()
 
             # Publish the current speed and rotation from SCT
-            print("Velocity: ", self.sm.output.speed, self.sm.output.rotation)
+            # print("Velocity: ", self.sm.output.speed, self.sm.output.rotation)
             self.node.vel_publish(x=self.sm.output.speed, rz = self.sm.output.rotation)
 
             # Print info
-            min_dist, min_deg = min([(round(value, 3), index) if value != 0 else (self.highest_distance, index) for (index,value) in enumerate(self.node.s_ranges)])
-            print(f"TestMin: {min_dist:.2f} MinDeg: {min_deg}")
-            print(f"offset: {self.sm.start_pos.laser_deg_offset}")
+            os.system('clear')
+            print("========= TurtleBot Stats =========")
+            print(f"velocity: {self.sm.output.speed}")
+            print(f"rotation speed: {self.sm.output.rotation}")
             print(f"yaw: {self.sm.imu.yaw:.3f}")
-            print(f"laser distanceMin: {self.sm.laser_distance.dmin:.3f} distanceMinDeg: {self.sm.laser_distance.min_deg}")
-            print(f"distance mean front: {self.sm.laser_distance.dfront_mean:.2f}, "
-                    f"right: {self.sm.laser_distance.dright_mean:.2f}, "
-                    f"left: {self.sm.laser_distance.dleft_mean:.2f}, "
-                    f"back: {self.sm.laser_distance.dback_mean:.2f}")
-            print("minDegree front, right and left:  ", self.sm.laser_distance.min_deg_f,
-                                                        self.sm.laser_distance.min_deg_r,
-                                                        self.sm.laser_distance.min_deg_l)
-            print(f"odom x: {self.sm.odom.x:.3f} odom y: {self.sm.odom.y:.3f}")
-            print("orientation: ", self.sm.grid.orientation)
-            print("row,col: ", self.sm.grid.row, self.sm.grid.column)
+
+            print("----------- Grid Info -----------")
+            print(f"orientation: {self.sm.grid.orientation}")
+            print(f"row: {self.sm.grid.row}")
+            print(f"col: {self.sm.grid.column}")
+
+            print(f"start pos:")
+            print(f"\tzero x: {self.sm.start_pos.zero_x:.2f}")
+            print(f"\tzero y: {self.sm.start_pos.zero_y:.2f}")
+            print(f"\tset zero: {self.sm.start_pos.set_zero}")
+
+            print("----------- Laser stuff -----------")
+            print(f"front mean:\t{self.sm.laser_distance.dfront_mean:.2f}")
+            print(f"left mean:\t{self.sm.laser_distance.dleft_mean:.2f}")
+            print(f"back mean:\t{self.sm.laser_distance.dback_mean:.2f}")
+            print(f"right mean:\t{self.sm.laser_distance.dright_mean:.2f}")
+
+            print("------------ Odometry -------------")
+            print(f"x: {self.sm.odom.x:.2f}")
+            print(f"y: {self.sm.odom.y:.2f}")
+
+            print("------------ Logging -------------")
+            print(f"visited: {self.sm.grid.visited:.2f}")
             print(f'Wall front: {self.sm.grid.wall_front}, right: {self.sm.grid.wall_right}, '
                     f'back: {self.sm.grid.wall_back}, left: {self.sm.grid.wall_left}')
-            print(f'zeroX: {self.sm.start_pos.zero_x:.3f}, zeroY: {self.sm.start_pos.zero_y:.3f} zeroSouthDegree: {self.sm.start_pos.zero_south_degree:.3f}')
-            # print("Active state: ", self.sm.__state_vector)
 
         # Print the final values and finish
         print("gems: ", self.sm.output.gems)
@@ -480,6 +484,7 @@ class SCTConnect():
         self.sm.grid.wall_right = self.current_node.walls[(self.sm.grid.orientation + 1) % 4]
         self.sm.grid.wall_left  = self.current_node.walls[(self.sm.grid.orientation - 1) % 4]
         self.sm.grid.wall_back  = self.current_node.walls[(self.sm.grid.orientation - 2) % 4]
+        self.sm.grid.visited = self.current_node.visited
 
     """
     Update Maze data with statechart information
@@ -492,6 +497,7 @@ class SCTConnect():
         self.current_node.walls[(self.sm.grid.orientation - 1) % 4] = self.sm.grid.wall_left
         self.current_node.walls[(self.sm.grid.orientation - 2) % 4] = self.sm.grid.wall_back
         self.current_node.visited = True
+        self.sm.grid.visited = True
 
 """
 Run the program
