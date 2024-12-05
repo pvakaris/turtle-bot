@@ -97,6 +97,11 @@ class Model:
 		"""
 		
 		def __init__(self, statemachine):
+			self.is_calibrated = None
+			self.half_grid_size = None
+			self.calibration_speed = None
+			self.calibration_rotation_speed = None
+			self.distance_to_right_wall = None
 			self.base_speed = None
 			self.base_rotation = None
 			self.startprocedure = None
@@ -367,11 +372,6 @@ class Model:
 		
 		self.__internal_event_queue = queue.Queue()
 		self.in_event_queue = queue.Queue()
-		self.__is_calibrated = None
-		self.__half_grid_size = None
-		self.__calibration_speed = None
-		self.__calibration_rotation_speed = None
-		self.__distance_to_right_wall = None
 		self.am_turn_left = None
 		self.am_turn_right = None
 		self.am_turn_back = None
@@ -394,11 +394,11 @@ class Model:
 		
 		# initializations:
 		#Default init sequence for statechart model
-		self.__is_calibrated = False
-		self.__half_grid_size = 0.24
-		self.__calibration_speed = 0.02
-		self.__calibration_rotation_speed = 0.18
-		self.__distance_to_right_wall = 0.0
+		self.user_var.is_calibrated = False
+		self.user_var.half_grid_size = 0.24
+		self.user_var.calibration_speed = 0.02
+		self.user_var.calibration_rotation_speed = 0.15
+		self.user_var.distance_to_right_wall = 0.0
 		self.user_var.base_speed = 0.05
 		self.user_var.base_rotation = 0.2
 		self.user_var.startprocedure = True
@@ -1067,13 +1067,13 @@ class Model:
 		"""
 		#Entry action for state 'Start calibration'.
 		self.output.speed = 0.0
-		self.output.rotation = self.__calibration_rotation_speed if self.imu.yaw >= 0.0 else -(self.__calibration_rotation_speed)
+		self.output.rotation = self.user_var.calibration_rotation_speed if self.imu.yaw >= 0.0 else -(self.user_var.calibration_rotation_speed)
 		
 	def __entry_action_x_initial_calibration_initial_calibration_region_need_to_get_closer_to_top_wall(self):
 		"""Entry action for state 'Need to get closer to top wall'..
 		"""
 		#Entry action for state 'Need to get closer to top wall'.
-		self.output.rotation = self.__calibration_rotation_speed
+		self.output.rotation = self.user_var.calibration_rotation_speed
 		
 	def __entry_action_x_initial_calibration_initial_calibration_region_need_to_get_away_from_the_top_wall(self):
 		"""Entry action for state 'Need to get away from the top wall'..
@@ -1092,7 +1092,7 @@ class Model:
 		"""
 		#Entry action for state 'Aligned Y axis'.
 		self.output.speed = 0.0
-		self.output.rotation = -(self.__calibration_rotation_speed) if (self.imu.yaw > -(0.5) and self.imu.yaw < 0.5) else self.__calibration_rotation_speed
+		self.output.rotation = -(self.user_var.calibration_rotation_speed) if (self.imu.yaw > -(0.5) and self.imu.yaw < 0.5) else self.user_var.calibration_rotation_speed
 		
 	def __entry_action_x_initial_calibration_initial_calibration_region_facing_the_top_wall(self):
 		"""Entry action for state 'Facing the top wall'..
@@ -1112,25 +1112,25 @@ class Model:
 		"""Entry action for state '0,5 G'..
 		"""
 		#Entry action for state '0,5 G'.
-		self.__distance_to_right_wall = self.__half_grid_size
+		self.user_var.distance_to_right_wall = self.user_var.half_grid_size
 		
 	def __entry_action_x_initial_calibration_initial_calibration_region__1_5_g(self):
 		"""Entry action for state '1,5 G'..
 		"""
 		#Entry action for state '1,5 G'.
-		self.__distance_to_right_wall = (self.grid.grid_size + self.__half_grid_size)
+		self.user_var.distance_to_right_wall = (self.grid.grid_size + self.user_var.half_grid_size)
 		
 	def __entry_action_x_initial_calibration_initial_calibration_region__2_5_g(self):
 		"""Entry action for state '2,5 G'..
 		"""
 		#Entry action for state '2,5 G'.
-		self.__distance_to_right_wall = ((2.0 * self.grid.grid_size) + self.__half_grid_size)
+		self.user_var.distance_to_right_wall = ((2.0 * self.grid.grid_size) + self.user_var.half_grid_size)
 		
 	def __entry_action_x_initial_calibration_initial_calibration_region__3_5_g(self):
 		""".
 		"""
 		#Entry action for state '3,5 G'.
-		self.__distance_to_right_wall = ((3.0 * self.grid.grid_size) + self.__half_grid_size)
+		self.user_var.distance_to_right_wall = ((3.0 * self.grid.grid_size) + self.user_var.half_grid_size)
 		self.__completed = True
 		
 	def __entry_action_x_initial_calibration_initial_calibration_region_need_to_get_closer_to_right_wall(self):
@@ -1143,14 +1143,14 @@ class Model:
 		"""Entry action for state 'Need to get away from right wall'..
 		"""
 		#Entry action for state 'Need to get away from right wall'.
-		self.output.rotation = self.__calibration_rotation_speed
+		self.output.rotation = self.user_var.calibration_rotation_speed
 		
 	def __entry_action_x_initial_calibration_initial_calibration_region_x_aligned(self):
 		"""Entry action for state 'X aligned'..
 		"""
 		#Entry action for state 'X aligned'.
 		self.output.speed = 0.0
-		self.output.rotation = self.__calibration_rotation_speed if (self.imu.yaw > 89.5 and self.imu.yaw < 90.5) else -(self.__calibration_rotation_speed)
+		self.output.rotation = self.user_var.calibration_rotation_speed if (self.imu.yaw > 89.5 and self.imu.yaw < 90.5) else -(self.user_var.calibration_rotation_speed)
 		
 	def __entry_action_x_initial_calibration_initial_calibration_region_facing_away_from_the_right_wall(self):
 		"""Entry action for state 'Facing away from the right wall'..
@@ -1158,6 +1158,18 @@ class Model:
 		#Entry action for state 'Facing away from the right wall'.
 		self.output.rotation = 0.0
 		self.output.speed = 0.02
+		
+	def __entry_action_x_initial_calibration_initial_calibration_region_set_zero(self):
+		"""Entry action for state 'Set ZERO'..
+		"""
+		#Entry action for state 'Set ZERO'.
+		self.start_pos.set_zero = True
+		self.start_pos.zero_x = self.odom.x
+		self.start_pos.zero_y = self.odom.y
+		self.start_pos.zero_south_degree = self.imu.yaw
+		self.output.rotation = 0.0
+		self.output.speed = 0.0
+		self.user_var.is_calibrated = True
 		
 	def __exit_action_x_automatic_moving_algoritms_algorithms_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front(self):
 		"""Exit action for state 'wall_in_front'..
@@ -1767,6 +1779,7 @@ class Model:
 		"""'default' enter sequence for state Set ZERO.
 		"""
 		#'default' enter sequence for state Set ZERO
+		self.__entry_action_x_initial_calibration_initial_calibration_region_set_zero()
 		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_set_zero
 		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
@@ -2915,12 +2928,12 @@ class Model:
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
-				if (self.computer.m_press) and (self.__is_calibrated):
+				if (self.computer.m_press) and (self.user_var.is_calibrated):
 					self.__exit_sequence_x_manual_control()
 					self.__enter_sequence_x_automatic_moving_default()
 					self.__react(0)
 					transitioned_after = 0
-				elif (self.computer.m_press) and (not self.__is_calibrated):
+				elif (self.computer.m_press) and (not self.user_var.is_calibrated):
 					self.__exit_sequence_x_manual_control()
 					self.__enter_sequence_x_initial_calibration_default()
 					self.__react(0)
@@ -4066,7 +4079,7 @@ class Model:
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
-				if self.laser_distance.d180 < (self.__half_grid_size + 0.02) and self.laser_distance.d180 > (self.__half_grid_size - 0.02):
+				if self.laser_distance.d180 < (self.user_var.half_grid_size + 0.02) and self.laser_distance.d180 > (self.user_var.half_grid_size - 0.02):
 					self.__exit_sequence_x_initial_calibration_initial_calibration_region_need_to_get_away_from_the_top_wall()
 					self.__enter_sequence_x_initial_calibration_initial_calibration_region_aligned_y_axis_default()
 					self.__x_initial_calibration_react(0)
@@ -4085,17 +4098,17 @@ class Model:
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
-				if self.laser_distance.d180 > self.__half_grid_size:
+				if self.laser_distance.d180 > self.user_var.half_grid_size:
 					self.__exit_sequence_x_initial_calibration_initial_calibration_region_aligned_perfect_south()
 					self.__enter_sequence_x_initial_calibration_initial_calibration_region_need_to_get_closer_to_top_wall_default()
 					self.__x_initial_calibration_react(0)
 					transitioned_after = 0
-				elif self.laser_distance.d180 < self.__half_grid_size:
+				elif self.laser_distance.d180 < self.user_var.half_grid_size:
 					self.__exit_sequence_x_initial_calibration_initial_calibration_region_aligned_perfect_south()
 					self.__enter_sequence_x_initial_calibration_initial_calibration_region_need_to_get_away_from_the_top_wall_default()
 					self.__x_initial_calibration_react(0)
 					transitioned_after = 0
-				elif self.laser_distance.d180 == self.__half_grid_size:
+				elif self.laser_distance.d180 == self.user_var.half_grid_size:
 					self.__exit_sequence_x_initial_calibration_initial_calibration_region_aligned_perfect_south()
 					self.__enter_sequence_x_initial_calibration_initial_calibration_region_aligned_y_axis_default()
 					self.__x_initial_calibration_react(0)
@@ -4133,7 +4146,7 @@ class Model:
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
-				if self.laser_distance.d0 < (self.__half_grid_size + 0.02) and self.laser_distance.d0 > (self.__half_grid_size - 0.02):
+				if self.laser_distance.d0 < (self.user_var.half_grid_size + 0.02) and self.laser_distance.d0 > (self.user_var.half_grid_size - 0.02):
 					self.__exit_sequence_x_initial_calibration_initial_calibration_region_facing_the_top_wall()
 					self.__enter_sequence_x_initial_calibration_initial_calibration_region_aligned_y_axis_default()
 					self.__x_initial_calibration_react(0)
@@ -4265,17 +4278,17 @@ class Model:
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
-				if self.laser_distance.d0 > self.__distance_to_right_wall:
+				if self.laser_distance.d0 > self.user_var.distance_to_right_wall:
 					self.__exit_sequence_x_initial_calibration_initial_calibration_region_the_distance_to_right_wall_is_determined()
 					self.__enter_sequence_x_initial_calibration_initial_calibration_region_need_to_get_closer_to_right_wall_default()
 					self.__x_initial_calibration_react(0)
 					transitioned_after = 0
-				elif self.laser_distance.d0 > (self.__distance_to_right_wall - 0.02) and self.laser_distance.d0 < (self.__distance_to_right_wall + 0.02):
+				elif self.laser_distance.d0 > (self.user_var.distance_to_right_wall - 0.02) and self.laser_distance.d0 < (self.user_var.distance_to_right_wall + 0.02):
 					self.__exit_sequence_x_initial_calibration_initial_calibration_region_the_distance_to_right_wall_is_determined()
 					self.__enter_sequence_x_initial_calibration_initial_calibration_region_x_aligned_default()
 					self.__x_initial_calibration_react(0)
 					transitioned_after = 0
-				elif self.laser_distance.d0 < self.__distance_to_right_wall:
+				elif self.laser_distance.d0 < self.user_var.distance_to_right_wall:
 					self.__exit_sequence_x_initial_calibration_initial_calibration_region_the_distance_to_right_wall_is_determined()
 					self.__enter_sequence_x_initial_calibration_initial_calibration_region_need_to_get_away_from_right_wall_default()
 					self.__x_initial_calibration_react(0)
@@ -4294,7 +4307,7 @@ class Model:
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
-				if self.laser_distance.d0 < (self.__distance_to_right_wall + 0.02) and self.laser_distance.d0 > (self.__distance_to_right_wall - 0.02):
+				if self.laser_distance.d0 < (self.user_var.distance_to_right_wall + 0.02) and self.laser_distance.d0 > (self.user_var.distance_to_right_wall - 0.02):
 					self.__exit_sequence_x_initial_calibration_initial_calibration_region_need_to_get_closer_to_right_wall()
 					self.__enter_sequence_x_initial_calibration_initial_calibration_region_x_aligned_default()
 					self.__x_initial_calibration_react(0)
@@ -4351,7 +4364,7 @@ class Model:
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
-				if self.laser_distance.d180 < (self.__distance_to_right_wall + 0.02) and self.laser_distance.d180 > (self.__distance_to_right_wall - 0.02):
+				if self.laser_distance.d180 < (self.user_var.distance_to_right_wall + 0.02) and self.laser_distance.d180 > (self.user_var.distance_to_right_wall - 0.02):
 					self.__exit_sequence_x_initial_calibration_initial_calibration_region_facing_away_from_the_right_wall()
 					self.__enter_sequence_x_initial_calibration_initial_calibration_region_x_aligned_default()
 					self.__x_initial_calibration_react(0)

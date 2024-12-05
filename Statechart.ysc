@@ -285,7 +285,7 @@
           <vertices xsi:type="sgraph:Entry" xmi:id="_dePjYLJ9Ee-CUr6SaR--zg">
             <outgoingTransitions xmi:id="_0hxJYLJ9Ee-CUr6SaR--zg" specification="" target="_z7OGwLJ9Ee-CUr6SaR--zg"/>
           </vertices>
-          <vertices xsi:type="sgraph:State" xmi:id="_z7OGwLJ9Ee-CUr6SaR--zg" specification="entry / output.speed = 0.0; &#xA;output.rotation = imu.yaw >= 0.0 ? &#xA;calibrationRotationSpeed : -calibrationRotationSpeed" name="Start calibration" incomingTransitions="_0hxJYLJ9Ee-CUr6SaR--zg">
+          <vertices xsi:type="sgraph:State" xmi:id="_z7OGwLJ9Ee-CUr6SaR--zg" specification="entry / output.speed = 0.0; &#xA;output.rotation = imu.yaw >= 0.0 ? &#xA;userVar.calibrationRotationSpeed : - userVar.calibrationRotationSpeed" name="Start calibration" incomingTransitions="_0hxJYLJ9Ee-CUr6SaR--zg">
             <outgoingTransitions xmi:id="_h2VvkLJ-Ee-CUr6SaR--zg" specification="[&#xA;&#x9;imu.yaw &lt; -179.5 &amp;&amp; imu.yaw >  -180.5 || &#xA;&#x9;imu.yaw >  179.5 &amp;&amp; imu.yaw &lt;   180.5&#xA;]" target="_1cyxwLJ-Ee-CUr6SaR--zg"/>
           </vertices>
           <vertices xsi:type="sgraph:State" xmi:id="_bqZxwLJ-Ee-CUr6SaR--zg" specification="entry / output.rotation = userVar.calibrationRotationSpeed" name="Need to get closer to top wall" incomingTransitions="_i0mHkLJ-Ee-CUr6SaR--zg">
