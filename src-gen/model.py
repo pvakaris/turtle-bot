@@ -1160,7 +1160,7 @@ class Model:
 		self.output.speed = 0.02
 		
 	def __entry_action_x_initial_calibration_initial_calibration_region_set_zero(self):
-		"""Entry action for state 'Set ZERO'..
+		""".
 		"""
 		#Entry action for state 'Set ZERO'.
 		self.start_pos.set_zero = True
@@ -1170,6 +1170,7 @@ class Model:
 		self.output.rotation = 0.0
 		self.output.speed = 0.0
 		self.user_var.is_calibrated = True
+		self.__completed = True
 		
 	def __exit_action_x_automatic_moving_algoritms_algorithms_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front(self):
 		"""Exit action for state 'wall_in_front'..
@@ -4381,7 +4382,16 @@ class Model:
 		"""
 		#The reactions of state Set ZERO.
 		transitioned_after = transitioned_before
-		if not self.__do_completion:
+		if self.__do_completion:
+			#Default exit sequence for state Initial calibration
+			self.__exit_sequence_x_initial_calibration_initial_calibration_region()
+			self.__state_vector[0] = self.State.null_state
+			self.__state_conf_vector_position = 0
+			#'default' enter sequence for state automatic moving
+			self.__enter_sequence_x_automatic_moving_algoritms_default()
+			self.__enter_sequence_x_automatic_moving_utils_default()
+			self.__react(0)
+		else:
 			#Always execute local reactions.
 			transitioned_after = self.__x_initial_calibration_react(transitioned_before)
 		return transitioned_after
