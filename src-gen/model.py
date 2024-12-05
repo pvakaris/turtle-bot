@@ -391,7 +391,7 @@ class Model:
 		
 		# for timed statechart:
 		self.timer_service = None
-		self.__time_events = [None] * 3
+		self.__time_events = [None] * 4
 		
 		# initializations:
 		#Default init sequence for statechart model
@@ -685,7 +685,7 @@ class Model:
 	def time_elapsed(self, event_id):
 		"""Add time events to in event queue
 		"""
-		if event_id in range(3):
+		if event_id in range(4):
 			self.in_event_queue.put(lambda: self.raise_time_event(event_id))
 			self.run_cycle()
 	
@@ -785,6 +785,12 @@ class Model:
 		"""
 		self.am_finished_move = True
 	
+	def __entry_action_x_manual_control(self):
+		"""Entry action for state 'Manual Control'..
+		"""
+		#Entry action for state 'Manual Control'.
+		self.timer_service.set_timer(self, 0, (1000 * 1000), False)
+		
 	def __entry_action_x_manual_control_manual_control_region_idle(self):
 		"""Entry action for state 'Idle'..
 		"""
@@ -860,8 +866,8 @@ class Model:
 		"""Entry action for state 'wall_in_front'..
 		"""
 		#Entry action for state 'wall_in_front'.
-		self.timer_service.set_timer(self, 0, (2 * 1000), False)
 		self.timer_service.set_timer(self, 1, (2 * 1000), False)
+		self.timer_service.set_timer(self, 2, (2 * 1000), False)
 		self.output.speed = 0.0
 		
 	def __entry_action_x_automatic_moving_algoritms_algorithms_automatic_moving_through_maze_moving_with_lidar_r1_left_wall_disappeared(self):
@@ -999,7 +1005,7 @@ class Model:
 		"""Entry action for state 'processingAngle'..
 		"""
 		#Entry action for state 'processingAngle'.
-		self.timer_service.set_timer(self, 2, (1 * 1000), False)
+		self.timer_service.set_timer(self, 3, (1 * 1000), False)
 		
 	def __entry_action_x_automatic_moving_utils_utils_r1_move_and_turn_turn_high_level_plus(self):
 		""".
@@ -1174,23 +1180,30 @@ class Model:
 		self.user_var.is_calibrated = True
 		self.__completed = True
 		
+	def __exit_action_x_manual_control(self):
+		"""Exit action for state 'Manual Control'..
+		"""
+		#Exit action for state 'Manual Control'.
+		self.timer_service.unset_timer(self, 0)
+		
 	def __exit_action_x_automatic_moving_algoritms_algorithms_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front(self):
 		"""Exit action for state 'wall_in_front'..
 		"""
 		#Exit action for state 'wall_in_front'.
-		self.timer_service.unset_timer(self, 0)
 		self.timer_service.unset_timer(self, 1)
+		self.timer_service.unset_timer(self, 2)
 		
 	def __exit_action_x_automatic_moving_utils_utils_r1_move_and_turn_turn_high_level_processing_angle(self):
 		"""Exit action for state 'processingAngle'..
 		"""
 		#Exit action for state 'processingAngle'.
-		self.timer_service.unset_timer(self, 2)
+		self.timer_service.unset_timer(self, 3)
 		
 	def __enter_sequence_x_manual_control_default(self):
 		"""'default' enter sequence for state Manual Control.
 		"""
 		#'default' enter sequence for state Manual Control
+		self.__entry_action_x_manual_control()
 		self.__enter_sequence_x_manual_control_manual_control_region_default()
 		
 	def __enter_sequence_x_manual_control_manual_control_region_idle_default(self):
@@ -1920,6 +1933,7 @@ class Model:
 		self.__exit_sequence_x_manual_control_manual_control_region()
 		self.__state_vector[0] = self.State.null_state
 		self.__state_conf_vector_position = 0
+		self.__exit_action_x_manual_control()
 		
 	def __exit_sequence_x_manual_control_manual_control_region_idle(self):
 		"""Default exit sequence for state Idle.
@@ -2417,16 +2431,22 @@ class Model:
 			self.__exit_sequence_x_manual_control()
 		elif state == self.State.xmanual_control_manual_control_region_idle:
 			self.__exit_sequence_x_manual_control_manual_control_region_idle()
+			self.__exit_action_x_manual_control()
 		elif state == self.State.xmanual_control_manual_control_region_in_action:
 			self.__exit_sequence_x_manual_control_manual_control_region_in_action()
+			self.__exit_action_x_manual_control()
 		elif state == self.State.xmanual_control_manual_control_region_decreasing_speed:
 			self.__exit_sequence_x_manual_control_manual_control_region_decreasing_speed()
+			self.__exit_action_x_manual_control()
 		elif state == self.State.xmanual_control_manual_control_region_increasing_speed:
 			self.__exit_sequence_x_manual_control_manual_control_region_increasing_speed()
+			self.__exit_action_x_manual_control()
 		elif state == self.State.xmanual_control_manual_control_region_turning_right:
 			self.__exit_sequence_x_manual_control_manual_control_region_turning_right()
+			self.__exit_action_x_manual_control()
 		elif state == self.State.xmanual_control_manual_control_region_turning_left:
 			self.__exit_sequence_x_manual_control_manual_control_region_turning_left()
+			self.__exit_action_x_manual_control()
 		elif state == self.State.xautomatic_moving_algoritms_algorithms_automatic_moving_through_maze_moving_with_lidar:
 			self.__exit_sequence_x_automatic_moving_algoritms_algorithms_automatic_moving_through_maze_moving_with_lidar()
 		elif state == self.State.xautomatic_moving_algoritms_algorithms_automatic_moving_through_maze_moving_with_lidar_r1go:
@@ -2931,13 +2951,14 @@ class Model:
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
-				if (self.computer.m_press) and (self.user_var.is_calibrated):
+				if self.computer.m_press:
 					self.__exit_sequence_x_manual_control()
 					self.__enter_sequence_x_automatic_moving_default()
 					self.__react(0)
 					transitioned_after = 0
-				elif (self.computer.m_press) and (not self.user_var.is_calibrated):
+				elif self.__time_events[0]:
 					self.__exit_sequence_x_manual_control()
+					self.__time_events[0] = False
 					self.__enter_sequence_x_initial_calibration_default()
 					self.__react(0)
 					transitioned_after = 0
@@ -3270,15 +3291,15 @@ class Model:
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
-				if (self.__time_events[0]) and (self.laser_distance.dm90 < self.grid.grid_size):
+				if (self.__time_events[1]) and (self.laser_distance.dm90 < self.grid.grid_size):
 					self.__exit_sequence_x_automatic_moving_algoritms_algorithms_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front()
-					self.__time_events[0] = False
+					self.__time_events[1] = False
 					self.__enter_sequence_x_automatic_moving_algoritms_algorithms_automatic_moving_through_maze_moving_with_lidar_r1_return_default()
 					self.__x_automatic_moving_algoritms_algorithms_automatic_moving_through_maze_moving_with_lidar_react(0)
 					transitioned_after = 0
-				elif (self.__time_events[1]) and (self.laser_distance.dm90 > 0.5):
+				elif (self.__time_events[2]) and (self.laser_distance.dm90 > 0.5):
 					self.__exit_sequence_x_automatic_moving_algoritms_algorithms_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front()
-					self.__time_events[1] = False
+					self.__time_events[2] = False
 					self.__enter_sequence_x_automatic_moving_algoritms_algorithms_automatic_moving_through_maze_moving_with_lidar_r1_to_right_default()
 					self.__x_automatic_moving_algoritms_algorithms_automatic_moving_through_maze_moving_with_lidar_react(0)
 					transitioned_after = 0
@@ -3797,9 +3818,9 @@ class Model:
 					self.__enter_sequence_x_automatic_moving_utils_utils_r1_move_and_turn_turn_high_level_minus_default()
 					self.__x_automatic_moving_utils_utils_r1_move_and_turn_react(4)
 					transitioned_after = 5
-				elif self.__time_events[2]:
+				elif self.__time_events[3]:
 					self.__exit_sequence_x_automatic_moving_utils_utils_r1_move_and_turn_turn_high_level_processing_angle()
-					self.__time_events[2] = False
+					self.__time_events[3] = False
 					self.__enter_sequence_x_automatic_moving_utils_utils_r1_move_and_turn_turn_high_level_processing_angle2_default()
 					self.__x_automatic_moving_utils_utils_r1_move_and_turn_react(4)
 					transitioned_after = 5
@@ -4411,6 +4432,7 @@ class Model:
 		self.__time_events[0] = False
 		self.__time_events[1] = False
 		self.__time_events[2] = False
+		self.__time_events[3] = False
 	
 	
 	def __clear_internal_events(self):
