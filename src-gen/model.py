@@ -22,20 +22,14 @@ class Model:
 			xmanual_control_manual_control_region_turning_right,
 			xmanual_control_manual_control_region_turning_left,
 			xautomatic_moving,
-			xautomatic_moving_grid_interaction_log_grid,
-			xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging,
-			xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging,
-			xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_not_logging,
-			xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging,
-			xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging_main,
-			xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation,
-			xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_first_step,
-			xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_second,
-			xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_firststep,
-			xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_second,
-			xautomatic_moving_grid_interaction_log_grid_log_grid_left_turn,
-			xautomatic_moving_grid_interaction_log_grid_log_grid_right_turn,
-			xautomatic_moving_grid_interaction_log_grid_log_grid_back_turn,
+			xautomatic_moving_column_calcualtion_first_step,
+			xautomatic_moving_column_calcualtion_second,
+			xautomatic_moving_row_calculation_firststep,
+			xautomatic_moving_row_calculation_second,
+			xautomatic_moving_grid_interaction_unlogging,
+			xautomatic_moving_grid_interaction_logging,
+			xautomatic_moving_grid_interaction_logging_r1first,
+			xautomatic_moving_grid_interaction_logging_r1second,
 			xautomatic_moving_automatic_moving_through_maze_moving_with_lidar,
 			xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1go,
 			xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1turn_and_go,
@@ -85,7 +79,7 @@ class Model:
 			xinitial_calibration_initial_calibration_region_facing_away_from_the_right_wall,
 			xinitial_calibration_initial_calibration_region_set_zero,
 			null_state
-		) = range(71)
+		) = range(65)
 	
 	
 	class UserVar:
@@ -93,6 +87,7 @@ class Model:
 		"""
 		
 		def __init__(self, statemachine):
+			self.cl = None
 			self.is_calibrated = None
 			self.half_grid_size = None
 			self.calibration_speed = None
@@ -105,17 +100,18 @@ class Model:
 			self.am_x_mem = None
 			self.am_y_mem = None
 			self.am_angle_targ = None
+			self.am_turning = None
 			self.am_ct_sp1 = None
 			self.am_ct_thr1 = None
 			self.am_ct_sp2 = None
 			self.am_ct_thr2 = None
 			self.am_ct_sp3 = None
-			self.am_gl_i_row = None
-			self.am_gl_i_col = None
 			self.am_gl_x_rel = None
 			self.am_gl_y_rel = None
-			self.am_gl_x_ind = None
-			self.am_gl_y_ind = None
+			self.am_gl_x_cen = None
+			self.am_gl_y_cen = None
+			self.ix = None
+			self.iy = None
 			
 			self.statemachine = statemachine
 		
@@ -391,6 +387,7 @@ class Model:
 		
 		# initializations:
 		#Default init sequence for statechart model
+		self.user_var.cl = 300
 		self.user_var.is_calibrated = False
 		self.user_var.half_grid_size = 0.24
 		self.user_var.calibration_speed = 0.02
@@ -403,17 +400,18 @@ class Model:
 		self.user_var.am_x_mem = 0.0
 		self.user_var.am_y_mem = 0.0
 		self.user_var.am_angle_targ = 0
+		self.user_var.am_turning = False
 		self.user_var.am_ct_sp1 = 0.2
 		self.user_var.am_ct_thr1 = 4.0
 		self.user_var.am_ct_sp2 = 0.02
 		self.user_var.am_ct_thr2 = 1.0
 		self.user_var.am_ct_sp3 = 0.02
-		self.user_var.am_gl_i_row = -(1)
-		self.user_var.am_gl_i_col = -(1)
 		self.user_var.am_gl_x_rel = -(1.0)
 		self.user_var.am_gl_y_rel = -(1.0)
-		self.user_var.am_gl_x_ind = 0
-		self.user_var.am_gl_y_ind = 0
+		self.user_var.am_gl_x_cen = False
+		self.user_var.am_gl_y_cen = False
+		self.user_var.ix = 0
+		self.user_var.iy = 0
 		self.base_values.max_speed = 0.22
 		self.base_values.max_rotation = 2.84
 		self.base_values.degrees_front = 10
@@ -532,39 +530,23 @@ class Model:
 		if s == self.__State.xautomatic_moving:
 			return (self.__state_vector[0] >= self.__State.xautomatic_moving)\
 				and (self.__state_vector[0] <= self.__State.xautomatic_moving_turn_low_level_nr3)
-		if s == self.__State.xautomatic_moving_grid_interaction_log_grid:
-			return (self.__state_vector[0] >= self.__State.xautomatic_moving_grid_interaction_log_grid)\
-				and (self.__state_vector[0] <= self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_back_turn)
-		if s == self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging:
-			return (self.__state_vector[0] >= self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging)\
-				and (self.__state_vector[0] <= self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_second)
-		if s == self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging:
-			return (self.__state_vector[0] >= self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging)\
-				and (self.__state_vector[0] <= self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_second)
-		if s == self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_not_logging:
-			return self.__state_vector[0] == self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_not_logging
-		if s == self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging:
-			return (self.__state_vector[0] >= self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging)\
-				and (self.__state_vector[0] <= self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging_main)
-		if s == self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging_main:
-			return self.__state_vector[0] == self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging_main
-		if s == self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation:
-			return (self.__state_vector[1] >= self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation)\
-				and (self.__state_vector[1] <= self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_second)
-		if s == self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_first_step:
-			return self.__state_vector[1] == self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_first_step
-		if s == self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_second:
-			return self.__state_vector[1] == self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_second
-		if s == self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_firststep:
-			return self.__state_vector[2] == self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_firststep
-		if s == self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_second:
-			return self.__state_vector[2] == self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_second
-		if s == self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_left_turn:
-			return self.__state_vector[0] == self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_left_turn
-		if s == self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_right_turn:
-			return self.__state_vector[0] == self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_right_turn
-		if s == self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_back_turn:
-			return self.__state_vector[0] == self.__State.xautomatic_moving_grid_interaction_log_grid_log_grid_back_turn
+		if s == self.__State.xautomatic_moving_column_calcualtion_first_step:
+			return self.__state_vector[0] == self.__State.xautomatic_moving_column_calcualtion_first_step
+		if s == self.__State.xautomatic_moving_column_calcualtion_second:
+			return self.__state_vector[0] == self.__State.xautomatic_moving_column_calcualtion_second
+		if s == self.__State.xautomatic_moving_row_calculation_firststep:
+			return self.__state_vector[1] == self.__State.xautomatic_moving_row_calculation_firststep
+		if s == self.__State.xautomatic_moving_row_calculation_second:
+			return self.__state_vector[1] == self.__State.xautomatic_moving_row_calculation_second
+		if s == self.__State.xautomatic_moving_grid_interaction_unlogging:
+			return self.__state_vector[2] == self.__State.xautomatic_moving_grid_interaction_unlogging
+		if s == self.__State.xautomatic_moving_grid_interaction_logging:
+			return (self.__state_vector[2] >= self.__State.xautomatic_moving_grid_interaction_logging)\
+				and (self.__state_vector[2] <= self.__State.xautomatic_moving_grid_interaction_logging_r1second)
+		if s == self.__State.xautomatic_moving_grid_interaction_logging_r1first:
+			return self.__state_vector[2] == self.__State.xautomatic_moving_grid_interaction_logging_r1first
+		if s == self.__State.xautomatic_moving_grid_interaction_logging_r1second:
+			return self.__state_vector[2] == self.__State.xautomatic_moving_grid_interaction_logging_r1second
 		if s == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar:
 			return (self.__state_vector[3] >= self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar)\
 				and (self.__state_vector[3] <= self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1normal_moving)
@@ -804,74 +786,44 @@ class Model:
 		self.output.rotation = (self.output.rotation + 0.02) if self.output.rotation < 2.82 else 2.84
 		self.__completed = True
 		
-	def __entry_action_x_automatic_moving_grid_interaction_log_grid(self):
-		"""Entry action for state 'log_grid'..
+	def __entry_action_x_automatic_moving(self):
+		"""Entry action for state 'automatic moving'..
 		"""
-		#Entry action for state 'log_grid'.
-		self.grid.update = True
-		self.grid.receive = False
+		#Entry action for state 'automatic moving'.
 		self.start_pos.zero_x = self.odom.x
 		self.start_pos.zero_y = self.odom.y
 		self.grid.orientation = 1
 		
-	def __entry_action_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_not_logging(self):
-		"""Entry action for state 'not logging'..
-		"""
-		#Entry action for state 'not logging'.
-		self.grid.wall_front = -(1)
-		self.grid.wall_right = -(1)
-		self.grid.wall_back = -(1)
-		self.grid.wall_left = -(1)
-		
-	def __entry_action_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging_main(self):
-		"""Entry action for state 'main'..
-		"""
-		#Entry action for state 'main'.
-		self.grid.column = self.user_var.am_gl_i_col
-		self.grid.row = self.user_var.am_gl_i_row
-		self.grid.wall_left = 1 if self.laser_distance.d90 < 0.5 else 0
-		
-	def __entry_action_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_first_step(self):
+	def __entry_action_x_automatic_moving_column_calcualtion_first_step(self):
 		"""Entry action for state 'first_step'..
 		"""
 		#Entry action for state 'first_step'.
 		self.user_var.am_gl_x_rel = (((self.odom.x - self.start_pos.zero_x)) / self.grid.grid_size)
+		self.grid.column = self.user_var.ix
 		
-	def __entry_action_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_firststep(self):
+	def __entry_action_x_automatic_moving_row_calculation_firststep(self):
 		"""Entry action for state 'firststep'..
 		"""
 		#Entry action for state 'firststep'.
 		self.user_var.am_gl_y_rel = (((self.start_pos.zero_y - self.odom.y)) / self.grid.grid_size)
+		self.grid.row = self.user_var.iy
 		
-	def __entry_action_x_automatic_moving_grid_interaction_log_grid_log_grid_left_turn(self):
-		"""Entry action for state 'left_turn'..
+	def __entry_action_x_automatic_moving_grid_interaction_logging_r1_first(self):
+		""".
 		"""
-		#Entry action for state 'left_turn'.
-		self.grid.wall_front = -(1)
-		self.grid.wall_right = -(1)
-		self.grid.wall_back = -(1)
-		self.grid.wall_left = -(1)
-		self.grid.orientation = (((self.grid.orientation + 3)) % 4)
+		#Entry action for state 'first'.
+		self.grid.wall_front = 1 if self.laser_distance.d0 < self.grid.grid_size else 0
+		self.grid.wall_left = 1 if self.laser_distance.d90 < self.grid.grid_size else 0
+		self.grid.wall_back = 1 if self.laser_distance.d180 < self.grid.grid_size else 0
+		self.grid.wall_right = 1 if self.laser_distance.dm90 < self.grid.grid_size else 0
+		self.__completed = True
 		
-	def __entry_action_x_automatic_moving_grid_interaction_log_grid_log_grid_right_turn(self):
-		"""Entry action for state 'right_turn'..
+	def __entry_action_x_automatic_moving_grid_interaction_logging_r1_second(self):
+		""".
 		"""
-		#Entry action for state 'right_turn'.
-		self.grid.wall_front = -(1)
-		self.grid.wall_right = -(1)
-		self.grid.wall_back = -(1)
-		self.grid.wall_left = -(1)
-		self.grid.orientation = (((self.grid.orientation + 1)) % 4)
-		
-	def __entry_action_x_automatic_moving_grid_interaction_log_grid_log_grid_back_turn(self):
-		"""Entry action for state 'back_turn'..
-		"""
-		#Entry action for state 'back_turn'.
-		self.grid.wall_front = -(1)
-		self.grid.wall_right = -(1)
-		self.grid.wall_back = -(1)
-		self.grid.wall_left = -(1)
-		self.grid.orientation = (((self.grid.orientation + 2)) % 4)
+		#Entry action for state 'second'.
+		self.grid.update = True
+		self.__completed = True
 		
 	def __entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_go(self):
 		"""Entry action for state 'go'..
@@ -957,12 +909,15 @@ class Model:
 		"""
 		#Entry action for state 'normal'.
 		self.output.rotation = 0.0
+		self.user_var.am_turning = False
 		
 	def __entry_action_x_automatic_moving_turn_high_level_turn_left(self):
 		""".
 		"""
 		#Entry action for state 'turnLeft'.
 		self.user_var.am_angle_targ = (self.imu.yaw + 90)
+		self.user_var.am_turning = True
+		self.grid.orientation = (((self.grid.orientation + 3)) % 4)
 		self.__completed = True
 		
 	def __entry_action_x_automatic_moving_turn_high_level_turn_right(self):
@@ -970,6 +925,8 @@ class Model:
 		"""
 		#Entry action for state 'turnRight'.
 		self.user_var.am_angle_targ = (self.imu.yaw - 90)
+		self.user_var.am_turning = True
+		self.grid.orientation = (((self.grid.orientation + 1)) % 4)
 		self.__completed = True
 		
 	def __entry_action_x_automatic_moving_turn_high_level_turn_back(self):
@@ -977,6 +934,8 @@ class Model:
 		"""
 		#Entry action for state 'turnBack'.
 		self.user_var.am_angle_targ = (self.imu.yaw + 180)
+		self.user_var.am_turning = True
+		self.grid.orientation = (((self.grid.orientation + 2)) % 4)
 		self.__completed = True
 		
 	def __entry_action_x_automatic_moving_turn_high_level_processing_angle(self):
@@ -1226,122 +1185,70 @@ class Model:
 		"""'default' enter sequence for state automatic moving.
 		"""
 		#'default' enter sequence for state automatic moving
+		self.__entry_action_x_automatic_moving()
+		self.__enter_sequence_x_automatic_moving_column_calcualtion_default()
+		self.__enter_sequence_x_automatic_moving_row_calculation_default()
 		self.__enter_sequence_x_automatic_moving_grid_interaction_default()
 		self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_default()
 		self.__enter_sequence_x_automatic_moving_move_default()
 		self.__enter_sequence_x_automatic_moving_turn_high_level_default()
 		self.__enter_sequence_x_automatic_moving_turn_low_level_default()
 		
-	def __enter_sequence_x_automatic_moving_grid_interaction_log_grid_default(self):
-		"""'default' enter sequence for state log_grid.
-		"""
-		#'default' enter sequence for state log_grid
-		self.__entry_action_x_automatic_moving_grid_interaction_log_grid()
-		self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_default()
-		
-	def __enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_default(self):
-		"""'default' enter sequence for state normal_logging.
-		"""
-		#'default' enter sequence for state normal_logging
-		self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_default()
-		
-	def __enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_default(self):
-		"""'default' enter sequence for state normal_logging.
-		"""
-		#'default' enter sequence for state normal_logging
-		self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_default()
-		self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_default()
-		
-	def __enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_not_logging_default(self):
-		"""'default' enter sequence for state not logging.
-		"""
-		#'default' enter sequence for state not logging
-		self.__entry_action_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_not_logging()
-		self.__state_vector[0] = self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_not_logging
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_default(self):
-		"""'default' enter sequence for state logging.
-		"""
-		#'default' enter sequence for state logging
-		self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging_default()
-		
-	def __enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging_main_default(self):
-		"""'default' enter sequence for state main.
-		"""
-		#'default' enter sequence for state main
-		self.__entry_action_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging_main()
-		self.__state_vector[0] = self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging_main
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_default(self):
-		"""'default' enter sequence for state row column calculation.
-		"""
-		#'default' enter sequence for state row column calculation
-		self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_default()
-		self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_default()
-		
-	def __enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_first_step_default(self):
+	def __enter_sequence_x_automatic_moving_column_calcualtion_first_step_default(self):
 		"""'default' enter sequence for state first_step.
 		"""
 		#'default' enter sequence for state first_step
-		self.__entry_action_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_first_step()
-		self.__state_vector[1] = self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_first_step
-		self.__state_conf_vector_position = 1
+		self.__entry_action_x_automatic_moving_column_calcualtion_first_step()
+		self.__state_vector[0] = self.State.xautomatic_moving_column_calcualtion_first_step
+		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_second_default(self):
+	def __enter_sequence_x_automatic_moving_column_calcualtion_second_default(self):
 		"""'default' enter sequence for state second.
 		"""
 		#'default' enter sequence for state second
-		self.__state_vector[1] = self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_second
-		self.__state_conf_vector_position = 1
+		self.__state_vector[0] = self.State.xautomatic_moving_column_calcualtion_second
+		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_firststep_default(self):
+	def __enter_sequence_x_automatic_moving_row_calculation_firststep_default(self):
 		"""'default' enter sequence for state firststep.
 		"""
 		#'default' enter sequence for state firststep
-		self.__entry_action_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_firststep()
-		self.__state_vector[2] = self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_firststep
-		self.__state_conf_vector_position = 2
+		self.__entry_action_x_automatic_moving_row_calculation_firststep()
+		self.__state_vector[1] = self.State.xautomatic_moving_row_calculation_firststep
+		self.__state_conf_vector_position = 1
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_second_default(self):
+	def __enter_sequence_x_automatic_moving_row_calculation_second_default(self):
 		"""'default' enter sequence for state second.
 		"""
 		#'default' enter sequence for state second
-		self.__state_vector[2] = self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_second
+		self.__state_vector[1] = self.State.xautomatic_moving_row_calculation_second
+		self.__state_conf_vector_position = 1
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_x_automatic_moving_grid_interaction_unlogging_default(self):
+		"""'default' enter sequence for state unlogging.
+		"""
+		#'default' enter sequence for state unlogging
+		self.__state_vector[2] = self.State.xautomatic_moving_grid_interaction_unlogging
 		self.__state_conf_vector_position = 2
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_left_turn_default(self):
-		"""'default' enter sequence for state left_turn.
+	def __enter_sequence_x_automatic_moving_grid_interaction_logging_default(self):
+		"""'default' enter sequence for state logging.
 		"""
-		#'default' enter sequence for state left_turn
-		self.__entry_action_x_automatic_moving_grid_interaction_log_grid_log_grid_left_turn()
-		self.__state_vector[0] = self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_left_turn
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
+		#'default' enter sequence for state logging
+		self.__enter_sequence_x_automatic_moving_grid_interaction_logging_r1_default()
 		
-	def __enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_right_turn_default(self):
-		"""'default' enter sequence for state right_turn.
+	def __enter_sequence_x_automatic_moving_grid_interaction_logging_r1_first_default(self):
+		"""'default' enter sequence for state first.
 		"""
-		#'default' enter sequence for state right_turn
-		self.__entry_action_x_automatic_moving_grid_interaction_log_grid_log_grid_right_turn()
-		self.__state_vector[0] = self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_right_turn
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_back_turn_default(self):
-		"""'default' enter sequence for state back_turn.
-		"""
-		#'default' enter sequence for state back_turn
-		self.__entry_action_x_automatic_moving_grid_interaction_log_grid_log_grid_back_turn()
-		self.__state_vector[0] = self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_back_turn
-		self.__state_conf_vector_position = 0
+		#'default' enter sequence for state first
+		self.__entry_action_x_automatic_moving_grid_interaction_logging_r1_first()
+		self.__state_vector[2] = self.State.xautomatic_moving_grid_interaction_logging_r1first
+		self.__state_conf_vector_position = 2
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_default(self):
@@ -1759,53 +1666,29 @@ class Model:
 		#'default' enter sequence for region manual control region
 		self.__react_x_manual_control_manual_control_region__entry_default()
 		
+	def __enter_sequence_x_automatic_moving_column_calcualtion_default(self):
+		"""'default' enter sequence for region column calcualtion.
+		"""
+		#'default' enter sequence for region column calcualtion
+		self.__react_x_automatic_moving_column_calcualtion__entry_default()
+		
+	def __enter_sequence_x_automatic_moving_row_calculation_default(self):
+		"""'default' enter sequence for region row calculation.
+		"""
+		#'default' enter sequence for region row calculation
+		self.__react_x_automatic_moving_row_calculation__entry_default()
+		
 	def __enter_sequence_x_automatic_moving_grid_interaction_default(self):
 		"""'default' enter sequence for region grid interaction.
 		"""
 		#'default' enter sequence for region grid interaction
 		self.__react_x_automatic_moving_grid_interaction__entry_default()
 		
-	def __enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_default(self):
-		"""'default' enter sequence for region log_grid.
+	def __enter_sequence_x_automatic_moving_grid_interaction_logging_r1_default(self):
+		"""'default' enter sequence for region r1.
 		"""
-		#'default' enter sequence for region log_grid
-		self.__react_x_automatic_moving_grid_interaction_log_grid_log_grid__entry_default()
-		
-	def __enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_default(self):
-		"""'default' enter sequence for region normal_logging.
-		"""
-		#'default' enter sequence for region normal_logging
-		self.__react_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging__entry_default()
-		
-	def __enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_default(self):
-		"""'default' enter sequence for region logging.
-		"""
-		#'default' enter sequence for region logging
-		self.__react_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging__entry_default()
-		
-	def __enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging_default(self):
-		"""'default' enter sequence for region logging.
-		"""
-		#'default' enter sequence for region logging
-		self.__react_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging__entry_default()
-		
-	def __enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_default(self):
-		"""'default' enter sequence for region row column calculation.
-		"""
-		#'default' enter sequence for region row column calculation
-		self.__react_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation__entry_default()
-		
-	def __enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_default(self):
-		"""'default' enter sequence for region column calcualtion.
-		"""
-		#'default' enter sequence for region column calcualtion
-		self.__react_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion__entry_default()
-		
-	def __enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_default(self):
-		"""'default' enter sequence for region row calculation.
-		"""
-		#'default' enter sequence for region row calculation
-		self.__react_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation__entry_default()
+		#'default' enter sequence for region r1
+		self.__react_x_automatic_moving_grid_interaction_logging_r1__entry_default()
 		
 	def __enter_sequence_x_automatic_moving_automatic_moving_through_maze_default(self):
 		"""'default' enter sequence for region automatic moving through maze.
@@ -1903,6 +1786,8 @@ class Model:
 		"""Default exit sequence for state automatic moving.
 		"""
 		#Default exit sequence for state automatic moving
+		self.__exit_sequence_x_automatic_moving_column_calcualtion()
+		self.__exit_sequence_x_automatic_moving_row_calculation()
 		self.__exit_sequence_x_automatic_moving_grid_interaction()
 		self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze()
 		self.__exit_sequence_x_automatic_moving_move()
@@ -1917,86 +1802,62 @@ class Model:
 		self.__state_vector[6] = self.State.null_state
 		self.__state_conf_vector_position = 6
 		
-	def __exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging(self):
-		"""Default exit sequence for state normal_logging.
-		"""
-		#Default exit sequence for state normal_logging
-		self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging()
-		self.__state_vector[0] = self.State.xautomatic_moving_grid_interaction_log_grid
-		self.__state_vector[1] = self.State.xautomatic_moving_grid_interaction_log_grid
-		self.__state_vector[2] = self.State.xautomatic_moving_grid_interaction_log_grid
-		self.__state_conf_vector_position = 2
-		
-	def __exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_not_logging(self):
-		"""Default exit sequence for state not logging.
-		"""
-		#Default exit sequence for state not logging
-		self.__state_vector[0] = self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging(self):
-		"""Default exit sequence for state logging.
-		"""
-		#Default exit sequence for state logging
-		self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging()
-		self.__state_vector[0] = self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging_main(self):
-		"""Default exit sequence for state main.
-		"""
-		#Default exit sequence for state main
-		self.__state_vector[0] = self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_first_step(self):
+	def __exit_sequence_x_automatic_moving_column_calcualtion_first_step(self):
 		"""Default exit sequence for state first_step.
 		"""
 		#Default exit sequence for state first_step
-		self.__state_vector[1] = self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation
-		self.__state_conf_vector_position = 1
+		self.__state_vector[0] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_second(self):
+	def __exit_sequence_x_automatic_moving_column_calcualtion_second(self):
 		"""Default exit sequence for state second.
 		"""
 		#Default exit sequence for state second
-		self.__state_vector[1] = self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation
-		self.__state_conf_vector_position = 1
+		self.__state_vector[0] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_firststep(self):
+	def __exit_sequence_x_automatic_moving_row_calculation_firststep(self):
 		"""Default exit sequence for state firststep.
 		"""
 		#Default exit sequence for state firststep
-		self.__state_vector[2] = self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation
-		self.__state_conf_vector_position = 2
+		self.__state_vector[1] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 1
 		
-	def __exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_second(self):
+	def __exit_sequence_x_automatic_moving_row_calculation_second(self):
 		"""Default exit sequence for state second.
 		"""
 		#Default exit sequence for state second
-		self.__state_vector[2] = self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation
+		self.__state_vector[1] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 1
+		
+	def __exit_sequence_x_automatic_moving_grid_interaction_unlogging(self):
+		"""Default exit sequence for state unlogging.
+		"""
+		#Default exit sequence for state unlogging
+		self.__state_vector[2] = self.State.xautomatic_moving
 		self.__state_conf_vector_position = 2
 		
-	def __exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_left_turn(self):
-		"""Default exit sequence for state left_turn.
+	def __exit_sequence_x_automatic_moving_grid_interaction_logging(self):
+		"""Default exit sequence for state logging.
 		"""
-		#Default exit sequence for state left_turn
-		self.__state_vector[0] = self.State.xautomatic_moving_grid_interaction_log_grid
-		self.__state_conf_vector_position = 0
+		#Default exit sequence for state logging
+		self.__exit_sequence_x_automatic_moving_grid_interaction_logging_r1()
+		self.__state_vector[2] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 2
 		
-	def __exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_right_turn(self):
-		"""Default exit sequence for state right_turn.
+	def __exit_sequence_x_automatic_moving_grid_interaction_logging_r1_first(self):
+		"""Default exit sequence for state first.
 		"""
-		#Default exit sequence for state right_turn
-		self.__state_vector[0] = self.State.xautomatic_moving_grid_interaction_log_grid
-		self.__state_conf_vector_position = 0
+		#Default exit sequence for state first
+		self.__state_vector[2] = self.State.xautomatic_moving_grid_interaction_logging
+		self.__state_conf_vector_position = 2
 		
-	def __exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_back_turn(self):
-		"""Default exit sequence for state back_turn.
+	def __exit_sequence_x_automatic_moving_grid_interaction_logging_r1_second(self):
+		"""Default exit sequence for state second.
 		"""
-		#Default exit sequence for state back_turn
-		self.__state_vector[0] = self.State.xautomatic_moving_grid_interaction_log_grid
-		self.__state_conf_vector_position = 0
+		#Default exit sequence for state second
+		self.__state_vector[2] = self.State.xautomatic_moving_grid_interaction_logging
+		self.__state_conf_vector_position = 2
 		
 	def __exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar(self):
 		"""Default exit sequence for state moving with lidar.
@@ -2358,18 +2219,10 @@ class Model:
 			self.__exit_sequence_x_manual_control_manual_control_region_turning_right()
 		elif state == self.State.xmanual_control_manual_control_region_turning_left:
 			self.__exit_sequence_x_manual_control_manual_control_region_turning_left()
-		elif state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_not_logging:
-			self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_not_logging()
-		elif state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging:
-			self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging()
-		elif state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging_main:
-			self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging_main()
-		elif state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_left_turn:
-			self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_left_turn()
-		elif state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_right_turn:
-			self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_right_turn()
-		elif state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_back_turn:
-			self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_back_turn()
+		elif state == self.State.xautomatic_moving_column_calcualtion_first_step:
+			self.__exit_sequence_x_automatic_moving_column_calcualtion_first_step()
+		elif state == self.State.xautomatic_moving_column_calcualtion_second:
+			self.__exit_sequence_x_automatic_moving_column_calcualtion_second()
 		elif state == self.State.xinitial_calibration:
 			self.__exit_sequence_x_initial_calibration()
 		elif state == self.State.xinitial_calibration_initial_calibration_region_start_calibration:
@@ -2407,15 +2260,19 @@ class Model:
 		elif state == self.State.xinitial_calibration_initial_calibration_region_set_zero:
 			self.__exit_sequence_x_initial_calibration_initial_calibration_region_set_zero()
 		state = self.__state_vector[1]
-		if state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_first_step:
-			self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_first_step()
-		elif state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_second:
-			self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_second()
+		if state == self.State.xautomatic_moving_row_calculation_firststep:
+			self.__exit_sequence_x_automatic_moving_row_calculation_firststep()
+		elif state == self.State.xautomatic_moving_row_calculation_second:
+			self.__exit_sequence_x_automatic_moving_row_calculation_second()
 		state = self.__state_vector[2]
-		if state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_firststep:
-			self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_firststep()
-		elif state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_second:
-			self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_second()
+		if state == self.State.xautomatic_moving_grid_interaction_unlogging:
+			self.__exit_sequence_x_automatic_moving_grid_interaction_unlogging()
+		elif state == self.State.xautomatic_moving_grid_interaction_logging:
+			self.__exit_sequence_x_automatic_moving_grid_interaction_logging()
+		elif state == self.State.xautomatic_moving_grid_interaction_logging_r1first:
+			self.__exit_sequence_x_automatic_moving_grid_interaction_logging_r1_first()
+		elif state == self.State.xautomatic_moving_grid_interaction_logging_r1second:
+			self.__exit_sequence_x_automatic_moving_grid_interaction_logging_r1_second()
 		state = self.__state_vector[3]
 		if state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar:
 			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar()
@@ -2499,63 +2356,49 @@ class Model:
 		elif state == self.State.xmanual_control_manual_control_region_turning_left:
 			self.__exit_sequence_x_manual_control_manual_control_region_turning_left()
 		
+	def __exit_sequence_x_automatic_moving_column_calcualtion(self):
+		"""Default exit sequence for region column calcualtion.
+		"""
+		#Default exit sequence for region column calcualtion
+		state = self.__state_vector[0]
+		if state == self.State.xautomatic_moving_column_calcualtion_first_step:
+			self.__exit_sequence_x_automatic_moving_column_calcualtion_first_step()
+		elif state == self.State.xautomatic_moving_column_calcualtion_second:
+			self.__exit_sequence_x_automatic_moving_column_calcualtion_second()
+		
+	def __exit_sequence_x_automatic_moving_row_calculation(self):
+		"""Default exit sequence for region row calculation.
+		"""
+		#Default exit sequence for region row calculation
+		state = self.__state_vector[1]
+		if state == self.State.xautomatic_moving_row_calculation_firststep:
+			self.__exit_sequence_x_automatic_moving_row_calculation_firststep()
+		elif state == self.State.xautomatic_moving_row_calculation_second:
+			self.__exit_sequence_x_automatic_moving_row_calculation_second()
+		
 	def __exit_sequence_x_automatic_moving_grid_interaction(self):
 		"""Default exit sequence for region grid interaction.
 		"""
 		#Default exit sequence for region grid interaction
-		state = self.__state_vector[0]
-		if state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_not_logging:
-			self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_not_logging()
-		elif state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging:
-			self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging()
-		elif state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging_main:
-			self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging_main()
-		elif state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_left_turn:
-			self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_left_turn()
-		elif state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_right_turn:
-			self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_right_turn()
-		elif state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_back_turn:
-			self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_back_turn()
-		state = self.__state_vector[1]
-		if state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_first_step:
-			self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_first_step()
-		elif state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_second:
-			self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_second()
 		state = self.__state_vector[2]
-		if state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_firststep:
-			self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_firststep()
-		elif state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_second:
-			self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_second()
+		if state == self.State.xautomatic_moving_grid_interaction_unlogging:
+			self.__exit_sequence_x_automatic_moving_grid_interaction_unlogging()
+		elif state == self.State.xautomatic_moving_grid_interaction_logging:
+			self.__exit_sequence_x_automatic_moving_grid_interaction_logging()
+		elif state == self.State.xautomatic_moving_grid_interaction_logging_r1first:
+			self.__exit_sequence_x_automatic_moving_grid_interaction_logging_r1_first()
+		elif state == self.State.xautomatic_moving_grid_interaction_logging_r1second:
+			self.__exit_sequence_x_automatic_moving_grid_interaction_logging_r1_second()
 		
-	def __exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging(self):
-		"""Default exit sequence for region normal_logging.
+	def __exit_sequence_x_automatic_moving_grid_interaction_logging_r1(self):
+		"""Default exit sequence for region r1.
 		"""
-		#Default exit sequence for region normal_logging
-		state = self.__state_vector[0]
-		if state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_not_logging:
-			self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_not_logging()
-		elif state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging:
-			self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging()
-		elif state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging_main:
-			self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging_main()
-		state = self.__state_vector[1]
-		if state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_first_step:
-			self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_first_step()
-		elif state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_second:
-			self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_second()
+		#Default exit sequence for region r1
 		state = self.__state_vector[2]
-		if state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_firststep:
-			self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_firststep()
-		elif state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_second:
-			self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_second()
-		
-	def __exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging(self):
-		"""Default exit sequence for region logging.
-		"""
-		#Default exit sequence for region logging
-		state = self.__state_vector[0]
-		if state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging_main:
-			self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging_main()
+		if state == self.State.xautomatic_moving_grid_interaction_logging_r1first:
+			self.__exit_sequence_x_automatic_moving_grid_interaction_logging_r1_first()
+		elif state == self.State.xautomatic_moving_grid_interaction_logging_r1second:
+			self.__exit_sequence_x_automatic_moving_grid_interaction_logging_r1_second()
 		
 	def __exit_sequence_x_automatic_moving_automatic_moving_through_maze(self):
 		"""Default exit sequence for region automatic moving through maze.
@@ -2725,53 +2568,29 @@ class Model:
 		#Default react sequence for initial entry 
 		self.__enter_sequence_x_manual_control_default()
 		
+	def __react_x_automatic_moving_column_calcualtion__entry_default(self):
+		"""Default react sequence for initial entry .
+		"""
+		#Default react sequence for initial entry 
+		self.__enter_sequence_x_automatic_moving_column_calcualtion_first_step_default()
+		
+	def __react_x_automatic_moving_row_calculation__entry_default(self):
+		"""Default react sequence for initial entry .
+		"""
+		#Default react sequence for initial entry 
+		self.__enter_sequence_x_automatic_moving_row_calculation_firststep_default()
+		
 	def __react_x_automatic_moving_grid_interaction__entry_default(self):
 		"""Default react sequence for initial entry .
 		"""
 		#Default react sequence for initial entry 
-		self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_default()
+		self.__enter_sequence_x_automatic_moving_grid_interaction_unlogging_default()
 		
-	def __react_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging__entry_default(self):
+	def __react_x_automatic_moving_grid_interaction_logging_r1__entry_default(self):
 		"""Default react sequence for initial entry .
 		"""
 		#Default react sequence for initial entry 
-		self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_not_logging_default()
-		
-	def __react_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging__entry_default(self):
-		"""Default react sequence for initial entry .
-		"""
-		#Default react sequence for initial entry 
-		self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging_main_default()
-		
-	def __react_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion__entry_default(self):
-		"""Default react sequence for initial entry .
-		"""
-		#Default react sequence for initial entry 
-		self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_first_step_default()
-		
-	def __react_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation__entry_default(self):
-		"""Default react sequence for initial entry .
-		"""
-		#Default react sequence for initial entry 
-		self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_firststep_default()
-		
-	def __react_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation__entry_default(self):
-		"""Default react sequence for initial entry .
-		"""
-		#Default react sequence for initial entry 
-		self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_default()
-		
-	def __react_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging__entry_default(self):
-		"""Default react sequence for initial entry .
-		"""
-		#Default react sequence for initial entry 
-		self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_default()
-		
-	def __react_x_automatic_moving_grid_interaction_log_grid_log_grid__entry_default(self):
-		"""Default react sequence for initial entry .
-		"""
-		#Default react sequence for initial entry 
-		self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_default()
+		self.__enter_sequence_x_automatic_moving_grid_interaction_logging_r1_first_default()
 		
 	def __react_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1__entry_default(self):
 		"""Default react sequence for initial entry .
@@ -3021,259 +2840,147 @@ class Model:
 		return transitioned_after
 	
 	
-	def __x_automatic_moving_grid_interaction_log_grid_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_grid_interaction_log_grid_react function.
-		"""
-		#The reactions of state log_grid.
-		return transitioned_before
-	
-	
-	def __x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_react function.
-		"""
-		#The reactions of state normal_logging.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.am_turn_left:
-					self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging()
-					self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_left_turn_default()
-					self.__x_automatic_moving_grid_interaction_log_grid_react(0)
-					transitioned_after = 2
-				elif self.am_turn_right:
-					self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging()
-					self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_right_turn_default()
-					self.__x_automatic_moving_grid_interaction_log_grid_react(0)
-					transitioned_after = 2
-				elif self.am_turn_back:
-					self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging()
-					self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_back_turn_default()
-					self.__x_automatic_moving_grid_interaction_log_grid_react(0)
-					transitioned_after = 2
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_automatic_moving_grid_interaction_log_grid_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_react function.
-		"""
-		#The reactions of state normal_logging.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_not_logging_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_not_logging_react function.
-		"""
-		#The reactions of state not logging.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.user_var.am_gl_i_row >= 0 and self.user_var.am_gl_i_col >= 0:
-					self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_not_logging()
-					self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_default()
-					transitioned_after = 0
-		return transitioned_after
-	
-	
-	def __x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_react function.
-		"""
-		#The reactions of state logging.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.user_var.am_gl_i_row < 0 or self.user_var.am_gl_i_col < 0:
-					self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging()
-					self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_not_logging_default()
-					transitioned_after = 0
-		return transitioned_after
-	
-	
-	def __x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging_main_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging_main_react function.
-		"""
-		#The reactions of state main.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.user_var.am_gl_i_row >= 0 and self.user_var.am_gl_i_col >= 0:
-					self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging_main()
-					self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging_main_default()
-					self.__x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_react function.
-		"""
-		#The reactions of state row column calculation.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_first_step_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_first_step_react function.
+	def __x_automatic_moving_column_calcualtion_first_step_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_column_calcualtion_first_step_react function.
 		"""
 		#The reactions of state first_step.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
-			if transitioned_after < 1:
-				self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_first_step()
-				self.user_var.am_gl_x_ind = 0
-				self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_second_default()
-				transitioned_after = 1
+			if transitioned_after < 0:
+				self.__exit_sequence_x_automatic_moving_column_calcualtion_first_step()
+				self.user_var.ix = 0
+				self.__enter_sequence_x_automatic_moving_column_calcualtion_second_default()
+				transitioned_after = 0
 		return transitioned_after
 	
 	
-	def __x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_second_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_second_react function.
+	def __x_automatic_moving_column_calcualtion_second_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_column_calcualtion_second_react function.
 		"""
 		#The reactions of state second.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
-			if transitioned_after < 1:
-				if self.user_var.am_gl_x_rel > (self.user_var.am_gl_x_ind + 0.25):
-					self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_second()
-					self.user_var.am_gl_x_ind = self.user_var.am_gl_x_ind + 1
-					self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_second_default()
-					transitioned_after = 1
-				elif self.user_var.am_gl_x_rel > (self.user_var.am_gl_x_ind - 0.25) and self.user_var.am_gl_x_rel < (self.user_var.am_gl_x_ind + 0.25):
-					self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_second()
-					self.user_var.am_gl_i_col = self.user_var.am_gl_x_ind
-					self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_first_step_default()
-					transitioned_after = 1
-				elif self.user_var.am_gl_x_rel <= (self.user_var.am_gl_x_ind - 0.25) or self.user_var.am_gl_x_rel >= (self.user_var.am_gl_x_ind + 0.25):
-					self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_second()
-					self.user_var.am_gl_i_col = -(1)
-					self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_first_step_default()
-					transitioned_after = 1
+			if transitioned_after < 0:
+				if self.user_var.am_gl_x_rel > (self.user_var.ix + 0.5):
+					self.__exit_sequence_x_automatic_moving_column_calcualtion_second()
+					self.user_var.ix = self.user_var.ix + 1
+					self.__enter_sequence_x_automatic_moving_column_calcualtion_second_default()
+					transitioned_after = 0
+				elif self.user_var.am_gl_x_rel <= (self.user_var.ix + 0.5) and (self.user_var.am_gl_x_rel <= (self.user_var.ix - 0.25) or self.user_var.am_gl_x_rel >= (self.user_var.ix + 0.25)):
+					self.__exit_sequence_x_automatic_moving_column_calcualtion_second()
+					self.user_var.am_gl_x_cen = False
+					self.__enter_sequence_x_automatic_moving_column_calcualtion_first_step_default()
+					transitioned_after = 0
+				elif self.user_var.am_gl_x_rel > (self.user_var.ix - 0.25) and self.user_var.am_gl_x_rel < (self.user_var.ix + 0.25):
+					self.__exit_sequence_x_automatic_moving_column_calcualtion_second()
+					self.user_var.am_gl_x_cen = True
+					self.__enter_sequence_x_automatic_moving_column_calcualtion_first_step_default()
+					transitioned_after = 0
 		return transitioned_after
 	
 	
-	def __x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_firststep_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_firststep_react function.
+	def __x_automatic_moving_row_calculation_firststep_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_row_calculation_firststep_react function.
 		"""
 		#The reactions of state firststep.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
-			if transitioned_after < 2:
-				self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_firststep()
-				self.user_var.am_gl_y_ind = 0
-				self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_second_default()
-				self.__x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_react(1)
-				transitioned_after = 2
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_react(transitioned_before)
+			if transitioned_after < 1:
+				self.__exit_sequence_x_automatic_moving_row_calculation_firststep()
+				self.user_var.iy = 0
+				self.__enter_sequence_x_automatic_moving_row_calculation_second_default()
+				transitioned_after = 1
 		return transitioned_after
 	
 	
-	def __x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_second_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_second_react function.
+	def __x_automatic_moving_row_calculation_second_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_row_calculation_second_react function.
 		"""
 		#The reactions of state second.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
+			if transitioned_after < 1:
+				if self.user_var.am_gl_y_rel > (self.user_var.iy + 0.5):
+					self.__exit_sequence_x_automatic_moving_row_calculation_second()
+					self.user_var.iy = self.user_var.iy + 1
+					self.__enter_sequence_x_automatic_moving_row_calculation_second_default()
+					transitioned_after = 1
+				elif self.user_var.am_gl_y_rel > (self.user_var.iy - 0.25) and self.user_var.am_gl_y_rel < (self.user_var.iy + 0.25):
+					self.__exit_sequence_x_automatic_moving_row_calculation_second()
+					self.user_var.am_gl_y_cen = True
+					self.__enter_sequence_x_automatic_moving_row_calculation_firststep_default()
+					transitioned_after = 1
+				elif self.user_var.am_gl_y_rel <= (self.user_var.iy + 0.5) and (self.user_var.am_gl_y_rel <= (self.user_var.iy - 0.25) or self.user_var.am_gl_y_rel >= (self.user_var.iy + 0.25)):
+					self.__exit_sequence_x_automatic_moving_row_calculation_second()
+					self.user_var.am_gl_y_cen = False
+					self.__enter_sequence_x_automatic_moving_row_calculation_firststep_default()
+					transitioned_after = 1
+		return transitioned_after
+	
+	
+	def __x_automatic_moving_grid_interaction_unlogging_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_grid_interaction_unlogging_react function.
+		"""
+		#The reactions of state unlogging.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
 			if transitioned_after < 2:
-				if self.user_var.am_gl_y_rel > (self.user_var.am_gl_y_ind + 0.25):
-					self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_second()
-					self.user_var.am_gl_y_ind = self.user_var.am_gl_y_ind + 1
-					self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_second_default()
-					self.__x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_react(1)
+				if self.user_var.am_gl_x_cen and self.user_var.am_gl_y_cen and not self.user_var.am_turning:
+					self.__exit_sequence_x_automatic_moving_grid_interaction_unlogging()
+					self.__enter_sequence_x_automatic_moving_grid_interaction_logging_default()
 					transitioned_after = 2
-				elif self.user_var.am_gl_y_rel > (self.user_var.am_gl_y_ind - 0.25) and self.user_var.am_gl_y_rel < (self.user_var.am_gl_y_ind + 0.25):
-					self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_second()
-					self.user_var.am_gl_i_row = self.user_var.am_gl_y_ind
-					self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_firststep_default()
-					self.__x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_react(1)
-					transitioned_after = 2
-				elif self.user_var.am_gl_y_rel <= (self.user_var.am_gl_y_ind - 0.25) or self.user_var.am_gl_y_rel >= (self.user_var.am_gl_y_ind + 0.25):
-					self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_second()
-					self.user_var.am_gl_i_row = -(1)
-					self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_firststep_default()
-					self.__x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_react(1)
-					transitioned_after = 2
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __x_automatic_moving_grid_interaction_log_grid_log_grid_left_turn_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_grid_interaction_log_grid_log_grid_left_turn_react function.
+	def __x_automatic_moving_grid_interaction_logging_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_grid_interaction_logging_react function.
 		"""
-		#The reactions of state left_turn.
+		#The reactions of state logging.
+		return transitioned_before
+	
+	
+	def __x_automatic_moving_grid_interaction_logging_r1_first_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_grid_interaction_logging_r1_first_react function.
+		"""
+		#The reactions of state first.
 		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.am_finished_turn:
-					self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_left_turn()
-					self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_default()
-					self.__x_automatic_moving_grid_interaction_log_grid_react(0)
-					transitioned_after = 0
+		if self.__do_completion:
+			#Default exit sequence for state first
+			self.__state_vector[2] = self.State.xautomatic_moving_grid_interaction_logging
+			self.__state_conf_vector_position = 2
+			#'default' enter sequence for state second
+			self.__entry_action_x_automatic_moving_grid_interaction_logging_r1_second()
+			self.__state_vector[2] = self.State.xautomatic_moving_grid_interaction_logging_r1second
+			self.__state_conf_vector_position = 2
+			self.__state_conf_vector_changed = True
+			self.__x_automatic_moving_grid_interaction_logging_react(2)
+		else:
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__x_automatic_moving_grid_interaction_log_grid_react(transitioned_before)
+				transitioned_after = self.__x_automatic_moving_grid_interaction_logging_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __x_automatic_moving_grid_interaction_log_grid_log_grid_right_turn_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_grid_interaction_log_grid_log_grid_right_turn_react function.
+	def __x_automatic_moving_grid_interaction_logging_r1_second_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_grid_interaction_logging_r1_second_react function.
 		"""
-		#The reactions of state right_turn.
+		#The reactions of state second.
 		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.am_finished_turn:
-					self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_right_turn()
-					self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_default()
-					self.__x_automatic_moving_grid_interaction_log_grid_react(0)
-					transitioned_after = 0
+		if self.__do_completion:
+			#Default exit sequence for state logging
+			self.__exit_sequence_x_automatic_moving_grid_interaction_logging_r1()
+			self.__state_vector[2] = self.State.xautomatic_moving
+			self.__state_conf_vector_position = 2
+			#'default' enter sequence for state unlogging
+			self.__state_vector[2] = self.State.xautomatic_moving_grid_interaction_unlogging
+			self.__state_conf_vector_position = 2
+			self.__state_conf_vector_changed = True
+		else:
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__x_automatic_moving_grid_interaction_log_grid_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_automatic_moving_grid_interaction_log_grid_log_grid_back_turn_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_grid_interaction_log_grid_log_grid_back_turn_react function.
-		"""
-		#The reactions of state back_turn.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.am_finished_turn:
-					self.__exit_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_back_turn()
-					self.__enter_sequence_x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_default()
-					self.__x_automatic_moving_grid_interaction_log_grid_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_automatic_moving_grid_interaction_log_grid_react(transitioned_before)
+				transitioned_after = self.__x_automatic_moving_grid_interaction_logging_react(transitioned_before)
 		return transitioned_after
 	
 	
@@ -4193,6 +3900,9 @@ class Model:
 			self.__state_vector[0] = self.State.null_state
 			self.__state_conf_vector_position = 0
 			#'default' enter sequence for state automatic moving
+			self.__entry_action_x_automatic_moving()
+			self.__enter_sequence_x_automatic_moving_column_calcualtion_default()
+			self.__enter_sequence_x_automatic_moving_row_calculation_default()
 			self.__enter_sequence_x_automatic_moving_grid_interaction_default()
 			self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_default()
 			self.__enter_sequence_x_automatic_moving_move_default()
@@ -4250,16 +3960,10 @@ class Model:
 			transitioned = self.__x_manual_control_manual_control_region_turning_right_react(transitioned)
 		elif state == self.State.xmanual_control_manual_control_region_turning_left:
 			transitioned = self.__x_manual_control_manual_control_region_turning_left_react(transitioned)
-		elif state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_not_logging:
-			transitioned = self.__x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_not_logging_react(transitioned)
-		elif state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging_main:
-			transitioned = self.__x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_logging_logging_logging_main_react(transitioned)
-		elif state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_left_turn:
-			transitioned = self.__x_automatic_moving_grid_interaction_log_grid_log_grid_left_turn_react(transitioned)
-		elif state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_right_turn:
-			transitioned = self.__x_automatic_moving_grid_interaction_log_grid_log_grid_right_turn_react(transitioned)
-		elif state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_back_turn:
-			transitioned = self.__x_automatic_moving_grid_interaction_log_grid_log_grid_back_turn_react(transitioned)
+		elif state == self.State.xautomatic_moving_column_calcualtion_first_step:
+			transitioned = self.__x_automatic_moving_column_calcualtion_first_step_react(transitioned)
+		elif state == self.State.xautomatic_moving_column_calcualtion_second:
+			transitioned = self.__x_automatic_moving_column_calcualtion_second_react(transitioned)
 		elif state == self.State.xinitial_calibration_initial_calibration_region_start_calibration:
 			transitioned = self.__x_initial_calibration_initial_calibration_region_start_calibration_react(transitioned)
 		elif state == self.State.xinitial_calibration_initial_calibration_region_need_to_get_closer_to_top_wall:
@@ -4296,16 +4000,18 @@ class Model:
 			transitioned = self.__x_initial_calibration_initial_calibration_region_set_zero_react(transitioned)
 		if self.__state_conf_vector_position < 1:
 			state = self.__state_vector[1]
-			if state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_first_step:
-				transitioned = self.__x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_first_step_react(transitioned)
-			elif state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_second:
-				transitioned = self.__x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_column_calcualtion_second_react(transitioned)
+			if state == self.State.xautomatic_moving_row_calculation_firststep:
+				transitioned = self.__x_automatic_moving_row_calculation_firststep_react(transitioned)
+			elif state == self.State.xautomatic_moving_row_calculation_second:
+				transitioned = self.__x_automatic_moving_row_calculation_second_react(transitioned)
 		if self.__state_conf_vector_position < 2:
 			state = self.__state_vector[2]
-			if state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_firststep:
-				transitioned = self.__x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_firststep_react(transitioned)
-			elif state == self.State.xautomatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_second:
-				transitioned = self.__x_automatic_moving_grid_interaction_log_grid_log_grid_normal_logging_normal_logging_normal_logging_row_column_calculation_row_column_calculation_row_calculation_second_react(transitioned)
+			if state == self.State.xautomatic_moving_grid_interaction_unlogging:
+				transitioned = self.__x_automatic_moving_grid_interaction_unlogging_react(transitioned)
+			elif state == self.State.xautomatic_moving_grid_interaction_logging_r1first:
+				transitioned = self.__x_automatic_moving_grid_interaction_logging_r1_first_react(transitioned)
+			elif state == self.State.xautomatic_moving_grid_interaction_logging_r1second:
+				transitioned = self.__x_automatic_moving_grid_interaction_logging_r1_second_react(transitioned)
 		if self.__state_conf_vector_position < 3:
 			state = self.__state_vector[3]
 			if state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1go:
