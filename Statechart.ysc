@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:sgraph="http://www.yakindu.org/sct/sgraph/2.0.0">
-  <sgraph:Statechart xmi:id="_H3ZnkBtMEeuKLrIwlRh1BQ" specification="@EventDriven&#xA;@ChildFirstExecution&#xA;&#xA;internal:&#xA;&#x9;var isCalibrated: boolean = false&#xA;&#x9;var halfGridSize: real = 0.24&#xA;&#x9;&#xA;&#x9;var distanceToRightWall: real&#xA;&#x9;&#xA;&#x9;event am_turnLeft&#xA;&#x9;event am_turnRight&#xA;&#x9;event am_turnBack&#xA;&#x9;event am_startTurn&#xA;&#x9;event am_finishedTurn&#xA;&#x9;&#xA;&#x9;event am_moveGr&#xA;&#x9;event am_moveHGr&#xA;&#x9;event am_finishedMove&#xA;&#xA;interface userVar:&#xA;    // userVar: not part of the robot interface.&#xA;    // You can modify this as you wish. &#xA;&#x9;var baseSpeed:real = 0.05&#xA;&#x9;var baseRotation:real = 0.2&#xA;&#x9;var startprocedure:boolean = true&#xA;&#x9;&#xA;&#x9;var am_xMem:real = 0.0&#xA;&#x9;var am_yMem:real = 0.0&#xA;&#x9;&#xA;&#x9;var am_angleTarg:real = 0&#xA;&#x9;&#xA;&#x9;// ct - cascade turning&#xA;&#x9;var am_ct_Sp1:real = 0.2&#xA;&#x9;var am_ct_Thr1:real = 4.0&#xA;&#x9;var am_ct_Sp2:real = 0.02&#xA;&#x9;var am_ct_Thr2:real = 1.0&#xA;&#x9;var am_ct_Sp3:real = 0.02&#xA;&#x9;&#xA;&#x9;// gl - grid logging&#xA;&#x9;var am_gl_iRow = -1&#xA;&#x9;var am_gl_iCol = -1&#xA;&#x9;var am_gl_xRel = -1.0&#xA;&#x9;var am_gl_yRel = -1.0&#xA;&#x9;var am_gl_xInd = 0&#xA;&#x9;var am_gl_yInd = 0&#xA;&#x9;&#xA;&#xA;/////////////////////////////////////////////////////&#xA;// Robot Interface.&#xA;// Don't change anything below this line.&#xA;interface baseValues:&#xA;&#x9;var maxSpeed:real = 0.22&#xA;&#x9;var maxRotation:real = 2.84&#xA;&#x9;&#xA;&#x9;var degreesFront:integer = 10&#xA;&#x9;var degreesRight:integer = 10&#xA;&#x9;var degreesBack:integer = 10&#xA;&#x9;var degreesLeft:integer = 10&#xA;&#xA;&#xA;////////////////////////////////////////////////&#xA;// These values are output.&#xA;// The code sends these either &#xA;// to the TurtleBot3, or &#xA;// uses it within the code&#xA;interface output:&#xA;&#x9;var speed:real&#xA;&#x9;var rotation:real&#xA;&#x9;&#xA;&#x9;var obstacles:integer = 0&#xA;&#x9;var gems:integer = 0&#xA;&#x9;&#xA;&#x9;var finish:integer = 0&#xA;&#xA;////////////////////////////////////////////////&#xA;// Keeps track of variables &#xA;// in the grid&#xA;interface grid:&#xA;&#x9;var update:boolean = false&#xA;&#x9;var receive:boolean = false&#xA;&#x9;&#xA;&#x9;var column:integer = 0&#xA;&#x9;var row:integer = 0&#xA;&#x9;var orientation:integer&#xA;&#x9;&#xA;&#x9;var visited:boolean&#xA;&#x9;&#xA;&#x9;var wallFront:integer&#xA;&#x9;var wallRight:integer&#xA;&#x9;var wallBack:integer&#xA;&#x9;var wallLeft:integer&#xA;&#x9;&#xA;&#x9;var gridSize:real = 0.48&#xA;&#x9;var maxCol:integer = 3&#xA;&#x9;var maxRow:integer = 3&#xA;&#xA;////////////////////////////////////////////////&#xA;// Calibration variables&#xA;interface startPos:&#xA;&#x9;var setZero:boolean = false&#xA;&#x9;var zeroX:real&#xA;&#x9;var zeroY:real&#xA;&#x9;var zeroSouthDegree:real&#xA;&#x9;var laserDegOffset:integer&#xA;&#xA;&#xA;////////////////////////////////////////////////&#xA;// Keyboard input in the&#xA;// form of events&#xA;interface computer:&#xA;&#x9;in event m_press&#xA;&#x9;in event w_press&#xA;&#x9;in event a_press&#xA;&#x9;in event s_press&#xA;&#x9;in event d_press&#xA;&#x9;in event x_press&#xA;&#xA;////////////////////////////////////////////////&#xA;// The data from the IMU in&#xA;// Euler angles.&#xA;interface imu:&#xA;&#x9;var pitch:real&#xA;&#x9;var roll:real&#xA;&#x9;var yaw:real&#xA;&#xA;////////////////////////////////////////////////&#xA;// The data from the odometry in&#xA;// the x, y and z directions.&#xA;interface odom:&#xA;&#x9;var x:real&#xA;&#x9;var y:real&#xA;&#x9;var z:real&#xA;&#xA;////////////////////////////////////////////////&#xA;// Distance data from the &#xA;// LDS&#xA;interface laserDistance:&#xA;&#x9;var d0:real&#xA;&#x9;var d90:real&#xA;&#x9;var d180:real&#xA;&#x9;var dm90:real&#xA;&#x9;&#xA;&#x9;var dMin:real&#xA;&#x9;var minDeg:integer&#xA;&#x9;&#xA;&#x9;var dMax:real&#xA;&#x9;var maxDeg:integer&#xA;&#x9;&#xA;&#x9;var dMean:real&#xA;&#x9;&#xA;&#x9;var dFrontMin:real&#xA;&#x9;var minDegF:integer&#xA;&#x9;var dFrontMax:real&#xA;&#x9;var maxDegF:integer&#xA;&#x9;var dFrontMean:real&#xA;&#x9;&#xA;&#x9;var dRightMin:real&#xA;&#x9;var minDegR:integer&#xA;&#x9;var dRightMax:real&#xA;&#x9;var maxDegR:integer&#xA;&#x9;var dRightMean:real&#xA;&#x9;&#xA;&#x9;var dBackMin:real&#xA;&#x9;var minDegB:integer&#xA;&#x9;var dBackMax:real&#xA;&#x9;var maxDegB:integer&#xA;&#x9;var dBackMean:real&#xA;&#x9;&#xA;&#x9;var dLeftMin:real&#xA;&#x9;var minDegL:integer&#xA;&#x9;var dLeftMax:real&#xA;&#x9;var maxDegL:integer&#xA;&#x9;var dLeftMean:real&#xA;&#xA;////////////////////////////////////////////////&#xA;// Intensity data from the &#xA;// LDS&#xA;interface laserIntensity:&#xA;&#x9;var i0:real&#xA;&#x9;var i90:real&#xA;&#x9;var i180:real&#xA;&#x9;var im90:real&#xA;&#x9;&#xA;&#x9;var iFrontMin:real&#xA;&#x9;var iFrontMax:real&#xA;&#x9;var iFrontMean:real&#xA;&#x9;&#xA;&#x9;var iRightMin:real&#xA;&#x9;var iRightMax:real&#xA;&#x9;var iRightMean:real&#xA;&#x9;&#xA;&#x9;var iBackMin:real&#xA;&#x9;var iBackMax:real&#xA;&#x9;var iBackMean:real&#xA;&#x9;&#xA;&#x9;var iLeftMin:real&#xA;&#x9;var iLeftMax:real&#xA;&#x9;var iLeftMean:real" name="model">
+  <sgraph:Statechart xmi:id="_H3ZnkBtMEeuKLrIwlRh1BQ" specification="@EventDriven&#xA;@ChildFirstExecution&#xA;&#xA;internal:&#xA;&#x9;event am_turnLeft&#xA;&#x9;event am_turnRight&#xA;&#x9;event am_turnBack&#xA;&#x9;event am_startTurn&#xA;&#x9;event am_finishedTurn&#xA;&#x9;&#xA;&#x9;event am_moveGr&#xA;&#x9;event am_moveHGr&#xA;&#x9;event am_finishedMove&#xA;&#xA;interface userVar:&#xA;&#xA;&#x9;var isCalibrated: boolean = false&#xA;&#x9;var halfGridSize: real = 0.24&#xA;&#x9;var calibrationSpeed: real = 0.02&#xA;&#x9;var calibrationRotationSpeed: real = 0.15&#xA;&#x9;&#xA;&#x9;var distanceToRightWall: real&#xA;&#xA;    // userVar: not part of the robot interface.&#xA;    // You can modify this as you wish. &#xA;&#x9;var baseSpeed:real = 0.05&#xA;&#x9;var baseRotation:real = 0.2&#xA;&#x9;var startprocedure:boolean = true&#xA;&#x9;&#xA;&#x9;var am_xMem:real = 0.0&#xA;&#x9;var am_yMem:real = 0.0&#xA;&#x9;&#xA;&#x9;var am_angleTarg:real = 0&#xA;&#x9;&#xA;&#x9;// ct - cascade turning&#xA;&#x9;var am_ct_Sp1:real = 0.2&#xA;&#x9;var am_ct_Thr1:real = 4.0&#xA;&#x9;var am_ct_Sp2:real = 0.02&#xA;&#x9;var am_ct_Thr2:real = 1.0&#xA;&#x9;var am_ct_Sp3:real = 0.02&#xA;&#x9;&#xA;&#x9;// gl - grid logging&#xA;&#x9;var am_gl_iRow = -1&#xA;&#x9;var am_gl_iCol = -1&#xA;&#x9;var am_gl_xRel = -1.0&#xA;&#x9;var am_gl_yRel = -1.0&#xA;&#x9;var am_gl_xInd = 0&#xA;&#x9;var am_gl_yInd = 0&#xA;&#x9;&#xA;&#xA;/////////////////////////////////////////////////////&#xA;// Robot Interface.&#xA;// Don't change anything below this line.&#xA;interface baseValues:&#xA;&#x9;var maxSpeed:real = 0.22&#xA;&#x9;var maxRotation:real = 2.84&#xA;&#x9;&#xA;&#x9;var degreesFront:integer = 10&#xA;&#x9;var degreesRight:integer = 10&#xA;&#x9;var degreesBack:integer = 10&#xA;&#x9;var degreesLeft:integer = 10&#xA;&#xA;&#xA;////////////////////////////////////////////////&#xA;// These values are output.&#xA;// The code sends these either &#xA;// to the TurtleBot3, or &#xA;// uses it within the code&#xA;interface output:&#xA;&#x9;var speed:real&#xA;&#x9;var rotation:real&#xA;&#x9;&#xA;&#x9;var obstacles:integer = 0&#xA;&#x9;var gems:integer = 0&#xA;&#x9;&#xA;&#x9;var finish:integer = 0&#xA;&#xA;////////////////////////////////////////////////&#xA;// Keeps track of variables &#xA;// in the grid&#xA;interface grid:&#xA;&#x9;var update:boolean = false&#xA;&#x9;var receive:boolean = false&#xA;&#x9;&#xA;&#x9;var column:integer = 0&#xA;&#x9;var row:integer = 0&#xA;&#x9;var orientation:integer&#xA;&#x9;&#xA;&#x9;var visited:boolean&#xA;&#x9;&#xA;&#x9;var wallFront:integer&#xA;&#x9;var wallRight:integer&#xA;&#x9;var wallBack:integer&#xA;&#x9;var wallLeft:integer&#xA;&#x9;&#xA;&#x9;var gridSize:real = 0.48&#xA;&#x9;var maxCol:integer = 3&#xA;&#x9;var maxRow:integer = 3&#xA;&#xA;////////////////////////////////////////////////&#xA;// Calibration variables&#xA;interface startPos:&#xA;&#x9;var setZero:boolean = false&#xA;&#x9;var zeroX:real&#xA;&#x9;var zeroY:real&#xA;&#x9;var zeroSouthDegree:real&#xA;&#x9;var laserDegOffset:integer&#xA;&#xA;&#xA;////////////////////////////////////////////////&#xA;// Keyboard input in the&#xA;// form of events&#xA;interface computer:&#xA;&#x9;in event m_press&#xA;&#x9;in event w_press&#xA;&#x9;in event a_press&#xA;&#x9;in event s_press&#xA;&#x9;in event d_press&#xA;&#x9;in event x_press&#xA;&#xA;////////////////////////////////////////////////&#xA;// The data from the IMU in&#xA;// Euler angles.&#xA;interface imu:&#xA;&#x9;var pitch:real&#xA;&#x9;var roll:real&#xA;&#x9;var yaw:real&#xA;&#xA;////////////////////////////////////////////////&#xA;// The data from the odometry in&#xA;// the x, y and z directions.&#xA;interface odom:&#xA;&#x9;var x:real&#xA;&#x9;var y:real&#xA;&#x9;var z:real&#xA;&#xA;////////////////////////////////////////////////&#xA;// Distance data from the &#xA;// LDS&#xA;interface laserDistance:&#xA;&#x9;var d0:real&#xA;&#x9;var d90:real&#xA;&#x9;var d180:real&#xA;&#x9;var dm90:real&#xA;&#x9;&#xA;&#x9;var dMin:real&#xA;&#x9;var minDeg:integer&#xA;&#x9;&#xA;&#x9;var dMax:real&#xA;&#x9;var maxDeg:integer&#xA;&#x9;&#xA;&#x9;var dMean:real&#xA;&#x9;&#xA;&#x9;var dFrontMin:real&#xA;&#x9;var minDegF:integer&#xA;&#x9;var dFrontMax:real&#xA;&#x9;var maxDegF:integer&#xA;&#x9;var dFrontMean:real&#xA;&#x9;&#xA;&#x9;var dRightMin:real&#xA;&#x9;var minDegR:integer&#xA;&#x9;var dRightMax:real&#xA;&#x9;var maxDegR:integer&#xA;&#x9;var dRightMean:real&#xA;&#x9;&#xA;&#x9;var dBackMin:real&#xA;&#x9;var minDegB:integer&#xA;&#x9;var dBackMax:real&#xA;&#x9;var maxDegB:integer&#xA;&#x9;var dBackMean:real&#xA;&#x9;&#xA;&#x9;var dLeftMin:real&#xA;&#x9;var minDegL:integer&#xA;&#x9;var dLeftMax:real&#xA;&#x9;var maxDegL:integer&#xA;&#x9;var dLeftMean:real&#xA;&#xA;////////////////////////////////////////////////&#xA;// Intensity data from the &#xA;// LDS&#xA;interface laserIntensity:&#xA;&#x9;var i0:real&#xA;&#x9;var i90:real&#xA;&#x9;var i180:real&#xA;&#x9;var im90:real&#xA;&#x9;&#xA;&#x9;var iFrontMin:real&#xA;&#x9;var iFrontMax:real&#xA;&#x9;var iFrontMean:real&#xA;&#x9;&#xA;&#x9;var iRightMin:real&#xA;&#x9;var iRightMax:real&#xA;&#x9;var iRightMean:real&#xA;&#x9;&#xA;&#x9;var iBackMin:real&#xA;&#x9;var iBackMax:real&#xA;&#x9;var iBackMean:real&#xA;&#x9;&#xA;&#x9;var iLeftMin:real&#xA;&#x9;var iLeftMax:real&#xA;&#x9;var iLeftMean:real" name="model">
     <regions xmi:id="_H3fuMxtMEeuKLrIwlRh1BQ" name="x">
       <vertices xsi:type="sgraph:State" xmi:id="_9aaewKftEe-yqbwlt3zHDA" specification="" name="Manual Control" incomingTransitions="_TLXCkKfuEe-yqbwlt3zHDA _UMzfYKz6Ee-BH8alyk3KcA">
-        <outgoingTransitions xmi:id="_JMJjYLAxEe-OQoT1SQjnrg" specification="computer.m_press [isCalibrated == true]" target="_F3eCEKpIEe-pp8eCViUvjA"/>
-        <outgoingTransitions xmi:id="_rCzUkLJ9Ee-CUr6SaR--zg" specification="computer.m_press [isCalibrated == false]" target="_Ti_bMLJ9Ee-CUr6SaR--zg"/>
+        <outgoingTransitions xmi:id="_JMJjYLAxEe-OQoT1SQjnrg" specification="computer.m_press [userVar.isCalibrated == true]" target="_F3eCEKpIEe-pp8eCViUvjA"/>
+        <outgoingTransitions xmi:id="_rCzUkLJ9Ee-CUr6SaR--zg" specification="computer.m_press [userVar.isCalibrated == false]" target="_Ti_bMLJ9Ee-CUr6SaR--zg"/>
         <regions xmi:id="_9abF0aftEe-yqbwlt3zHDA" name="manual control region">
           <vertices xsi:type="sgraph:Entry" xmi:id="_9abF0qftEe-yqbwlt3zHDA">
             <outgoingTransitions xmi:id="_9abF06ftEe-yqbwlt3zHDA" target="_9abF1KftEe-yqbwlt3zHDA"/>
@@ -38,7 +38,7 @@
       <vertices xsi:type="sgraph:Entry" xmi:id="_AVaQS6fuEe-yqbwlt3zHDA">
         <outgoingTransitions xmi:id="_TLXCkKfuEe-yqbwlt3zHDA" specification="" target="_9aaewKftEe-yqbwlt3zHDA"/>
       </vertices>
-      <vertices xsi:type="sgraph:State" xmi:id="_F3eCEKpIEe-pp8eCViUvjA" name="automatic moving" incomingTransitions="_JMJjYLAxEe-OQoT1SQjnrg _JA9PILLmEe-0wdjU_fwQww">
+      <vertices xsi:type="sgraph:State" xmi:id="_F3eCEKpIEe-pp8eCViUvjA" name="automatic moving" incomingTransitions="_JMJjYLAxEe-OQoT1SQjnrg">
         <outgoingTransitions xmi:id="_UMzfYKz6Ee-BH8alyk3KcA" specification="computer.m_press" target="_9aaewKftEe-yqbwlt3zHDA"/>
         <regions xmi:id="_F3epIapIEe-pp8eCViUvjA" name="algoritms">
           <vertices xsi:type="sgraph:State" xmi:id="_THNPELF1Ee-R2r0tx0FCWA" name="algorithms" incomingTransitions="_pK6W0LF1Ee-R2r0tx0FCWA">
@@ -285,64 +285,62 @@
           <vertices xsi:type="sgraph:Entry" xmi:id="_dePjYLJ9Ee-CUr6SaR--zg">
             <outgoingTransitions xmi:id="_0hxJYLJ9Ee-CUr6SaR--zg" specification="" target="_z7OGwLJ9Ee-CUr6SaR--zg"/>
           </vertices>
-          <vertices xsi:type="sgraph:State" xmi:id="_z7OGwLJ9Ee-CUr6SaR--zg" specification="entry / output.speed = 0.0; &#xA;output.rotation = imu.yaw >= 0.0 ? 0.15 : -0.15" name="Start calibration" incomingTransitions="_0hxJYLJ9Ee-CUr6SaR--zg">
+          <vertices xsi:type="sgraph:State" xmi:id="_z7OGwLJ9Ee-CUr6SaR--zg" specification="entry / output.speed = 0.0; &#xA;output.rotation = imu.yaw >= 0.0 ? &#xA;calibrationRotationSpeed : -calibrationRotationSpeed" name="Start calibration" incomingTransitions="_0hxJYLJ9Ee-CUr6SaR--zg">
             <outgoingTransitions xmi:id="_h2VvkLJ-Ee-CUr6SaR--zg" specification="[&#xA;&#x9;imu.yaw &lt; -179.5 &amp;&amp; imu.yaw >  -180.5 || &#xA;&#x9;imu.yaw >  179.5 &amp;&amp; imu.yaw &lt;   180.5&#xA;]" target="_1cyxwLJ-Ee-CUr6SaR--zg"/>
           </vertices>
-          <vertices xsi:type="sgraph:State" xmi:id="_bqZxwLJ-Ee-CUr6SaR--zg" specification="entry / output.rotation = 0.15" name="Need to get closer to top wall" incomingTransitions="_i0mHkLJ-Ee-CUr6SaR--zg">
+          <vertices xsi:type="sgraph:State" xmi:id="_bqZxwLJ-Ee-CUr6SaR--zg" specification="entry / output.rotation = userVar.calibrationRotationSpeed" name="Need to get closer to top wall" incomingTransitions="_i0mHkLJ-Ee-CUr6SaR--zg">
             <outgoingTransitions xmi:id="_zDgz8LKDEe-CUr6SaR--zg" specification="[imu.yaw &lt; 0.5 &amp;&amp; imu.yaw >  -0.5]" target="_tyUAELKDEe-CUr6SaR--zg"/>
           </vertices>
           <vertices xsi:type="sgraph:State" xmi:id="_d8Ij0LJ-Ee-CUr6SaR--zg" specification="entry / output.speed = 0.02" name="Need to get away from the top wall" incomingTransitions="_ZzFOULJ_Ee-CUr6SaR--zg">
-            <outgoingTransitions xmi:id="_WMx5MLKDEe-CUr6SaR--zg" specification="[&#xA;&#x9;laserDistance.d180 &lt; halfGridSize + 0.02 &amp;&amp; &#xA;&#x9;laserDistance.d180 > halfGridSize - 0.02&#xA;]" target="_ESZXQLKDEe-CUr6SaR--zg"/>
+            <outgoingTransitions xmi:id="_WMx5MLKDEe-CUr6SaR--zg" specification="[&#xA;&#x9;laserDistance.d180 &lt; userVar.halfGridSize + 0.02 &amp;&amp; &#xA;&#x9;laserDistance.d180 > userVar.halfGridSize - 0.02&#xA;]" target="_ESZXQLKDEe-CUr6SaR--zg"/>
           </vertices>
           <vertices xsi:type="sgraph:State" xmi:id="_1cyxwLJ-Ee-CUr6SaR--zg" specification="entry / output.rotation = 0.0" name="Aligned perfect south" incomingTransitions="_h2VvkLJ-Ee-CUr6SaR--zg">
-            <outgoingTransitions xmi:id="_i0mHkLJ-Ee-CUr6SaR--zg" specification="[laserDistance.d180 > halfGridSize]" target="_bqZxwLJ-Ee-CUr6SaR--zg"/>
-            <outgoingTransitions xmi:id="_ZzFOULJ_Ee-CUr6SaR--zg" specification="[laserDistance.d180 &lt; halfGridSize]" target="_d8Ij0LJ-Ee-CUr6SaR--zg"/>
-            <outgoingTransitions xmi:id="_HlRdQLKDEe-CUr6SaR--zg" specification="[laserDistance.d180 == halfGridSize]" target="_ESZXQLKDEe-CUr6SaR--zg"/>
+            <outgoingTransitions xmi:id="_i0mHkLJ-Ee-CUr6SaR--zg" specification="[laserDistance.d180 > userVar.halfGridSize]" target="_bqZxwLJ-Ee-CUr6SaR--zg"/>
+            <outgoingTransitions xmi:id="_ZzFOULJ_Ee-CUr6SaR--zg" specification="[laserDistance.d180 &lt; userVar.halfGridSize]" target="_d8Ij0LJ-Ee-CUr6SaR--zg"/>
+            <outgoingTransitions xmi:id="_HlRdQLKDEe-CUr6SaR--zg" specification="[laserDistance.d180 == userVar.halfGridSize]" target="_ESZXQLKDEe-CUr6SaR--zg"/>
           </vertices>
-          <vertices xsi:type="sgraph:State" xmi:id="_ESZXQLKDEe-CUr6SaR--zg" specification="entry / output.speed = 0.0;&#xA;output.rotation = (imu.yaw > -0.5 &amp;&amp; imu.yaw &lt; 0.5) ?&#xA; -0.15 : +0.15" name="Aligned Y axis" incomingTransitions="_HlRdQLKDEe-CUr6SaR--zg _WMx5MLKDEe-CUr6SaR--zg _Immh8LKEEe-CUr6SaR--zg">
+          <vertices xsi:type="sgraph:State" xmi:id="_ESZXQLKDEe-CUr6SaR--zg" specification="entry / output.speed = 0.0;&#xA;output.rotation = (imu.yaw > -0.5 &amp;&amp; imu.yaw &lt; 0.5) ?&#xA; - userVar.calibrationRotationSpeed : userVar.calibrationRotationSpeed" name="Aligned Y axis" incomingTransitions="_HlRdQLKDEe-CUr6SaR--zg _WMx5MLKDEe-CUr6SaR--zg _Immh8LKEEe-CUr6SaR--zg">
             <outgoingTransitions xmi:id="_oCuKkLKEEe-CUr6SaR--zg" specification="&#x9;[imu.yaw &lt; -89.5 &amp;&amp; imu.yaw >  -90.5]" target="_gQKNMLKEEe-CUr6SaR--zg"/>
           </vertices>
           <vertices xsi:type="sgraph:State" xmi:id="_tyUAELKDEe-CUr6SaR--zg" specification="entry / output.rotation = 0.0; output.speed = 0.02" name="Facing the top wall" incomingTransitions="_zDgz8LKDEe-CUr6SaR--zg">
-            <outgoingTransitions xmi:id="_Immh8LKEEe-CUr6SaR--zg" specification="[&#xA;&#x9;laserDistance.d0 &lt; halfGridSize + 0.02 &amp;&amp; &#xA;&#x9;laserDistance.d0 > halfGridSize - 0.02&#xA;]" target="_ESZXQLKDEe-CUr6SaR--zg"/>
+            <outgoingTransitions xmi:id="_Immh8LKEEe-CUr6SaR--zg" specification="[&#xA;&#x9;laserDistance.d0 &lt; userVar.halfGridSize + 0.02 &amp;&amp; &#xA;&#x9;laserDistance.d0 > userVar.halfGridSize - 0.02&#xA;]" target="_ESZXQLKDEe-CUr6SaR--zg"/>
           </vertices>
           <vertices xsi:type="sgraph:State" xmi:id="_gQKNMLKEEe-CUr6SaR--zg" specification="entry / output.rotation = 0.0" name="Aligned perfect East" incomingTransitions="_oCuKkLKEEe-CUr6SaR--zg">
             <outgoingTransitions xmi:id="_oGvOQLKMEe-CUr6SaR--zg" specification="" target="_jL7zELKKEe-CUr6SaR--zg"/>
           </vertices>
-          <vertices xsi:type="sgraph:State" xmi:id="_jL7zELKKEe-CUr6SaR--zg" specification="entry / distanceToRightWall = halfGridSize" name="0,5 G" incomingTransitions="_oGvOQLKMEe-CUr6SaR--zg">
+          <vertices xsi:type="sgraph:State" xmi:id="_jL7zELKKEe-CUr6SaR--zg" specification="entry / userVar.distanceToRightWall = userVar.halfGridSize" name="0,5 G" incomingTransitions="_oGvOQLKMEe-CUr6SaR--zg">
             <outgoingTransitions xmi:id="_62AmQLKLEe-CUr6SaR--zg" specification="always [laserDistance.d0 >= grid.gridSize - 0.02]" target="_zE4BsLKKEe-CUr6SaR--zg"/>
             <outgoingTransitions xmi:id="_bfPs0LKNEe-CUr6SaR--zg" specification="[laserDistance.d0 &lt; grid.gridSize]" target="_nEVLgLKLEe-CUr6SaR--zg"/>
           </vertices>
-          <vertices xsi:type="sgraph:State" xmi:id="_zE4BsLKKEe-CUr6SaR--zg" specification="entry / distanceToRightWall = &#xA;grid.gridSize + halfGridSize" name="1,5 G" incomingTransitions="_62AmQLKLEe-CUr6SaR--zg">
+          <vertices xsi:type="sgraph:State" xmi:id="_zE4BsLKKEe-CUr6SaR--zg" specification="entry / userVar.distanceToRightWall = &#xA;grid.gridSize + userVar.halfGridSize" name="1,5 G" incomingTransitions="_62AmQLKLEe-CUr6SaR--zg">
             <outgoingTransitions xmi:id="_8syFMLKMEe-CUr6SaR--zg" specification="always [laserDistance.d0 >= 2 * grid.gridSize - 0.02]" target="_2bKoELKKEe-CUr6SaR--zg"/>
             <outgoingTransitions xmi:id="_dZUM0LKNEe-CUr6SaR--zg" specification="[laserDistance.d0 &lt; 2.0 * grid.gridSize]" target="_nEVLgLKLEe-CUr6SaR--zg"/>
           </vertices>
-          <vertices xsi:type="sgraph:State" xmi:id="_2bKoELKKEe-CUr6SaR--zg" specification="entry / distanceToRightWall = &#xA;2.0 * grid.gridSize + halfGridSize" name="2,5 G" incomingTransitions="_8syFMLKMEe-CUr6SaR--zg">
+          <vertices xsi:type="sgraph:State" xmi:id="_2bKoELKKEe-CUr6SaR--zg" specification="entry / userVar.distanceToRightWall = &#xA;2.0 * grid.gridSize + userVar.halfGridSize" name="2,5 G" incomingTransitions="_8syFMLKMEe-CUr6SaR--zg">
             <outgoingTransitions xmi:id="_9sAtkLKMEe-CUr6SaR--zg" specification="always [laserDistance.d0 >= 3 * grid.gridSize - 0.02]" target="_5a3TYLKKEe-CUr6SaR--zg"/>
             <outgoingTransitions xmi:id="_fz5_8LKNEe-CUr6SaR--zg" specification="[laserDistance.d0 &lt; 3.0 * grid.gridSize]" target="_nEVLgLKLEe-CUr6SaR--zg"/>
           </vertices>
-          <vertices xsi:type="sgraph:State" xmi:id="_5a3TYLKKEe-CUr6SaR--zg" specification="entry / distanceToRightWall = &#xA;3.0 * grid.gridSize + halfGridSize" name="3,5 G" incomingTransitions="_9sAtkLKMEe-CUr6SaR--zg">
+          <vertices xsi:type="sgraph:State" xmi:id="_5a3TYLKKEe-CUr6SaR--zg" specification="entry / userVar.distanceToRightWall = &#xA;3.0 * grid.gridSize + userVar.halfGridSize" name="3,5 G" incomingTransitions="_9sAtkLKMEe-CUr6SaR--zg">
             <outgoingTransitions xmi:id="_khko8LKNEe-CUr6SaR--zg" specification="" target="_nEVLgLKLEe-CUr6SaR--zg"/>
           </vertices>
           <vertices xsi:type="sgraph:State" xmi:id="_nEVLgLKLEe-CUr6SaR--zg" specification="" name="The distance to right wall is determined" incomingTransitions="_bfPs0LKNEe-CUr6SaR--zg _dZUM0LKNEe-CUr6SaR--zg _fz5_8LKNEe-CUr6SaR--zg _khko8LKNEe-CUr6SaR--zg">
-            <outgoingTransitions xmi:id="_vnvPoLKOEe-CUr6SaR--zg" specification="[laserDistance.d0 > distanceToRightWall]" target="_j-GTALKOEe-CUr6SaR--zg"/>
-            <outgoingTransitions xmi:id="_7h1DELKOEe-CUr6SaR--zg" specification="[&#xA;&#x9;laserDistance.d0 > distanceToRightWall - 0.02 &amp;&amp;&#xA;&#x9;laserDistance.d0 &lt; distanceToRightWall + 0.02&#xA;]" target="_4A4r4LKOEe-CUr6SaR--zg"/>
-            <outgoingTransitions xmi:id="_NmBBQLKPEe-CUr6SaR--zg" specification="[laserDistance.d0 &lt; distanceToRightWall]" target="_kTwZ8LKOEe-CUr6SaR--zg"/>
+            <outgoingTransitions xmi:id="_vnvPoLKOEe-CUr6SaR--zg" specification="[laserDistance.d0 > userVar.distanceToRightWall]" target="_j-GTALKOEe-CUr6SaR--zg"/>
+            <outgoingTransitions xmi:id="_7h1DELKOEe-CUr6SaR--zg" specification="[&#xA;&#x9;laserDistance.d0 > userVar.distanceToRightWall - 0.02 &amp;&amp;&#xA;&#x9;laserDistance.d0 &lt; userVar.distanceToRightWall + 0.02&#xA;]" target="_4A4r4LKOEe-CUr6SaR--zg"/>
+            <outgoingTransitions xmi:id="_NmBBQLKPEe-CUr6SaR--zg" specification="[laserDistance.d0 &lt; userVar.distanceToRightWall]" target="_kTwZ8LKOEe-CUr6SaR--zg"/>
           </vertices>
           <vertices xsi:type="sgraph:State" xmi:id="_j-GTALKOEe-CUr6SaR--zg" specification="entry / output.speed = 0.02" name="Need to get closer to right wall" incomingTransitions="_vnvPoLKOEe-CUr6SaR--zg">
-            <outgoingTransitions xmi:id="_b1KnkLKPEe-CUr6SaR--zg" specification="[&#xA;&#x9;laserDistance.d0 &lt; distanceToRightWall + 0.02 &amp;&amp; &#xA;&#x9;laserDistance.d0 > distanceToRightWall - 0.02&#xA;]" target="_4A4r4LKOEe-CUr6SaR--zg"/>
+            <outgoingTransitions xmi:id="_b1KnkLKPEe-CUr6SaR--zg" specification="[&#xA;&#x9;laserDistance.d0 &lt; userVar.distanceToRightWall + 0.02 &amp;&amp; &#xA;&#x9;laserDistance.d0 > userVar.distanceToRightWall - 0.02&#xA;]" target="_4A4r4LKOEe-CUr6SaR--zg"/>
           </vertices>
-          <vertices xsi:type="sgraph:State" xmi:id="_kTwZ8LKOEe-CUr6SaR--zg" specification="entry / output.rotation = 0.15" name="Need to get away from right wall" incomingTransitions="_NmBBQLKPEe-CUr6SaR--zg">
+          <vertices xsi:type="sgraph:State" xmi:id="_kTwZ8LKOEe-CUr6SaR--zg" specification="entry / output.rotation = userVar.calibrationRotationSpeed" name="Need to get away from right wall" incomingTransitions="_NmBBQLKPEe-CUr6SaR--zg">
             <outgoingTransitions xmi:id="_EK8_kLKQEe-CUr6SaR--zg" specification="[imu.yaw &lt; 90.5 &amp;&amp; imu.yaw >  89.5]" target="_B8EtMLKQEe-CUr6SaR--zg"/>
           </vertices>
-          <vertices xsi:type="sgraph:State" xmi:id="_4A4r4LKOEe-CUr6SaR--zg" specification="entry / output.speed = 0.0;&#xA;output.rotation = (imu.yaw > 89.5 &amp;&amp; imu.yaw &lt; 90.5) ?&#xA; 0.15 : -0.15" name="X aligned" incomingTransitions="_7h1DELKOEe-CUr6SaR--zg _b1KnkLKPEe-CUr6SaR--zg _Tzgo0LKQEe-CUr6SaR--zg">
+          <vertices xsi:type="sgraph:State" xmi:id="_4A4r4LKOEe-CUr6SaR--zg" specification="entry / output.speed = 0.0;&#xA;output.rotation = (imu.yaw > 89.5 &amp;&amp; imu.yaw &lt; 90.5) ?&#xA; userVar.calibrationRotationSpeed : - userVar.calibrationRotationSpeed" name="X aligned" incomingTransitions="_7h1DELKOEe-CUr6SaR--zg _b1KnkLKPEe-CUr6SaR--zg _Tzgo0LKQEe-CUr6SaR--zg">
             <outgoingTransitions xmi:id="_1SvYsLKQEe-CUr6SaR--zg" specification="[&#xA;&#x9;imu.yaw &lt; -179.5 &amp;&amp; imu.yaw >  -180.5 || &#xA;&#x9;imu.yaw >  179.5 &amp;&amp; imu.yaw &lt;   180.5&#xA;]" target="_sqhlsLKQEe-CUr6SaR--zg"/>
           </vertices>
           <vertices xsi:type="sgraph:State" xmi:id="_B8EtMLKQEe-CUr6SaR--zg" specification="entry / output.rotation = 0.0;&#xA;output.speed = 0.02" name="Facing away from the right wall" incomingTransitions="_EK8_kLKQEe-CUr6SaR--zg">
-            <outgoingTransitions xmi:id="_Tzgo0LKQEe-CUr6SaR--zg" specification="[&#xA;&#x9;laserDistance.d180 &lt; distanceToRightWall + 0.02 &amp;&amp; &#xA;&#x9;laserDistance.d180 > distanceToRightWall - 0.02&#xA;]" target="_4A4r4LKOEe-CUr6SaR--zg"/>
+            <outgoingTransitions xmi:id="_Tzgo0LKQEe-CUr6SaR--zg" specification="[&#xA;&#x9;laserDistance.d180 &lt; userVar.distanceToRightWall + 0.02 &amp;&amp; &#xA;&#x9;laserDistance.d180 > userVar.distanceToRightWall - 0.02&#xA;]" target="_4A4r4LKOEe-CUr6SaR--zg"/>
           </vertices>
-          <vertices xsi:type="sgraph:State" xmi:id="_sqhlsLKQEe-CUr6SaR--zg" specification="entry / &#xA;startPos.setZero = true;&#xA;startPos.zeroX = odom.x;&#xA;startPos.zeroY = odom.y;&#xA;startPos.zeroSouthDegree = imu.yaw;&#xA;output.rotation = 0.0;&#xA;output.speed = 0.0;&#xA;isCalibrated = true" name="Set ZERO" incomingTransitions="_1SvYsLKQEe-CUr6SaR--zg">
-            <outgoingTransitions xmi:id="_JA9PILLmEe-0wdjU_fwQww" specification="" target="_F3eCEKpIEe-pp8eCViUvjA"/>
-          </vertices>
+          <vertices xsi:type="sgraph:State" xmi:id="_sqhlsLKQEe-CUr6SaR--zg" specification="entry / &#xA;startPos.setZero = true;&#xA;startPos.zeroX = odom.x;&#xA;startPos.zeroY = odom.y;&#xA;startPos.zeroSouthDegree = imu.yaw;&#xA;output.rotation = 0.0;&#xA;output.speed = 0.0;&#xA;userVar.isCalibrated = true" name="Set ZERO" incomingTransitions="_1SvYsLKQEe-CUr6SaR--zg"/>
         </regions>
       </vertices>
     </regions>
@@ -1840,7 +1838,7 @@
                   <styles xsi:type="notation:ShapeStyle" xmi:id="_ESZ-UbKDEe-CUr6SaR--zg" fontName="Verdana" fillColor="15720400" lineColor="12632256"/>
                   <styles xsi:type="notation:FontStyle" xmi:id="_ESZ-UrKDEe-CUr6SaR--zg"/>
                   <styles xsi:type="notation:BooleanValueStyle" xmi:id="_ESalZLKDEe-CUr6SaR--zg" name="isHorizontal" booleanValue="true"/>
-                  <layoutConstraint xsi:type="notation:Bounds" xmi:id="_ESZ-U7KDEe-CUr6SaR--zg" x="290" y="508" width="296" height="65"/>
+                  <layoutConstraint xsi:type="notation:Bounds" xmi:id="_ESZ-U7KDEe-CUr6SaR--zg" x="290" y="508" width="343" height="73"/>
                 </children>
                 <children xmi:id="_tyUAE7KDEe-CUr6SaR--zg" type="State" element="_tyUAELKDEe-CUr6SaR--zg">
                   <children xsi:type="notation:DecorationNode" xmi:id="_tyUAF7KDEe-CUr6SaR--zg" type="StateName">
@@ -2627,7 +2625,7 @@
     <edges xmi:id="_JMQRELAxEe-OQoT1SQjnrg" type="Transition" element="_JMJjYLAxEe-OQoT1SQjnrg" source="_9aZQoKftEe-yqbwlt3zHDA" target="_F3VfMKpIEe-pp8eCViUvjA">
       <children xsi:type="notation:DecorationNode" xmi:id="_JMRfMbAxEe-OQoT1SQjnrg" type="TransitionExpression">
         <styles xsi:type="notation:ShapeStyle" xmi:id="_JMRfMrAxEe-OQoT1SQjnrg"/>
-        <layoutConstraint xsi:type="notation:Location" xmi:id="_JMRfM7AxEe-OQoT1SQjnrg" x="-167" y="-101"/>
+        <layoutConstraint xsi:type="notation:Location" xmi:id="_JMRfM7AxEe-OQoT1SQjnrg" x="-159" y="-116"/>
       </children>
       <styles xsi:type="notation:ConnectorStyle" xmi:id="_JMQREbAxEe-OQoT1SQjnrg" routing="Rectilinear" lineColor="4210752"/>
       <styles xsi:type="notation:FontStyle" xmi:id="_JMRfMLAxEe-OQoT1SQjnrg" fontName="Verdana"/>
@@ -3075,17 +3073,17 @@
       </children>
       <styles xsi:type="notation:ConnectorStyle" xmi:id="_HlSrYbKDEe-CUr6SaR--zg" routing="Rectilinear" lineColor="4210752"/>
       <styles xsi:type="notation:FontStyle" xmi:id="_HlSrY7KDEe-CUr6SaR--zg" fontName="Verdana"/>
-      <bendpoints xsi:type="notation:RelativeBendpoints" xmi:id="_HlSrYrKDEe-CUr6SaR--zg" points="[-4, 27, -83, -220]$[-4, 238, -83, -9]"/>
+      <bendpoints xsi:type="notation:RelativeBendpoints" xmi:id="_HlSrYrKDEe-CUr6SaR--zg" points="[-4, 27, -106, -222]$[-4, 238, -106, -11]"/>
       <targetAnchor xsi:type="notation:IdentityAnchor" xmi:id="_IGeF0LKDEe-CUr6SaR--zg" id="(0.47540983606557374,0.1509433962264151)"/>
     </edges>
     <edges xmi:id="_WMygQLKDEe-CUr6SaR--zg" type="Transition" element="_WMx5MLKDEe-CUr6SaR--zg" source="_d8JK4LJ-Ee-CUr6SaR--zg" target="_ESZ-ULKDEe-CUr6SaR--zg">
       <children xsi:type="notation:DecorationNode" xmi:id="_WMygRLKDEe-CUr6SaR--zg" type="TransitionExpression">
         <styles xsi:type="notation:ShapeStyle" xmi:id="_WMygRbKDEe-CUr6SaR--zg"/>
-        <layoutConstraint xsi:type="notation:Location" xmi:id="_WMygRrKDEe-CUr6SaR--zg" x="-2" y="-139"/>
+        <layoutConstraint xsi:type="notation:Location" xmi:id="_WMygRrKDEe-CUr6SaR--zg" x="20" y="-139"/>
       </children>
       <styles xsi:type="notation:ConnectorStyle" xmi:id="_WMygQbKDEe-CUr6SaR--zg" routing="Rectilinear" lineColor="4210752"/>
       <styles xsi:type="notation:FontStyle" xmi:id="_WMygQ7KDEe-CUr6SaR--zg" fontName="Verdana"/>
-      <bendpoints xsi:type="notation:RelativeBendpoints" xmi:id="_WMygQrKDEe-CUr6SaR--zg" points="[37, 27, 37, -122]$[37, 145, 37, -4]$[18, 145, 18, -4]"/>
+      <bendpoints xsi:type="notation:RelativeBendpoints" xmi:id="_WMygQrKDEe-CUr6SaR--zg" points="[37, 27, -8, -126]$[37, 120, -8, -33]"/>
       <targetAnchor xsi:type="notation:IdentityAnchor" xmi:id="_WMzHULKDEe-CUr6SaR--zg" id="(0.9421052631578948,0.4528301886792453)"/>
     </edges>
     <edges xmi:id="_zDhbALKDEe-CUr6SaR--zg" type="Transition" element="_zDgz8LKDEe-CUr6SaR--zg" source="_bqaY0bJ-Ee-CUr6SaR--zg" target="_tyUAE7KDEe-CUr6SaR--zg">
@@ -3101,21 +3099,21 @@
     <edges xmi:id="_Immh8bKEEe-CUr6SaR--zg" type="Transition" element="_Immh8LKEEe-CUr6SaR--zg" source="_tyUAE7KDEe-CUr6SaR--zg" target="_ESZ-ULKDEe-CUr6SaR--zg">
       <children xsi:type="notation:DecorationNode" xmi:id="_ImnJALKEEe-CUr6SaR--zg" type="TransitionExpression">
         <styles xsi:type="notation:ShapeStyle" xmi:id="_ImnJAbKEEe-CUr6SaR--zg"/>
-        <layoutConstraint xsi:type="notation:Location" xmi:id="_ImnJArKEEe-CUr6SaR--zg" x="13" y="27"/>
+        <layoutConstraint xsi:type="notation:Location" xmi:id="_ImnJArKEEe-CUr6SaR--zg" x="17" y="27"/>
       </children>
       <styles xsi:type="notation:ConnectorStyle" xmi:id="_Immh8rKEEe-CUr6SaR--zg" routing="Rectilinear" lineColor="4210752"/>
       <styles xsi:type="notation:FontStyle" xmi:id="_Immh9LKEEe-CUr6SaR--zg" fontName="Verdana"/>
-      <bendpoints xsi:type="notation:RelativeBendpoints" xmi:id="_Immh87KEEe-CUr6SaR--zg" points="[0, 27, -289, -8]$[0, 92, -289, 57]$[233, 92, -56, 57]$[233, 39, -56, 4]"/>
+      <bendpoints xsi:type="notation:RelativeBendpoints" xmi:id="_Immh87KEEe-CUr6SaR--zg" points="[0, 27, -311, -15]$[0, 92, -311, 50]$[233, 92, -78, 50]$[233, 47, -78, 5]"/>
       <targetAnchor xsi:type="notation:IdentityAnchor" xmi:id="_ImnwELKEEe-CUr6SaR--zg" id="(0.45789473684210524,0.9433962264150944)"/>
     </edges>
     <edges xmi:id="_oCuxoLKEEe-CUr6SaR--zg" type="Transition" element="_oCuKkLKEEe-CUr6SaR--zg" source="_ESZ-ULKDEe-CUr6SaR--zg" target="_gQKNM7KEEe-CUr6SaR--zg">
       <children xsi:type="notation:DecorationNode" xmi:id="_oCuxpLKEEe-CUr6SaR--zg" type="TransitionExpression">
         <styles xsi:type="notation:ShapeStyle" xmi:id="_oCuxpbKEEe-CUr6SaR--zg"/>
-        <layoutConstraint xsi:type="notation:Location" xmi:id="_oCuxprKEEe-CUr6SaR--zg" x="24" y="10"/>
+        <layoutConstraint xsi:type="notation:Location" xmi:id="_oCuxprKEEe-CUr6SaR--zg" x="20" y="10"/>
       </children>
       <styles xsi:type="notation:ConnectorStyle" xmi:id="_oCuxobKEEe-CUr6SaR--zg" routing="Rectilinear" lineColor="4210752"/>
       <styles xsi:type="notation:FontStyle" xmi:id="_oCuxo7KEEe-CUr6SaR--zg" fontName="Verdana"/>
-      <bendpoints xsi:type="notation:RelativeBendpoints" xmi:id="_oCuxorKEEe-CUr6SaR--zg" points="[-9, 33, -235, -71]$[-9, 97, -235, -7]$[214, 97, -12, -7]"/>
+      <bendpoints xsi:type="notation:RelativeBendpoints" xmi:id="_oCuxorKEEe-CUr6SaR--zg" points="[-32, 37, -235, -63]$[-32, 93, -235, -7]$[191, 93, -12, -7]"/>
       <targetAnchor xsi:type="notation:IdentityAnchor" xmi:id="_oCv_wLKEEe-CUr6SaR--zg" id="(0.06,0.6037735849056604)"/>
     </edges>
     <edges xmi:id="_62AmQbKLEe-CUr6SaR--zg" type="Transition" element="_62AmQLKLEe-CUr6SaR--zg" source="_jMAEgLKKEe-CUr6SaR--zg" target="_zE4owLKKEe-CUr6SaR--zg">
@@ -3240,7 +3238,7 @@
     <edges xmi:id="_b1KnkbKPEe-CUr6SaR--zg" type="Transition" element="_b1KnkLKPEe-CUr6SaR--zg" source="_j-G6EbKOEe-CUr6SaR--zg" target="_4A5S8LKOEe-CUr6SaR--zg">
       <children xsi:type="notation:DecorationNode" xmi:id="_b1KnlbKPEe-CUr6SaR--zg" type="TransitionExpression">
         <styles xsi:type="notation:ShapeStyle" xmi:id="_b1KnlrKPEe-CUr6SaR--zg"/>
-        <layoutConstraint xsi:type="notation:Location" xmi:id="_b1Knl7KPEe-CUr6SaR--zg" x="-1" y="-33"/>
+        <layoutConstraint xsi:type="notation:Location" xmi:id="_b1Knl7KPEe-CUr6SaR--zg" x="29" y="-40"/>
       </children>
       <styles xsi:type="notation:ConnectorStyle" xmi:id="_b1KnkrKPEe-CUr6SaR--zg" routing="Rectilinear" lineColor="4210752"/>
       <styles xsi:type="notation:FontStyle" xmi:id="_b1KnlLKPEe-CUr6SaR--zg" fontName="Verdana"/>
@@ -3262,7 +3260,7 @@
     <edges xmi:id="_Tzgo0bKQEe-CUr6SaR--zg" type="Transition" element="_Tzgo0LKQEe-CUr6SaR--zg" source="_B8FUQLKQEe-CUr6SaR--zg" target="_4A5S8LKOEe-CUr6SaR--zg">
       <children xsi:type="notation:DecorationNode" xmi:id="_TzhP4bKQEe-CUr6SaR--zg" type="TransitionExpression">
         <styles xsi:type="notation:ShapeStyle" xmi:id="_TzhP4rKQEe-CUr6SaR--zg"/>
-        <layoutConstraint xsi:type="notation:Location" xmi:id="_TzhP47KQEe-CUr6SaR--zg" x="12" y="134"/>
+        <layoutConstraint xsi:type="notation:Location" xmi:id="_TzhP47KQEe-CUr6SaR--zg" x="16" y="170"/>
       </children>
       <styles xsi:type="notation:ConnectorStyle" xmi:id="_Tzgo0rKQEe-CUr6SaR--zg" routing="Rectilinear" lineColor="4210752"/>
       <styles xsi:type="notation:FontStyle" xmi:id="_TzhP4LKQEe-CUr6SaR--zg" fontName="Verdana"/>
@@ -3280,17 +3278,6 @@
       <bendpoints xsi:type="notation:RelativeBendpoints" xmi:id="_1Sv_wrKQEe-CUr6SaR--zg" points="[19, 7, -196, -22]$[209, 7, -6, -22]"/>
       <sourceAnchor xsi:type="notation:IdentityAnchor" xmi:id="_1SxN4LKQEe-CUr6SaR--zg" id="(0.9353448275862069,0.4946236559139785)"/>
       <targetAnchor xsi:type="notation:IdentityAnchor" xmi:id="_1SxN4bKQEe-CUr6SaR--zg" id="(0.02631578947368421,0.5268817204301075)"/>
-    </edges>
-    <edges xmi:id="_JBc-YLLmEe-0wdjU_fwQww" type="Transition" element="_JA9PILLmEe-0wdjU_fwQww" source="_sqiMwLKQEe-CUr6SaR--zg" target="_F3VfMKpIEe-pp8eCViUvjA">
-      <children xsi:type="notation:DecorationNode" xmi:id="_JBezkbLmEe-0wdjU_fwQww" type="TransitionExpression">
-        <styles xsi:type="notation:ShapeStyle" xmi:id="_JBezkrLmEe-0wdjU_fwQww"/>
-        <layoutConstraint xsi:type="notation:Location" xmi:id="_JBfaoLLmEe-0wdjU_fwQww" x="-16" y="10"/>
-      </children>
-      <styles xsi:type="notation:ConnectorStyle" xmi:id="_JBc-YbLmEe-0wdjU_fwQww" routing="Rectilinear" lineColor="4210752"/>
-      <styles xsi:type="notation:FontStyle" xmi:id="_JBezkLLmEe-0wdjU_fwQww" fontName="Verdana"/>
-      <bendpoints xsi:type="notation:RelativeBendpoints" xmi:id="_JBc-YrLmEe-0wdjU_fwQww" points="[-4, 29, 0, -274]$[-4, 303, 0, 0]"/>
-      <sourceAnchor xsi:type="notation:IdentityAnchor" xmi:id="_JBjsELLmEe-0wdjU_fwQww" id="(0.5043859649122807,0.7741935483870968)"/>
-      <targetAnchor xsi:type="notation:IdentityAnchor" xmi:id="_JBjsEbLmEe-0wdjU_fwQww" id="(0.5922459893048129,0.0)"/>
     </edges>
   </notation:Diagram>
 </xmi:XMI>
