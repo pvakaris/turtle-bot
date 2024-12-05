@@ -299,7 +299,7 @@
             <outgoingTransitions xmi:id="_ZzFOULJ_Ee-CUr6SaR--zg" specification="[laserDistance.d180 &lt; userVar.halfGridSize]" target="_d8Ij0LJ-Ee-CUr6SaR--zg"/>
             <outgoingTransitions xmi:id="_HlRdQLKDEe-CUr6SaR--zg" specification="[laserDistance.d180 == userVar.halfGridSize]" target="_ESZXQLKDEe-CUr6SaR--zg"/>
           </vertices>
-          <vertices xsi:type="sgraph:State" xmi:id="_ESZXQLKDEe-CUr6SaR--zg" specification="entry / output.speed = 0.0;&#xA;output.rotation = (imu.yaw > -0.5 &amp;&amp; imu.yaw &lt; 0.5) ?&#xA; - userVar.calibrationRotationSpeed : userVar.calibrationRotationSpeed" name="Aligned Y axis" incomingTransitions="_HlRdQLKDEe-CUr6SaR--zg _WMx5MLKDEe-CUr6SaR--zg _Immh8LKEEe-CUr6SaR--zg">
+          <vertices xsi:type="sgraph:State" xmi:id="_ESZXQLKDEe-CUr6SaR--zg" specification="entry / output.speed = 0.0;&#xA;output.rotation = (imu.yaw > -0.5 &amp;&amp; imu.yaw &lt; 0.5) ?&#xA; (- userVar.calibrationRotationSpeed) : userVar.calibrationRotationSpeed" name="Aligned Y axis" incomingTransitions="_HlRdQLKDEe-CUr6SaR--zg _WMx5MLKDEe-CUr6SaR--zg _Immh8LKEEe-CUr6SaR--zg">
             <outgoingTransitions xmi:id="_oCuKkLKEEe-CUr6SaR--zg" specification="&#x9;[imu.yaw &lt; -89.5 &amp;&amp; imu.yaw >  -90.5]" target="_gQKNMLKEEe-CUr6SaR--zg"/>
           </vertices>
           <vertices xsi:type="sgraph:State" xmi:id="_tyUAELKDEe-CUr6SaR--zg" specification="entry / output.rotation = 0.0; output.speed = 0.02" name="Facing the top wall" incomingTransitions="_zDgz8LKDEe-CUr6SaR--zg">

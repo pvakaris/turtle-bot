@@ -1092,7 +1092,7 @@ class Model:
 		"""
 		#Entry action for state 'Aligned Y axis'.
 		self.output.speed = 0.0
-		self.output.rotation = -(self.user_var.calibration_rotation_speed) if (self.imu.yaw > -(0.5) and self.imu.yaw < 0.5) else self.user_var.calibration_rotation_speed
+		self.output.rotation = (-(self.user_var.calibration_rotation_speed)) if (self.imu.yaw > -(0.5) and self.imu.yaw < 0.5) else self.user_var.calibration_rotation_speed
 		
 	def __entry_action_x_initial_calibration_initial_calibration_region_facing_the_top_wall(self):
 		"""Entry action for state 'Facing the top wall'..
