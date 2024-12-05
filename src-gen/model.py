@@ -100,7 +100,8 @@ class Model:
 			self.is_calibrated = None
 			self.half_grid_size = None
 			self.calibration_speed = None
-			self.calibration_rotation_speed = None
+			self.calibration_rotation_speed_left = None
+			self.calibration_rotation_speed_right = None
 			self.distance_to_right_wall = None
 			self.base_speed = None
 			self.base_rotation = None
@@ -397,7 +398,8 @@ class Model:
 		self.user_var.is_calibrated = False
 		self.user_var.half_grid_size = 0.24
 		self.user_var.calibration_speed = 0.02
-		self.user_var.calibration_rotation_speed = 0.15
+		self.user_var.calibration_rotation_speed_left = 0.15
+		self.user_var.calibration_rotation_speed_right = -(0.15)
 		self.user_var.distance_to_right_wall = 0.0
 		self.user_var.base_speed = 0.05
 		self.user_var.base_rotation = 0.2
@@ -1067,13 +1069,13 @@ class Model:
 		"""
 		#Entry action for state 'Start calibration'.
 		self.output.speed = 0.0
-		self.output.rotation = self.user_var.calibration_rotation_speed if self.imu.yaw >= 0.0 else -(self.user_var.calibration_rotation_speed)
+		self.output.rotation = self.user_var.calibration_rotation_speed_left if self.imu.yaw >= 0.0 else self.user_var.calibration_rotation_speed_right
 		
 	def __entry_action_x_initial_calibration_initial_calibration_region_need_to_get_closer_to_top_wall(self):
 		"""Entry action for state 'Need to get closer to top wall'..
 		"""
 		#Entry action for state 'Need to get closer to top wall'.
-		self.output.rotation = self.user_var.calibration_rotation_speed
+		self.output.rotation = self.user_var.calibration_rotation_speed_left
 		
 	def __entry_action_x_initial_calibration_initial_calibration_region_need_to_get_away_from_the_top_wall(self):
 		"""Entry action for state 'Need to get away from the top wall'..
@@ -1092,7 +1094,7 @@ class Model:
 		"""
 		#Entry action for state 'Aligned Y axis'.
 		self.output.speed = 0.0
-		self.output.rotation = (-(self.user_var.calibration_rotation_speed)) if (self.imu.yaw > -(0.5) and self.imu.yaw < 0.5) else self.user_var.calibration_rotation_speed
+		self.output.rotation = self.user_var.calibration_rotation_speed_right if (self.imu.yaw > -(0.5) and self.imu.yaw < 0.5) else self.user_var.calibration_rotation_speed_left
 		
 	def __entry_action_x_initial_calibration_initial_calibration_region_facing_the_top_wall(self):
 		"""Entry action for state 'Facing the top wall'..
@@ -1143,14 +1145,14 @@ class Model:
 		"""Entry action for state 'Need to get away from right wall'..
 		"""
 		#Entry action for state 'Need to get away from right wall'.
-		self.output.rotation = self.user_var.calibration_rotation_speed
+		self.output.rotation = self.user_var.calibration_rotation_speed_left
 		
 	def __entry_action_x_initial_calibration_initial_calibration_region_x_aligned(self):
 		"""Entry action for state 'X aligned'..
 		"""
 		#Entry action for state 'X aligned'.
 		self.output.speed = 0.0
-		self.output.rotation = self.user_var.calibration_rotation_speed if (self.imu.yaw > 89.5 and self.imu.yaw < 90.5) else -(self.user_var.calibration_rotation_speed)
+		self.output.rotation = self.user_var.calibration_rotation_speed_left if (self.imu.yaw > 89.5 and self.imu.yaw < 90.5) else -(self.user_var.calibration_rotation_speed_right)
 		
 	def __entry_action_x_initial_calibration_initial_calibration_region_facing_away_from_the_right_wall(self):
 		"""Entry action for state 'Facing away from the right wall'..
