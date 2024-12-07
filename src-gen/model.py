@@ -22,7 +22,6 @@ class Model:
 			xmanual_control_manual_control_region_turning_right,
 			xmanual_control_manual_control_region_turning_left,
 			xautomatic_moving,
-			xautomatic_moving_update_generator_gen,
 			xautomatic_moving_column_calcualtion_first_step,
 			xautomatic_moving_column_calcualtion_second,
 			xautomatic_moving_row_calculation_firststep,
@@ -36,21 +35,22 @@ class Model:
 			xautomatic_moving_grid_interaction_logging,
 			xautomatic_moving_grid_interaction_logging_r1first,
 			xautomatic_moving_grid_interaction_logging_r1second,
+			xautomatic_moving_grid_interaction_pr,
 			xautomatic_moving_automatic_moving_through_maze_moving_with_lidar,
-			xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1go,
-			xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1turn_and_go,
-			xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1to_right,
-			xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1move_forward,
-			xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1return,
-			xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1turn_left,
-			xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1wall_in_front,
+			xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1base_state,
 			xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1left_wall_disappeared,
-			xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1normal_moving,
+			xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1wall_in_front,
+			xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1move_forward,
+			xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1need_to_turn_right,
+			xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1dead_end,
+			xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1logging,
 			xautomatic_moving_automatic_moving_through_maze_moving_without_lidar,
 			xautomatic_moving_automatic_moving_through_maze_moving_without_lidar_r1placeholder,
+			xautomatic_moving_automatic_moving_through_maze_prom,
 			xautomatic_moving_move_normal,
 			xautomatic_moving_move_moving_full,
-			xautomatic_moving_move_moving_half,
+			xautomatic_moving_move_precise,
+			xautomatic_moving_move_precise2,
 			xautomatic_moving_turn_high_level_normal,
 			xautomatic_moving_turn_high_level_turn_left,
 			xautomatic_moving_turn_high_level_turn_right,
@@ -376,19 +376,21 @@ class Model:
 		self.am_start_turn = None
 		self.am_finished_turn = None
 		self.am_move_gr = None
-		self.am_move_hgr = None
 		self.am_finished_move = None
+		self.am_gl_update_dat = None
+		self.am_gl_log = None
+		self.am_gl_logged = None
 		
 		# enumeration of all states:
 		self.__State = Model.State
 		self.__state_conf_vector_changed = None
-		self.__state_vector = [None] * 9
-		for __state_index in range(9):
+		self.__state_vector = [None] * 8
+		for __state_index in range(8):
 			self.__state_vector[__state_index] = self.State.null_state
 		
 		# for timed statechart:
 		self.timer_service = None
-		self.__time_events = [None] * 1
+		self.__time_events = [None] * 4
 		
 		# initializations:
 		#Default init sequence for statechart model
@@ -398,7 +400,7 @@ class Model:
 		self.user_var.calibration_rotation_speed_left = 0.15
 		self.user_var.calibration_rotation_speed_right = -(0.15)
 		self.user_var.distance_to_right_wall = 0.0
-		self.user_var.base_speed = 0.02
+		self.user_var.base_speed = 0.2
 		self.user_var.base_rotation = 0.2
 		self.user_var.startprocedure = True
 		self.user_var.am_x_mem = 0.0
@@ -504,7 +506,7 @@ class Model:
 	def is_active(self):
 		"""Checks if the state machine is active.
 		"""
-		return self.__state_vector[0] is not self.__State.null_state or self.__state_vector[1] is not self.__State.null_state or self.__state_vector[2] is not self.__State.null_state or self.__state_vector[3] is not self.__State.null_state or self.__state_vector[4] is not self.__State.null_state or self.__state_vector[5] is not self.__State.null_state or self.__state_vector[6] is not self.__State.null_state or self.__state_vector[7] is not self.__State.null_state or self.__state_vector[8] is not self.__State.null_state
+		return self.__state_vector[0] is not self.__State.null_state or self.__state_vector[1] is not self.__State.null_state or self.__state_vector[2] is not self.__State.null_state or self.__state_vector[3] is not self.__State.null_state or self.__state_vector[4] is not self.__State.null_state or self.__state_vector[5] is not self.__State.null_state or self.__state_vector[6] is not self.__State.null_state or self.__state_vector[7] is not self.__State.null_state
 	
 	def is_final(self):
 		"""Checks if the statemachine is final.
@@ -534,97 +536,97 @@ class Model:
 		if s == self.__State.xautomatic_moving:
 			return (self.__state_vector[0] >= self.__State.xautomatic_moving)\
 				and (self.__state_vector[0] <= self.__State.xautomatic_moving_turn_low_level_nr3)
-		if s == self.__State.xautomatic_moving_update_generator_gen:
-			return self.__state_vector[0] == self.__State.xautomatic_moving_update_generator_gen
 		if s == self.__State.xautomatic_moving_column_calcualtion_first_step:
-			return self.__state_vector[1] == self.__State.xautomatic_moving_column_calcualtion_first_step
+			return self.__state_vector[0] == self.__State.xautomatic_moving_column_calcualtion_first_step
 		if s == self.__State.xautomatic_moving_column_calcualtion_second:
-			return self.__state_vector[1] == self.__State.xautomatic_moving_column_calcualtion_second
+			return self.__state_vector[0] == self.__State.xautomatic_moving_column_calcualtion_second
 		if s == self.__State.xautomatic_moving_row_calculation_firststep:
-			return self.__state_vector[2] == self.__State.xautomatic_moving_row_calculation_firststep
+			return self.__state_vector[1] == self.__State.xautomatic_moving_row_calculation_firststep
 		if s == self.__State.xautomatic_moving_row_calculation_second:
-			return self.__state_vector[2] == self.__State.xautomatic_moving_row_calculation_second
+			return self.__state_vector[1] == self.__State.xautomatic_moving_row_calculation_second
 		if s == self.__State.xautomatic_moving_direction_calculation_start:
-			return self.__state_vector[3] == self.__State.xautomatic_moving_direction_calculation_start
+			return self.__state_vector[2] == self.__State.xautomatic_moving_direction_calculation_start
 		if s == self.__State.xautomatic_moving_direction_calculation_south:
-			return self.__state_vector[3] == self.__State.xautomatic_moving_direction_calculation_south
+			return self.__state_vector[2] == self.__State.xautomatic_moving_direction_calculation_south
 		if s == self.__State.xautomatic_moving_direction_calculation_north:
-			return self.__state_vector[3] == self.__State.xautomatic_moving_direction_calculation_north
+			return self.__state_vector[2] == self.__State.xautomatic_moving_direction_calculation_north
 		if s == self.__State.xautomatic_moving_direction_calculation_east:
-			return self.__state_vector[3] == self.__State.xautomatic_moving_direction_calculation_east
+			return self.__state_vector[2] == self.__State.xautomatic_moving_direction_calculation_east
 		if s == self.__State.xautomatic_moving_direction_calculation_west:
-			return self.__state_vector[3] == self.__State.xautomatic_moving_direction_calculation_west
+			return self.__state_vector[2] == self.__State.xautomatic_moving_direction_calculation_west
 		if s == self.__State.xautomatic_moving_grid_interaction_unlogging:
-			return self.__state_vector[4] == self.__State.xautomatic_moving_grid_interaction_unlogging
+			return self.__state_vector[3] == self.__State.xautomatic_moving_grid_interaction_unlogging
 		if s == self.__State.xautomatic_moving_grid_interaction_logging:
-			return (self.__state_vector[4] >= self.__State.xautomatic_moving_grid_interaction_logging)\
-				and (self.__state_vector[4] <= self.__State.xautomatic_moving_grid_interaction_logging_r1second)
+			return (self.__state_vector[3] >= self.__State.xautomatic_moving_grid_interaction_logging)\
+				and (self.__state_vector[3] <= self.__State.xautomatic_moving_grid_interaction_logging_r1second)
 		if s == self.__State.xautomatic_moving_grid_interaction_logging_r1first:
-			return self.__state_vector[4] == self.__State.xautomatic_moving_grid_interaction_logging_r1first
+			return self.__state_vector[3] == self.__State.xautomatic_moving_grid_interaction_logging_r1first
 		if s == self.__State.xautomatic_moving_grid_interaction_logging_r1second:
-			return self.__state_vector[4] == self.__State.xautomatic_moving_grid_interaction_logging_r1second
+			return self.__state_vector[3] == self.__State.xautomatic_moving_grid_interaction_logging_r1second
+		if s == self.__State.xautomatic_moving_grid_interaction_pr:
+			return self.__state_vector[3] == self.__State.xautomatic_moving_grid_interaction_pr
 		if s == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar:
-			return (self.__state_vector[5] >= self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar)\
-				and (self.__state_vector[5] <= self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1normal_moving)
-		if s == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1go:
-			return self.__state_vector[5] == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1go
-		if s == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1turn_and_go:
-			return self.__state_vector[5] == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1turn_and_go
-		if s == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1to_right:
-			return self.__state_vector[5] == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1to_right
-		if s == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1move_forward:
-			return self.__state_vector[5] == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1move_forward
-		if s == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1return:
-			return self.__state_vector[5] == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1return
-		if s == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1turn_left:
-			return self.__state_vector[5] == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1turn_left
-		if s == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1wall_in_front:
-			return self.__state_vector[5] == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1wall_in_front
+			return (self.__state_vector[4] >= self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar)\
+				and (self.__state_vector[4] <= self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1logging)
+		if s == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1base_state:
+			return self.__state_vector[4] == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1base_state
 		if s == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1left_wall_disappeared:
-			return self.__state_vector[5] == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1left_wall_disappeared
-		if s == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1normal_moving:
-			return self.__state_vector[5] == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1normal_moving
+			return self.__state_vector[4] == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1left_wall_disappeared
+		if s == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1wall_in_front:
+			return self.__state_vector[4] == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1wall_in_front
+		if s == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1move_forward:
+			return self.__state_vector[4] == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1move_forward
+		if s == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1need_to_turn_right:
+			return self.__state_vector[4] == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1need_to_turn_right
+		if s == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1dead_end:
+			return self.__state_vector[4] == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1dead_end
+		if s == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1logging:
+			return self.__state_vector[4] == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1logging
 		if s == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_without_lidar:
-			return (self.__state_vector[5] >= self.__State.xautomatic_moving_automatic_moving_through_maze_moving_without_lidar)\
-				and (self.__state_vector[5] <= self.__State.xautomatic_moving_automatic_moving_through_maze_moving_without_lidar_r1placeholder)
+			return (self.__state_vector[4] >= self.__State.xautomatic_moving_automatic_moving_through_maze_moving_without_lidar)\
+				and (self.__state_vector[4] <= self.__State.xautomatic_moving_automatic_moving_through_maze_moving_without_lidar_r1placeholder)
 		if s == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_without_lidar_r1placeholder:
-			return self.__state_vector[5] == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_without_lidar_r1placeholder
+			return self.__state_vector[4] == self.__State.xautomatic_moving_automatic_moving_through_maze_moving_without_lidar_r1placeholder
+		if s == self.__State.xautomatic_moving_automatic_moving_through_maze_prom:
+			return self.__state_vector[4] == self.__State.xautomatic_moving_automatic_moving_through_maze_prom
 		if s == self.__State.xautomatic_moving_move_normal:
-			return self.__state_vector[6] == self.__State.xautomatic_moving_move_normal
+			return self.__state_vector[5] == self.__State.xautomatic_moving_move_normal
 		if s == self.__State.xautomatic_moving_move_moving_full:
-			return self.__state_vector[6] == self.__State.xautomatic_moving_move_moving_full
-		if s == self.__State.xautomatic_moving_move_moving_half:
-			return self.__state_vector[6] == self.__State.xautomatic_moving_move_moving_half
+			return self.__state_vector[5] == self.__State.xautomatic_moving_move_moving_full
+		if s == self.__State.xautomatic_moving_move_precise:
+			return self.__state_vector[5] == self.__State.xautomatic_moving_move_precise
+		if s == self.__State.xautomatic_moving_move_precise2:
+			return self.__state_vector[5] == self.__State.xautomatic_moving_move_precise2
 		if s == self.__State.xautomatic_moving_turn_high_level_normal:
-			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_high_level_normal
+			return self.__state_vector[6] == self.__State.xautomatic_moving_turn_high_level_normal
 		if s == self.__State.xautomatic_moving_turn_high_level_turn_left:
-			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_high_level_turn_left
+			return self.__state_vector[6] == self.__State.xautomatic_moving_turn_high_level_turn_left
 		if s == self.__State.xautomatic_moving_turn_high_level_turn_right:
-			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_high_level_turn_right
+			return self.__state_vector[6] == self.__State.xautomatic_moving_turn_high_level_turn_right
 		if s == self.__State.xautomatic_moving_turn_high_level_turn_back:
-			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_high_level_turn_back
+			return self.__state_vector[6] == self.__State.xautomatic_moving_turn_high_level_turn_back
 		if s == self.__State.xautomatic_moving_turn_high_level_processing_angle:
-			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_high_level_processing_angle
+			return self.__state_vector[6] == self.__State.xautomatic_moving_turn_high_level_processing_angle
 		if s == self.__State.xautomatic_moving_turn_high_level_plus:
-			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_high_level_plus
+			return self.__state_vector[6] == self.__State.xautomatic_moving_turn_high_level_plus
 		if s == self.__State.xautomatic_moving_turn_high_level_minus:
-			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_high_level_minus
+			return self.__state_vector[6] == self.__State.xautomatic_moving_turn_high_level_minus
 		if s == self.__State.xautomatic_moving_turn_high_level_processing_angle2:
-			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_high_level_processing_angle2
+			return self.__state_vector[6] == self.__State.xautomatic_moving_turn_high_level_processing_angle2
 		if s == self.__State.xautomatic_moving_turn_low_level_normal:
-			return self.__state_vector[8] == self.__State.xautomatic_moving_turn_low_level_normal
+			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_low_level_normal
 		if s == self.__State.xautomatic_moving_turn_low_level_negative_rotation:
-			return self.__state_vector[8] == self.__State.xautomatic_moving_turn_low_level_negative_rotation
+			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_low_level_negative_rotation
 		if s == self.__State.xautomatic_moving_turn_low_level_positive_rotation:
-			return self.__state_vector[8] == self.__State.xautomatic_moving_turn_low_level_positive_rotation
+			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_low_level_positive_rotation
 		if s == self.__State.xautomatic_moving_turn_low_level_pr2:
-			return self.__state_vector[8] == self.__State.xautomatic_moving_turn_low_level_pr2
+			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_low_level_pr2
 		if s == self.__State.xautomatic_moving_turn_low_level_pr3:
-			return self.__state_vector[8] == self.__State.xautomatic_moving_turn_low_level_pr3
+			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_low_level_pr3
 		if s == self.__State.xautomatic_moving_turn_low_level_nr2:
-			return self.__state_vector[8] == self.__State.xautomatic_moving_turn_low_level_nr2
+			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_low_level_nr2
 		if s == self.__State.xautomatic_moving_turn_low_level_nr3:
-			return self.__state_vector[8] == self.__State.xautomatic_moving_turn_low_level_nr3
+			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_low_level_nr3
 		if s == self.__State.xinitial_calibration:
 			return (self.__state_vector[0] >= self.__State.xinitial_calibration)\
 				and (self.__state_vector[0] <= self.__State.xinitial_calibration_initial_calibration_region_set_zero)
@@ -667,7 +669,7 @@ class Model:
 	def time_elapsed(self, event_id):
 		"""Add time events to in event queue
 		"""
-		if event_id in range(1):
+		if event_id in range(4):
 			self.in_event_queue.put(lambda: self.raise_time_event(event_id))
 			self.run_cycle()
 	
@@ -747,16 +749,6 @@ class Model:
 		"""
 		self.am_move_gr = True
 	
-	def raise_am_move_hgr(self):
-		"""Raise method for event am_move_hgr.
-		"""
-		self.__internal_event_queue.put(self.__raise_am_move_hgr_call)
-	
-	def __raise_am_move_hgr_call(self):
-		"""Raise callback for event am_move_hgr.
-		"""
-		self.am_move_hgr = True
-	
 	def raise_am_finished_move(self):
 		"""Raise method for event am_finished_move.
 		"""
@@ -766,6 +758,36 @@ class Model:
 		"""Raise callback for event am_finished_move.
 		"""
 		self.am_finished_move = True
+	
+	def raise_am_gl_update_dat(self):
+		"""Raise method for event am_gl_update_dat.
+		"""
+		self.__internal_event_queue.put(self.__raise_am_gl_update_dat_call)
+	
+	def __raise_am_gl_update_dat_call(self):
+		"""Raise callback for event am_gl_update_dat.
+		"""
+		self.am_gl_update_dat = True
+	
+	def raise_am_gl_log(self):
+		"""Raise method for event am_gl_log.
+		"""
+		self.__internal_event_queue.put(self.__raise_am_gl_log_call)
+	
+	def __raise_am_gl_log_call(self):
+		"""Raise callback for event am_gl_log.
+		"""
+		self.am_gl_log = True
+	
+	def raise_am_gl_logged(self):
+		"""Raise method for event am_gl_logged.
+		"""
+		self.__internal_event_queue.put(self.__raise_am_gl_logged_call)
+	
+	def __raise_am_gl_logged_call(self):
+		"""Raise callback for event am_gl_logged.
+		"""
+		self.am_gl_logged = True
 	
 	def __entry_action_x_manual_control_manual_control_region_idle(self):
 		"""Entry action for state 'Idle'..
@@ -802,31 +824,18 @@ class Model:
 		self.output.rotation = (self.output.rotation + 0.02) if self.output.rotation < 2.82 else 2.84
 		self.__completed = True
 		
-	def __entry_action_x_automatic_moving(self):
-		"""Entry action for state 'automatic moving'..
-		"""
-		#Entry action for state 'automatic moving'.
-		self.start_pos.zero_x = self.odom.x
-		self.start_pos.zero_y = self.odom.y
-		self.start_pos.zero_south_degree = -(90.0)
-		
-	def __entry_action_x_automatic_moving_update_generator_gen(self):
-		""".
-		"""
-		self.__completed = True
-		
 	def __entry_action_x_automatic_moving_column_calcualtion_first_step(self):
 		"""Entry action for state 'first_step'..
 		"""
 		#Entry action for state 'first_step'.
-		self.user_var.am_gl_x_rel = (((self.odom.x - self.start_pos.zero_x)) / self.grid.grid_size)
+		self.user_var.am_gl_x_rel = ((((self.odom.x - self.start_pos.zero_x)) if (self.odom.x > self.start_pos.zero_x) else ((self.start_pos.zero_x - self.odom.x))) / self.grid.grid_size)
 		self.grid.column = self.user_var.ix
 		
 	def __entry_action_x_automatic_moving_row_calculation_firststep(self):
 		"""Entry action for state 'firststep'..
 		"""
 		#Entry action for state 'firststep'.
-		self.user_var.am_gl_y_rel = (((self.start_pos.zero_y - self.odom.y)) / self.grid.grid_size)
+		self.user_var.am_gl_y_rel = ((((self.start_pos.zero_y - self.odom.y)) if (self.start_pos.zero_y > self.odom.y) else ((self.odom.y - self.start_pos.zero_y))) / self.grid.grid_size)
 		self.grid.row = self.user_var.iy
 		
 	def __entry_action_x_automatic_moving_direction_calculation_south(self):
@@ -862,82 +871,78 @@ class Model:
 		self.__completed = True
 		
 	def __entry_action_x_automatic_moving_grid_interaction_logging_r1_first(self):
-		""".
+		"""Entry action for state 'first'..
 		"""
 		#Entry action for state 'first'.
+		self.timer_service.set_timer(self, 0, (5 * 1000), False)
 		self.grid.wall_front = 1 if self.laser_distance.d0 < self.grid.grid_size else 0
 		self.grid.wall_left = 1 if self.laser_distance.d90 < self.grid.grid_size else 0
 		self.grid.wall_back = 1 if self.laser_distance.d180 < self.grid.grid_size else 0
 		self.grid.wall_right = 1 if self.laser_distance.dm90 < self.grid.grid_size else 0
-		self.__completed = True
 		
 	def __entry_action_x_automatic_moving_grid_interaction_logging_r1_second(self):
-		""".
+		"""Entry action for state 'second'..
 		"""
 		#Entry action for state 'second'.
+		self.timer_service.set_timer(self, 1, (1 * 1000), False)
 		self.grid.update = True
-		self.__completed = True
 		
-	def __entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_go(self):
-		"""Entry action for state 'go'..
+	def __entry_action_x_automatic_moving_grid_interaction_pr(self):
+		"""Entry action for state 'pr'..
 		"""
-		#Entry action for state 'go'.
-		self.raise_am_move_gr()
+		#Entry action for state 'pr'.
+		self.timer_service.set_timer(self, 2, (1 * 1000), False)
+		self.raise_am_gl_update_dat()
 		
-	def __entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_turn_and_go(self):
-		"""Entry action for state 'turn and go'..
+	def __entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_base_state(self):
+		"""Entry action for state 'base_state'..
 		"""
-		#Entry action for state 'turn and go'.
-		self.raise_am_turn_left()
-		
-	def __entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_to_right(self):
-		"""Entry action for state 'to right'..
-		"""
-		#Entry action for state 'to right'.
-		self.raise_am_turn_right()
-		
-	def __entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_move_forward(self):
-		"""Entry action for state 'move forward'..
-		"""
-		#Entry action for state 'move forward'.
-		self.raise_am_move_gr()
-		
-	def __entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_return(self):
-		"""Entry action for state 'return'..
-		"""
-		#Entry action for state 'return'.
-		self.raise_am_turn_back()
-		
-	def __entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_turn_left(self):
-		"""Entry action for state 'turn left'..
-		"""
-		#Entry action for state 'turn left'.
-		self.raise_am_turn_left()
-		
-	def __entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front(self):
-		"""Entry action for state 'wall_in_front'..
-		"""
-		#Entry action for state 'wall_in_front'.
+		#Entry action for state 'base_state'.
 		self.output.speed = 0.0
+		self.output.rotation = 0.0
 		
 	def __entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_left_wall_disappeared(self):
 		"""Entry action for state 'left_wall_disappeared'..
 		"""
 		#Entry action for state 'left_wall_disappeared'.
-		self.raise_am_move_hgr()
+		self.raise_am_turn_left()
 		
-	def __entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_normal_moving(self):
-		"""Entry action for state 'normal_moving'..
+	def __entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_move_forward(self):
+		"""Entry action for state 'move_forward'..
 		"""
-		#Entry action for state 'normal_moving'.
-		self.output.speed = self.user_var.base_speed
-		self.output.rotation = 0.0
+		#Entry action for state 'move_forward'.
+		self.raise_am_move_gr()
+		
+	def __entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_need_to_turn_right(self):
+		"""Entry action for state 'need_to_turn_right'..
+		"""
+		#Entry action for state 'need_to_turn_right'.
+		self.raise_am_turn_right()
+		
+	def __entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_dead_end(self):
+		"""Entry action for state 'dead_end'..
+		"""
+		#Entry action for state 'dead_end'.
+		self.raise_am_turn_back()
+		
+	def __entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_logging(self):
+		"""Entry action for state 'logging'..
+		"""
+		#Entry action for state 'logging'.
+		self.raise_am_gl_log()
+		
+	def __entry_action_x_automatic_moving_automatic_moving_through_maze_prom(self):
+		"""Entry action for state 'prom'..
+		"""
+		#Entry action for state 'prom'.
+		self.raise_am_turn_left()
 		
 	def __entry_action_x_automatic_moving_move_normal(self):
 		"""Entry action for state 'normal'..
 		"""
 		#Entry action for state 'normal'.
 		self.raise_am_finished_move()
+		self.output.speed = 0.0
 		
 	def __entry_action_x_automatic_moving_move_moving_full(self):
 		"""Entry action for state 'moving full'..
@@ -947,13 +952,17 @@ class Model:
 		self.user_var.am_x_mem = self.odom.x
 		self.user_var.am_y_mem = self.odom.y
 		
-	def __entry_action_x_automatic_moving_move_moving_half(self):
-		"""Entry action for state 'moving half'..
+	def __entry_action_x_automatic_moving_move_precise(self):
+		"""Entry action for state 'precise'..
 		"""
-		#Entry action for state 'moving half'.
-		self.output.speed = self.user_var.base_speed
-		self.user_var.am_x_mem = self.odom.x
-		self.user_var.am_y_mem = self.odom.y
+		#Entry action for state 'precise'.
+		self.output.speed = (-(self.user_var.base_speed) / 10.0)
+		
+	def __entry_action_x_automatic_moving_move_precise2(self):
+		"""Entry action for state 'precise2'..
+		"""
+		#Entry action for state 'precise2'.
+		self.output.speed = (self.user_var.base_speed / 40.0)
 		
 	def __entry_action_x_automatic_moving_turn_high_level_normal(self):
 		"""Entry action for state 'normal'..
@@ -989,7 +998,7 @@ class Model:
 		"""Entry action for state 'processingAngle'..
 		"""
 		#Entry action for state 'processingAngle'.
-		self.timer_service.set_timer(self, 0, (1 * 1000), False)
+		self.timer_service.set_timer(self, 3, (1 * 1000), False)
 		
 	def __entry_action_x_automatic_moving_turn_high_level_plus(self):
 		""".
@@ -1164,11 +1173,29 @@ class Model:
 		self.user_var.is_calibrated = True
 		self.__completed = True
 		
+	def __exit_action_x_automatic_moving_grid_interaction_logging_r1_first(self):
+		"""Exit action for state 'first'..
+		"""
+		#Exit action for state 'first'.
+		self.timer_service.unset_timer(self, 0)
+		
+	def __exit_action_x_automatic_moving_grid_interaction_logging_r1_second(self):
+		"""Exit action for state 'second'..
+		"""
+		#Exit action for state 'second'.
+		self.timer_service.unset_timer(self, 1)
+		
+	def __exit_action_x_automatic_moving_grid_interaction_pr(self):
+		"""Exit action for state 'pr'..
+		"""
+		#Exit action for state 'pr'.
+		self.timer_service.unset_timer(self, 2)
+		
 	def __exit_action_x_automatic_moving_turn_high_level_processing_angle(self):
 		"""Exit action for state 'processingAngle'..
 		"""
 		#Exit action for state 'processingAngle'.
-		self.timer_service.unset_timer(self, 0)
+		self.timer_service.unset_timer(self, 3)
 		
 	def __enter_sequence_x_manual_control_default(self):
 		"""'default' enter sequence for state Manual Control.
@@ -1225,8 +1252,6 @@ class Model:
 		"""'default' enter sequence for state automatic moving.
 		"""
 		#'default' enter sequence for state automatic moving
-		self.__entry_action_x_automatic_moving()
-		self.__enter_sequence_x_automatic_moving_update_generator_default()
 		self.__enter_sequence_x_automatic_moving_column_calcualtion_default()
 		self.__enter_sequence_x_automatic_moving_row_calculation_default()
 		self.__enter_sequence_x_automatic_moving_direction_calculation_default()
@@ -1236,30 +1261,21 @@ class Model:
 		self.__enter_sequence_x_automatic_moving_turn_high_level_default()
 		self.__enter_sequence_x_automatic_moving_turn_low_level_default()
 		
-	def __enter_sequence_x_automatic_moving_update_generator_gen_default(self):
-		"""'default' enter sequence for state gen.
-		"""
-		#'default' enter sequence for state gen
-		self.__entry_action_x_automatic_moving_update_generator_gen()
-		self.__state_vector[0] = self.State.xautomatic_moving_update_generator_gen
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
 	def __enter_sequence_x_automatic_moving_column_calcualtion_first_step_default(self):
 		"""'default' enter sequence for state first_step.
 		"""
 		#'default' enter sequence for state first_step
 		self.__entry_action_x_automatic_moving_column_calcualtion_first_step()
-		self.__state_vector[1] = self.State.xautomatic_moving_column_calcualtion_first_step
-		self.__state_conf_vector_position = 1
+		self.__state_vector[0] = self.State.xautomatic_moving_column_calcualtion_first_step
+		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_column_calcualtion_second_default(self):
 		"""'default' enter sequence for state second.
 		"""
 		#'default' enter sequence for state second
-		self.__state_vector[1] = self.State.xautomatic_moving_column_calcualtion_second
-		self.__state_conf_vector_position = 1
+		self.__state_vector[0] = self.State.xautomatic_moving_column_calcualtion_second
+		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_row_calculation_firststep_default(self):
@@ -1267,24 +1283,24 @@ class Model:
 		"""
 		#'default' enter sequence for state firststep
 		self.__entry_action_x_automatic_moving_row_calculation_firststep()
-		self.__state_vector[2] = self.State.xautomatic_moving_row_calculation_firststep
-		self.__state_conf_vector_position = 2
+		self.__state_vector[1] = self.State.xautomatic_moving_row_calculation_firststep
+		self.__state_conf_vector_position = 1
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_row_calculation_second_default(self):
 		"""'default' enter sequence for state second.
 		"""
 		#'default' enter sequence for state second
-		self.__state_vector[2] = self.State.xautomatic_moving_row_calculation_second
-		self.__state_conf_vector_position = 2
+		self.__state_vector[1] = self.State.xautomatic_moving_row_calculation_second
+		self.__state_conf_vector_position = 1
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_direction_calculation_start_default(self):
 		"""'default' enter sequence for state start.
 		"""
 		#'default' enter sequence for state start
-		self.__state_vector[3] = self.State.xautomatic_moving_direction_calculation_start
-		self.__state_conf_vector_position = 3
+		self.__state_vector[2] = self.State.xautomatic_moving_direction_calculation_start
+		self.__state_conf_vector_position = 2
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_direction_calculation_south_default(self):
@@ -1292,8 +1308,8 @@ class Model:
 		"""
 		#'default' enter sequence for state south
 		self.__entry_action_x_automatic_moving_direction_calculation_south()
-		self.__state_vector[3] = self.State.xautomatic_moving_direction_calculation_south
-		self.__state_conf_vector_position = 3
+		self.__state_vector[2] = self.State.xautomatic_moving_direction_calculation_south
+		self.__state_conf_vector_position = 2
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_direction_calculation_north_default(self):
@@ -1301,8 +1317,8 @@ class Model:
 		"""
 		#'default' enter sequence for state north
 		self.__entry_action_x_automatic_moving_direction_calculation_north()
-		self.__state_vector[3] = self.State.xautomatic_moving_direction_calculation_north
-		self.__state_conf_vector_position = 3
+		self.__state_vector[2] = self.State.xautomatic_moving_direction_calculation_north
+		self.__state_conf_vector_position = 2
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_direction_calculation_east_default(self):
@@ -1310,8 +1326,8 @@ class Model:
 		"""
 		#'default' enter sequence for state east
 		self.__entry_action_x_automatic_moving_direction_calculation_east()
-		self.__state_vector[3] = self.State.xautomatic_moving_direction_calculation_east
-		self.__state_conf_vector_position = 3
+		self.__state_vector[2] = self.State.xautomatic_moving_direction_calculation_east
+		self.__state_conf_vector_position = 2
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_direction_calculation_west_default(self):
@@ -1319,16 +1335,16 @@ class Model:
 		"""
 		#'default' enter sequence for state west
 		self.__entry_action_x_automatic_moving_direction_calculation_west()
-		self.__state_vector[3] = self.State.xautomatic_moving_direction_calculation_west
-		self.__state_conf_vector_position = 3
+		self.__state_vector[2] = self.State.xautomatic_moving_direction_calculation_west
+		self.__state_conf_vector_position = 2
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_grid_interaction_unlogging_default(self):
 		"""'default' enter sequence for state unlogging.
 		"""
 		#'default' enter sequence for state unlogging
-		self.__state_vector[4] = self.State.xautomatic_moving_grid_interaction_unlogging
-		self.__state_conf_vector_position = 4
+		self.__state_vector[3] = self.State.xautomatic_moving_grid_interaction_unlogging
+		self.__state_conf_vector_position = 3
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_grid_interaction_logging_default(self):
@@ -1342,8 +1358,26 @@ class Model:
 		"""
 		#'default' enter sequence for state first
 		self.__entry_action_x_automatic_moving_grid_interaction_logging_r1_first()
-		self.__state_vector[4] = self.State.xautomatic_moving_grid_interaction_logging_r1first
-		self.__state_conf_vector_position = 4
+		self.__state_vector[3] = self.State.xautomatic_moving_grid_interaction_logging_r1first
+		self.__state_conf_vector_position = 3
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_x_automatic_moving_grid_interaction_logging_r1_second_default(self):
+		"""'default' enter sequence for state second.
+		"""
+		#'default' enter sequence for state second
+		self.__entry_action_x_automatic_moving_grid_interaction_logging_r1_second()
+		self.__state_vector[3] = self.State.xautomatic_moving_grid_interaction_logging_r1second
+		self.__state_conf_vector_position = 3
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_x_automatic_moving_grid_interaction_pr_default(self):
+		"""'default' enter sequence for state pr.
+		"""
+		#'default' enter sequence for state pr
+		self.__entry_action_x_automatic_moving_grid_interaction_pr()
+		self.__state_vector[3] = self.State.xautomatic_moving_grid_interaction_pr
+		self.__state_conf_vector_position = 3
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_default(self):
@@ -1352,67 +1386,13 @@ class Model:
 		#'default' enter sequence for state moving with lidar
 		self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_default()
 		
-	def __enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_go_default(self):
-		"""'default' enter sequence for state go.
+	def __enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_base_state_default(self):
+		"""'default' enter sequence for state base_state.
 		"""
-		#'default' enter sequence for state go
-		self.__entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_go()
-		self.__state_vector[5] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1go
-		self.__state_conf_vector_position = 5
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_turn_and_go_default(self):
-		"""'default' enter sequence for state turn and go.
-		"""
-		#'default' enter sequence for state turn and go
-		self.__entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_turn_and_go()
-		self.__state_vector[5] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1turn_and_go
-		self.__state_conf_vector_position = 5
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_to_right_default(self):
-		"""'default' enter sequence for state to right.
-		"""
-		#'default' enter sequence for state to right
-		self.__entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_to_right()
-		self.__state_vector[5] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1to_right
-		self.__state_conf_vector_position = 5
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_move_forward_default(self):
-		"""'default' enter sequence for state move forward.
-		"""
-		#'default' enter sequence for state move forward
-		self.__entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_move_forward()
-		self.__state_vector[5] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1move_forward
-		self.__state_conf_vector_position = 5
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_return_default(self):
-		"""'default' enter sequence for state return.
-		"""
-		#'default' enter sequence for state return
-		self.__entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_return()
-		self.__state_vector[5] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1return
-		self.__state_conf_vector_position = 5
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_turn_left_default(self):
-		"""'default' enter sequence for state turn left.
-		"""
-		#'default' enter sequence for state turn left
-		self.__entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_turn_left()
-		self.__state_vector[5] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1turn_left
-		self.__state_conf_vector_position = 5
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front_default(self):
-		"""'default' enter sequence for state wall_in_front.
-		"""
-		#'default' enter sequence for state wall_in_front
-		self.__entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front()
-		self.__state_vector[5] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1wall_in_front
-		self.__state_conf_vector_position = 5
+		#'default' enter sequence for state base_state
+		self.__entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_base_state()
+		self.__state_vector[4] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1base_state
+		self.__state_conf_vector_position = 4
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_left_wall_disappeared_default(self):
@@ -1420,17 +1400,52 @@ class Model:
 		"""
 		#'default' enter sequence for state left_wall_disappeared
 		self.__entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_left_wall_disappeared()
-		self.__state_vector[5] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1left_wall_disappeared
-		self.__state_conf_vector_position = 5
+		self.__state_vector[4] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1left_wall_disappeared
+		self.__state_conf_vector_position = 4
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_normal_moving_default(self):
-		"""'default' enter sequence for state normal_moving.
+	def __enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front_default(self):
+		"""'default' enter sequence for state wall_in_front.
 		"""
-		#'default' enter sequence for state normal_moving
-		self.__entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_normal_moving()
-		self.__state_vector[5] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1normal_moving
-		self.__state_conf_vector_position = 5
+		#'default' enter sequence for state wall_in_front
+		self.__state_vector[4] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1wall_in_front
+		self.__state_conf_vector_position = 4
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_move_forward_default(self):
+		"""'default' enter sequence for state move_forward.
+		"""
+		#'default' enter sequence for state move_forward
+		self.__entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_move_forward()
+		self.__state_vector[4] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1move_forward
+		self.__state_conf_vector_position = 4
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_need_to_turn_right_default(self):
+		"""'default' enter sequence for state need_to_turn_right.
+		"""
+		#'default' enter sequence for state need_to_turn_right
+		self.__entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_need_to_turn_right()
+		self.__state_vector[4] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1need_to_turn_right
+		self.__state_conf_vector_position = 4
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_dead_end_default(self):
+		"""'default' enter sequence for state dead_end.
+		"""
+		#'default' enter sequence for state dead_end
+		self.__entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_dead_end()
+		self.__state_vector[4] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1dead_end
+		self.__state_conf_vector_position = 4
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_logging_default(self):
+		"""'default' enter sequence for state logging.
+		"""
+		#'default' enter sequence for state logging
+		self.__entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_logging()
+		self.__state_vector[4] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1logging
+		self.__state_conf_vector_position = 4
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_without_lidar_default(self):
@@ -1443,8 +1458,17 @@ class Model:
 		"""'default' enter sequence for state placeholder.
 		"""
 		#'default' enter sequence for state placeholder
-		self.__state_vector[5] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_without_lidar_r1placeholder
-		self.__state_conf_vector_position = 5
+		self.__state_vector[4] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_without_lidar_r1placeholder
+		self.__state_conf_vector_position = 4
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_x_automatic_moving_automatic_moving_through_maze_prom_default(self):
+		"""'default' enter sequence for state prom.
+		"""
+		#'default' enter sequence for state prom
+		self.__entry_action_x_automatic_moving_automatic_moving_through_maze_prom()
+		self.__state_vector[4] = self.State.xautomatic_moving_automatic_moving_through_maze_prom
+		self.__state_conf_vector_position = 4
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_move_normal_default(self):
@@ -1452,8 +1476,8 @@ class Model:
 		"""
 		#'default' enter sequence for state normal
 		self.__entry_action_x_automatic_moving_move_normal()
-		self.__state_vector[6] = self.State.xautomatic_moving_move_normal
-		self.__state_conf_vector_position = 6
+		self.__state_vector[5] = self.State.xautomatic_moving_move_normal
+		self.__state_conf_vector_position = 5
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_move_moving_full_default(self):
@@ -1461,17 +1485,26 @@ class Model:
 		"""
 		#'default' enter sequence for state moving full
 		self.__entry_action_x_automatic_moving_move_moving_full()
-		self.__state_vector[6] = self.State.xautomatic_moving_move_moving_full
-		self.__state_conf_vector_position = 6
+		self.__state_vector[5] = self.State.xautomatic_moving_move_moving_full
+		self.__state_conf_vector_position = 5
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_x_automatic_moving_move_moving_half_default(self):
-		"""'default' enter sequence for state moving half.
+	def __enter_sequence_x_automatic_moving_move_precise_default(self):
+		"""'default' enter sequence for state precise.
 		"""
-		#'default' enter sequence for state moving half
-		self.__entry_action_x_automatic_moving_move_moving_half()
-		self.__state_vector[6] = self.State.xautomatic_moving_move_moving_half
-		self.__state_conf_vector_position = 6
+		#'default' enter sequence for state precise
+		self.__entry_action_x_automatic_moving_move_precise()
+		self.__state_vector[5] = self.State.xautomatic_moving_move_precise
+		self.__state_conf_vector_position = 5
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_x_automatic_moving_move_precise2_default(self):
+		"""'default' enter sequence for state precise2.
+		"""
+		#'default' enter sequence for state precise2
+		self.__entry_action_x_automatic_moving_move_precise2()
+		self.__state_vector[5] = self.State.xautomatic_moving_move_precise2
+		self.__state_conf_vector_position = 5
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_turn_high_level_normal_default(self):
@@ -1479,8 +1512,8 @@ class Model:
 		"""
 		#'default' enter sequence for state normal
 		self.__entry_action_x_automatic_moving_turn_high_level_normal()
-		self.__state_vector[7] = self.State.xautomatic_moving_turn_high_level_normal
-		self.__state_conf_vector_position = 7
+		self.__state_vector[6] = self.State.xautomatic_moving_turn_high_level_normal
+		self.__state_conf_vector_position = 6
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_turn_high_level_turn_left_default(self):
@@ -1488,8 +1521,8 @@ class Model:
 		"""
 		#'default' enter sequence for state turnLeft
 		self.__entry_action_x_automatic_moving_turn_high_level_turn_left()
-		self.__state_vector[7] = self.State.xautomatic_moving_turn_high_level_turn_left
-		self.__state_conf_vector_position = 7
+		self.__state_vector[6] = self.State.xautomatic_moving_turn_high_level_turn_left
+		self.__state_conf_vector_position = 6
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_turn_high_level_turn_right_default(self):
@@ -1497,8 +1530,8 @@ class Model:
 		"""
 		#'default' enter sequence for state turnRight
 		self.__entry_action_x_automatic_moving_turn_high_level_turn_right()
-		self.__state_vector[7] = self.State.xautomatic_moving_turn_high_level_turn_right
-		self.__state_conf_vector_position = 7
+		self.__state_vector[6] = self.State.xautomatic_moving_turn_high_level_turn_right
+		self.__state_conf_vector_position = 6
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_turn_high_level_turn_back_default(self):
@@ -1506,8 +1539,8 @@ class Model:
 		"""
 		#'default' enter sequence for state turnBack
 		self.__entry_action_x_automatic_moving_turn_high_level_turn_back()
-		self.__state_vector[7] = self.State.xautomatic_moving_turn_high_level_turn_back
-		self.__state_conf_vector_position = 7
+		self.__state_vector[6] = self.State.xautomatic_moving_turn_high_level_turn_back
+		self.__state_conf_vector_position = 6
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_turn_high_level_plus_default(self):
@@ -1515,8 +1548,8 @@ class Model:
 		"""
 		#'default' enter sequence for state plus
 		self.__entry_action_x_automatic_moving_turn_high_level_plus()
-		self.__state_vector[7] = self.State.xautomatic_moving_turn_high_level_plus
-		self.__state_conf_vector_position = 7
+		self.__state_vector[6] = self.State.xautomatic_moving_turn_high_level_plus
+		self.__state_conf_vector_position = 6
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_turn_high_level_minus_default(self):
@@ -1524,8 +1557,8 @@ class Model:
 		"""
 		#'default' enter sequence for state minus
 		self.__entry_action_x_automatic_moving_turn_high_level_minus()
-		self.__state_vector[7] = self.State.xautomatic_moving_turn_high_level_minus
-		self.__state_conf_vector_position = 7
+		self.__state_vector[6] = self.State.xautomatic_moving_turn_high_level_minus
+		self.__state_conf_vector_position = 6
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_turn_high_level_processing_angle2_default(self):
@@ -1533,8 +1566,8 @@ class Model:
 		"""
 		#'default' enter sequence for state processingAngle2
 		self.__entry_action_x_automatic_moving_turn_high_level_processing_angle2()
-		self.__state_vector[7] = self.State.xautomatic_moving_turn_high_level_processing_angle2
-		self.__state_conf_vector_position = 7
+		self.__state_vector[6] = self.State.xautomatic_moving_turn_high_level_processing_angle2
+		self.__state_conf_vector_position = 6
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_turn_low_level_normal_default(self):
@@ -1542,8 +1575,8 @@ class Model:
 		"""
 		#'default' enter sequence for state normal
 		self.__entry_action_x_automatic_moving_turn_low_level_normal()
-		self.__state_vector[8] = self.State.xautomatic_moving_turn_low_level_normal
-		self.__state_conf_vector_position = 8
+		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_normal
+		self.__state_conf_vector_position = 7
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_turn_low_level_negative_rotation_default(self):
@@ -1551,8 +1584,8 @@ class Model:
 		"""
 		#'default' enter sequence for state negativeRotation
 		self.__entry_action_x_automatic_moving_turn_low_level_negative_rotation()
-		self.__state_vector[8] = self.State.xautomatic_moving_turn_low_level_negative_rotation
-		self.__state_conf_vector_position = 8
+		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_negative_rotation
+		self.__state_conf_vector_position = 7
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_turn_low_level_positive_rotation_default(self):
@@ -1560,8 +1593,8 @@ class Model:
 		"""
 		#'default' enter sequence for state positiveRotation
 		self.__entry_action_x_automatic_moving_turn_low_level_positive_rotation()
-		self.__state_vector[8] = self.State.xautomatic_moving_turn_low_level_positive_rotation
-		self.__state_conf_vector_position = 8
+		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_positive_rotation
+		self.__state_conf_vector_position = 7
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_turn_low_level_p_r2_default(self):
@@ -1569,8 +1602,8 @@ class Model:
 		"""
 		#'default' enter sequence for state pR2
 		self.__entry_action_x_automatic_moving_turn_low_level_p_r2()
-		self.__state_vector[8] = self.State.xautomatic_moving_turn_low_level_pr2
-		self.__state_conf_vector_position = 8
+		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_pr2
+		self.__state_conf_vector_position = 7
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_turn_low_level_p_r3_default(self):
@@ -1578,8 +1611,8 @@ class Model:
 		"""
 		#'default' enter sequence for state pR3
 		self.__entry_action_x_automatic_moving_turn_low_level_p_r3()
-		self.__state_vector[8] = self.State.xautomatic_moving_turn_low_level_pr3
-		self.__state_conf_vector_position = 8
+		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_pr3
+		self.__state_conf_vector_position = 7
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_turn_low_level_n_r2_default(self):
@@ -1587,8 +1620,8 @@ class Model:
 		"""
 		#'default' enter sequence for state nR2
 		self.__entry_action_x_automatic_moving_turn_low_level_n_r2()
-		self.__state_vector[8] = self.State.xautomatic_moving_turn_low_level_nr2
-		self.__state_conf_vector_position = 8
+		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_nr2
+		self.__state_conf_vector_position = 7
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_automatic_moving_turn_low_level_n_r3_default(self):
@@ -1596,8 +1629,8 @@ class Model:
 		"""
 		#'default' enter sequence for state nR3
 		self.__entry_action_x_automatic_moving_turn_low_level_n_r3()
-		self.__state_vector[8] = self.State.xautomatic_moving_turn_low_level_nr3
-		self.__state_conf_vector_position = 8
+		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_nr3
+		self.__state_conf_vector_position = 7
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_x_initial_calibration_default(self):
@@ -1761,12 +1794,6 @@ class Model:
 		#'default' enter sequence for region manual control region
 		self.__react_x_manual_control_manual_control_region__entry_default()
 		
-	def __enter_sequence_x_automatic_moving_update_generator_default(self):
-		"""'default' enter sequence for region update generator.
-		"""
-		#'default' enter sequence for region update generator
-		self.__react_x_automatic_moving_update_generator__entry_default()
-		
 	def __enter_sequence_x_automatic_moving_column_calcualtion_default(self):
 		"""'default' enter sequence for region column calcualtion.
 		"""
@@ -1893,7 +1920,6 @@ class Model:
 		"""Default exit sequence for state automatic moving.
 		"""
 		#Default exit sequence for state automatic moving
-		self.__exit_sequence_x_automatic_moving_update_generator()
 		self.__exit_sequence_x_automatic_moving_column_calcualtion()
 		self.__exit_sequence_x_automatic_moving_row_calculation()
 		self.__exit_sequence_x_automatic_moving_direction_calculation()
@@ -1910,320 +1936,322 @@ class Model:
 		self.__state_vector[5] = self.State.null_state
 		self.__state_vector[6] = self.State.null_state
 		self.__state_vector[7] = self.State.null_state
-		self.__state_vector[8] = self.State.null_state
-		self.__state_conf_vector_position = 8
-		
-	def __exit_sequence_x_automatic_moving_update_generator_gen(self):
-		"""Default exit sequence for state gen.
-		"""
-		#Default exit sequence for state gen
-		self.__state_vector[0] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 0
+		self.__state_conf_vector_position = 7
 		
 	def __exit_sequence_x_automatic_moving_column_calcualtion_first_step(self):
 		"""Default exit sequence for state first_step.
 		"""
 		#Default exit sequence for state first_step
-		self.__state_vector[1] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 1
+		self.__state_vector[0] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 0
 		
 	def __exit_sequence_x_automatic_moving_column_calcualtion_second(self):
 		"""Default exit sequence for state second.
 		"""
 		#Default exit sequence for state second
-		self.__state_vector[1] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 1
+		self.__state_vector[0] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 0
 		
 	def __exit_sequence_x_automatic_moving_row_calculation_firststep(self):
 		"""Default exit sequence for state firststep.
 		"""
 		#Default exit sequence for state firststep
-		self.__state_vector[2] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 2
+		self.__state_vector[1] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 1
 		
 	def __exit_sequence_x_automatic_moving_row_calculation_second(self):
 		"""Default exit sequence for state second.
 		"""
 		#Default exit sequence for state second
-		self.__state_vector[2] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 2
+		self.__state_vector[1] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 1
 		
 	def __exit_sequence_x_automatic_moving_direction_calculation_start(self):
 		"""Default exit sequence for state start.
 		"""
 		#Default exit sequence for state start
-		self.__state_vector[3] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 3
+		self.__state_vector[2] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 2
 		
 	def __exit_sequence_x_automatic_moving_direction_calculation_south(self):
 		"""Default exit sequence for state south.
 		"""
 		#Default exit sequence for state south
-		self.__state_vector[3] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 3
+		self.__state_vector[2] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 2
 		
 	def __exit_sequence_x_automatic_moving_direction_calculation_north(self):
 		"""Default exit sequence for state north.
 		"""
 		#Default exit sequence for state north
-		self.__state_vector[3] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 3
+		self.__state_vector[2] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 2
 		
 	def __exit_sequence_x_automatic_moving_direction_calculation_east(self):
 		"""Default exit sequence for state east.
 		"""
 		#Default exit sequence for state east
-		self.__state_vector[3] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 3
+		self.__state_vector[2] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 2
 		
 	def __exit_sequence_x_automatic_moving_direction_calculation_west(self):
 		"""Default exit sequence for state west.
 		"""
 		#Default exit sequence for state west
-		self.__state_vector[3] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 3
+		self.__state_vector[2] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 2
 		
 	def __exit_sequence_x_automatic_moving_grid_interaction_unlogging(self):
 		"""Default exit sequence for state unlogging.
 		"""
 		#Default exit sequence for state unlogging
-		self.__state_vector[4] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 4
+		self.__state_vector[3] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 3
 		
 	def __exit_sequence_x_automatic_moving_grid_interaction_logging(self):
 		"""Default exit sequence for state logging.
 		"""
 		#Default exit sequence for state logging
 		self.__exit_sequence_x_automatic_moving_grid_interaction_logging_r1()
-		self.__state_vector[4] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 4
+		self.__state_vector[3] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 3
 		
 	def __exit_sequence_x_automatic_moving_grid_interaction_logging_r1_first(self):
 		"""Default exit sequence for state first.
 		"""
 		#Default exit sequence for state first
-		self.__state_vector[4] = self.State.xautomatic_moving_grid_interaction_logging
-		self.__state_conf_vector_position = 4
+		self.__state_vector[3] = self.State.xautomatic_moving_grid_interaction_logging
+		self.__state_conf_vector_position = 3
+		self.__exit_action_x_automatic_moving_grid_interaction_logging_r1_first()
 		
 	def __exit_sequence_x_automatic_moving_grid_interaction_logging_r1_second(self):
 		"""Default exit sequence for state second.
 		"""
 		#Default exit sequence for state second
-		self.__state_vector[4] = self.State.xautomatic_moving_grid_interaction_logging
-		self.__state_conf_vector_position = 4
+		self.__state_vector[3] = self.State.xautomatic_moving_grid_interaction_logging
+		self.__state_conf_vector_position = 3
+		self.__exit_action_x_automatic_moving_grid_interaction_logging_r1_second()
+		
+	def __exit_sequence_x_automatic_moving_grid_interaction_pr(self):
+		"""Default exit sequence for state pr.
+		"""
+		#Default exit sequence for state pr
+		self.__state_vector[3] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 3
+		self.__exit_action_x_automatic_moving_grid_interaction_pr()
 		
 	def __exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar(self):
 		"""Default exit sequence for state moving with lidar.
 		"""
 		#Default exit sequence for state moving with lidar
 		self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1()
-		self.__state_vector[5] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 5
+		self.__state_vector[4] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 4
 		
-	def __exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_go(self):
-		"""Default exit sequence for state go.
+	def __exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_base_state(self):
+		"""Default exit sequence for state base_state.
 		"""
-		#Default exit sequence for state go
-		self.__state_vector[5] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar
-		self.__state_conf_vector_position = 5
-		
-	def __exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_turn_and_go(self):
-		"""Default exit sequence for state turn and go.
-		"""
-		#Default exit sequence for state turn and go
-		self.__state_vector[5] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar
-		self.__state_conf_vector_position = 5
-		
-	def __exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_to_right(self):
-		"""Default exit sequence for state to right.
-		"""
-		#Default exit sequence for state to right
-		self.__state_vector[5] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar
-		self.__state_conf_vector_position = 5
-		
-	def __exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_move_forward(self):
-		"""Default exit sequence for state move forward.
-		"""
-		#Default exit sequence for state move forward
-		self.__state_vector[5] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar
-		self.__state_conf_vector_position = 5
-		
-	def __exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_return(self):
-		"""Default exit sequence for state return.
-		"""
-		#Default exit sequence for state return
-		self.__state_vector[5] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar
-		self.__state_conf_vector_position = 5
-		
-	def __exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_turn_left(self):
-		"""Default exit sequence for state turn left.
-		"""
-		#Default exit sequence for state turn left
-		self.__state_vector[5] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar
-		self.__state_conf_vector_position = 5
-		
-	def __exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front(self):
-		"""Default exit sequence for state wall_in_front.
-		"""
-		#Default exit sequence for state wall_in_front
-		self.__state_vector[5] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar
-		self.__state_conf_vector_position = 5
+		#Default exit sequence for state base_state
+		self.__state_vector[4] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar
+		self.__state_conf_vector_position = 4
 		
 	def __exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_left_wall_disappeared(self):
 		"""Default exit sequence for state left_wall_disappeared.
 		"""
 		#Default exit sequence for state left_wall_disappeared
-		self.__state_vector[5] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar
-		self.__state_conf_vector_position = 5
+		self.__state_vector[4] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar
+		self.__state_conf_vector_position = 4
 		
-	def __exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_normal_moving(self):
-		"""Default exit sequence for state normal_moving.
+	def __exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front(self):
+		"""Default exit sequence for state wall_in_front.
 		"""
-		#Default exit sequence for state normal_moving
-		self.__state_vector[5] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar
-		self.__state_conf_vector_position = 5
+		#Default exit sequence for state wall_in_front
+		self.__state_vector[4] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar
+		self.__state_conf_vector_position = 4
+		
+	def __exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_move_forward(self):
+		"""Default exit sequence for state move_forward.
+		"""
+		#Default exit sequence for state move_forward
+		self.__state_vector[4] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar
+		self.__state_conf_vector_position = 4
+		
+	def __exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_need_to_turn_right(self):
+		"""Default exit sequence for state need_to_turn_right.
+		"""
+		#Default exit sequence for state need_to_turn_right
+		self.__state_vector[4] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar
+		self.__state_conf_vector_position = 4
+		
+	def __exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_dead_end(self):
+		"""Default exit sequence for state dead_end.
+		"""
+		#Default exit sequence for state dead_end
+		self.__state_vector[4] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar
+		self.__state_conf_vector_position = 4
+		
+	def __exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_logging(self):
+		"""Default exit sequence for state logging.
+		"""
+		#Default exit sequence for state logging
+		self.__state_vector[4] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar
+		self.__state_conf_vector_position = 4
 		
 	def __exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_without_lidar(self):
 		"""Default exit sequence for state moving without lidar.
 		"""
 		#Default exit sequence for state moving without lidar
 		self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_without_lidar_r1()
-		self.__state_vector[5] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 5
+		self.__state_vector[4] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 4
 		
 	def __exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_without_lidar_r1_placeholder(self):
 		"""Default exit sequence for state placeholder.
 		"""
 		#Default exit sequence for state placeholder
-		self.__state_vector[5] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_without_lidar
-		self.__state_conf_vector_position = 5
+		self.__state_vector[4] = self.State.xautomatic_moving_automatic_moving_through_maze_moving_without_lidar
+		self.__state_conf_vector_position = 4
+		
+	def __exit_sequence_x_automatic_moving_automatic_moving_through_maze_prom(self):
+		"""Default exit sequence for state prom.
+		"""
+		#Default exit sequence for state prom
+		self.__state_vector[4] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 4
 		
 	def __exit_sequence_x_automatic_moving_move_normal(self):
 		"""Default exit sequence for state normal.
 		"""
 		#Default exit sequence for state normal
-		self.__state_vector[6] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 6
+		self.__state_vector[5] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 5
 		
 	def __exit_sequence_x_automatic_moving_move_moving_full(self):
 		"""Default exit sequence for state moving full.
 		"""
 		#Default exit sequence for state moving full
-		self.__state_vector[6] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 6
+		self.__state_vector[5] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 5
 		
-	def __exit_sequence_x_automatic_moving_move_moving_half(self):
-		"""Default exit sequence for state moving half.
+	def __exit_sequence_x_automatic_moving_move_precise(self):
+		"""Default exit sequence for state precise.
 		"""
-		#Default exit sequence for state moving half
-		self.__state_vector[6] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 6
+		#Default exit sequence for state precise
+		self.__state_vector[5] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 5
+		
+	def __exit_sequence_x_automatic_moving_move_precise2(self):
+		"""Default exit sequence for state precise2.
+		"""
+		#Default exit sequence for state precise2
+		self.__state_vector[5] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 5
 		
 	def __exit_sequence_x_automatic_moving_turn_high_level_normal(self):
 		"""Default exit sequence for state normal.
 		"""
 		#Default exit sequence for state normal
-		self.__state_vector[7] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 7
+		self.__state_vector[6] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 6
 		
 	def __exit_sequence_x_automatic_moving_turn_high_level_turn_left(self):
 		"""Default exit sequence for state turnLeft.
 		"""
 		#Default exit sequence for state turnLeft
-		self.__state_vector[7] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 7
+		self.__state_vector[6] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 6
 		
 	def __exit_sequence_x_automatic_moving_turn_high_level_turn_right(self):
 		"""Default exit sequence for state turnRight.
 		"""
 		#Default exit sequence for state turnRight
-		self.__state_vector[7] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 7
+		self.__state_vector[6] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 6
 		
 	def __exit_sequence_x_automatic_moving_turn_high_level_turn_back(self):
 		"""Default exit sequence for state turnBack.
 		"""
 		#Default exit sequence for state turnBack
-		self.__state_vector[7] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 7
+		self.__state_vector[6] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 6
 		
 	def __exit_sequence_x_automatic_moving_turn_high_level_processing_angle(self):
 		"""Default exit sequence for state processingAngle.
 		"""
 		#Default exit sequence for state processingAngle
-		self.__state_vector[7] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 7
+		self.__state_vector[6] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 6
 		self.__exit_action_x_automatic_moving_turn_high_level_processing_angle()
 		
 	def __exit_sequence_x_automatic_moving_turn_high_level_plus(self):
 		"""Default exit sequence for state plus.
 		"""
 		#Default exit sequence for state plus
-		self.__state_vector[7] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 7
+		self.__state_vector[6] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 6
 		
 	def __exit_sequence_x_automatic_moving_turn_high_level_minus(self):
 		"""Default exit sequence for state minus.
 		"""
 		#Default exit sequence for state minus
-		self.__state_vector[7] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 7
+		self.__state_vector[6] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 6
 		
 	def __exit_sequence_x_automatic_moving_turn_high_level_processing_angle2(self):
 		"""Default exit sequence for state processingAngle2.
 		"""
 		#Default exit sequence for state processingAngle2
-		self.__state_vector[7] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 7
+		self.__state_vector[6] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 6
 		
 	def __exit_sequence_x_automatic_moving_turn_low_level_normal(self):
 		"""Default exit sequence for state normal.
 		"""
 		#Default exit sequence for state normal
-		self.__state_vector[8] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 8
+		self.__state_vector[7] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 7
 		
 	def __exit_sequence_x_automatic_moving_turn_low_level_negative_rotation(self):
 		"""Default exit sequence for state negativeRotation.
 		"""
 		#Default exit sequence for state negativeRotation
-		self.__state_vector[8] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 8
+		self.__state_vector[7] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 7
 		
 	def __exit_sequence_x_automatic_moving_turn_low_level_positive_rotation(self):
 		"""Default exit sequence for state positiveRotation.
 		"""
 		#Default exit sequence for state positiveRotation
-		self.__state_vector[8] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 8
+		self.__state_vector[7] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 7
 		
 	def __exit_sequence_x_automatic_moving_turn_low_level_p_r2(self):
 		"""Default exit sequence for state pR2.
 		"""
 		#Default exit sequence for state pR2
-		self.__state_vector[8] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 8
+		self.__state_vector[7] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 7
 		
 	def __exit_sequence_x_automatic_moving_turn_low_level_p_r3(self):
 		"""Default exit sequence for state pR3.
 		"""
 		#Default exit sequence for state pR3
-		self.__state_vector[8] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 8
+		self.__state_vector[7] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 7
 		
 	def __exit_sequence_x_automatic_moving_turn_low_level_n_r2(self):
 		"""Default exit sequence for state nR2.
 		"""
 		#Default exit sequence for state nR2
-		self.__state_vector[8] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 8
+		self.__state_vector[7] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 7
 		
 	def __exit_sequence_x_automatic_moving_turn_low_level_n_r3(self):
 		"""Default exit sequence for state nR3.
 		"""
 		#Default exit sequence for state nR3
-		self.__state_vector[8] = self.State.xautomatic_moving
-		self.__state_conf_vector_position = 8
+		self.__state_vector[7] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 7
 		
 	def __exit_sequence_x_initial_calibration(self):
 		"""Default exit sequence for state Initial calibration.
@@ -2371,8 +2399,10 @@ class Model:
 			self.__exit_sequence_x_manual_control_manual_control_region_turning_right()
 		elif state == self.State.xmanual_control_manual_control_region_turning_left:
 			self.__exit_sequence_x_manual_control_manual_control_region_turning_left()
-		elif state == self.State.xautomatic_moving_update_generator_gen:
-			self.__exit_sequence_x_automatic_moving_update_generator_gen()
+		elif state == self.State.xautomatic_moving_column_calcualtion_first_step:
+			self.__exit_sequence_x_automatic_moving_column_calcualtion_first_step()
+		elif state == self.State.xautomatic_moving_column_calcualtion_second:
+			self.__exit_sequence_x_automatic_moving_column_calcualtion_second()
 		elif state == self.State.xinitial_calibration:
 			self.__exit_sequence_x_initial_calibration()
 		elif state == self.State.xinitial_calibration_initial_calibration_region_start_calibration:
@@ -2410,16 +2440,11 @@ class Model:
 		elif state == self.State.xinitial_calibration_initial_calibration_region_set_zero:
 			self.__exit_sequence_x_initial_calibration_initial_calibration_region_set_zero()
 		state = self.__state_vector[1]
-		if state == self.State.xautomatic_moving_column_calcualtion_first_step:
-			self.__exit_sequence_x_automatic_moving_column_calcualtion_first_step()
-		elif state == self.State.xautomatic_moving_column_calcualtion_second:
-			self.__exit_sequence_x_automatic_moving_column_calcualtion_second()
-		state = self.__state_vector[2]
 		if state == self.State.xautomatic_moving_row_calculation_firststep:
 			self.__exit_sequence_x_automatic_moving_row_calculation_firststep()
 		elif state == self.State.xautomatic_moving_row_calculation_second:
 			self.__exit_sequence_x_automatic_moving_row_calculation_second()
-		state = self.__state_vector[3]
+		state = self.__state_vector[2]
 		if state == self.State.xautomatic_moving_direction_calculation_start:
 			self.__exit_sequence_x_automatic_moving_direction_calculation_start()
 		elif state == self.State.xautomatic_moving_direction_calculation_south:
@@ -2430,7 +2455,7 @@ class Model:
 			self.__exit_sequence_x_automatic_moving_direction_calculation_east()
 		elif state == self.State.xautomatic_moving_direction_calculation_west:
 			self.__exit_sequence_x_automatic_moving_direction_calculation_west()
-		state = self.__state_vector[4]
+		state = self.__state_vector[3]
 		if state == self.State.xautomatic_moving_grid_interaction_unlogging:
 			self.__exit_sequence_x_automatic_moving_grid_interaction_unlogging()
 		elif state == self.State.xautomatic_moving_grid_interaction_logging:
@@ -2439,39 +2464,41 @@ class Model:
 			self.__exit_sequence_x_automatic_moving_grid_interaction_logging_r1_first()
 		elif state == self.State.xautomatic_moving_grid_interaction_logging_r1second:
 			self.__exit_sequence_x_automatic_moving_grid_interaction_logging_r1_second()
-		state = self.__state_vector[5]
+		elif state == self.State.xautomatic_moving_grid_interaction_pr:
+			self.__exit_sequence_x_automatic_moving_grid_interaction_pr()
+		state = self.__state_vector[4]
 		if state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar:
 			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar()
-		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1go:
-			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_go()
-		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1turn_and_go:
-			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_turn_and_go()
-		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1to_right:
-			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_to_right()
-		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1move_forward:
-			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_move_forward()
-		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1return:
-			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_return()
-		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1turn_left:
-			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_turn_left()
-		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1wall_in_front:
-			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front()
+		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1base_state:
+			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_base_state()
 		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1left_wall_disappeared:
 			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_left_wall_disappeared()
-		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1normal_moving:
-			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_normal_moving()
+		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1wall_in_front:
+			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front()
+		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1move_forward:
+			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_move_forward()
+		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1need_to_turn_right:
+			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_need_to_turn_right()
+		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1dead_end:
+			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_dead_end()
+		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1logging:
+			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_logging()
 		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_without_lidar:
 			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_without_lidar()
 		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_without_lidar_r1placeholder:
 			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_without_lidar_r1_placeholder()
-		state = self.__state_vector[6]
+		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_prom:
+			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_prom()
+		state = self.__state_vector[5]
 		if state == self.State.xautomatic_moving_move_normal:
 			self.__exit_sequence_x_automatic_moving_move_normal()
 		elif state == self.State.xautomatic_moving_move_moving_full:
 			self.__exit_sequence_x_automatic_moving_move_moving_full()
-		elif state == self.State.xautomatic_moving_move_moving_half:
-			self.__exit_sequence_x_automatic_moving_move_moving_half()
-		state = self.__state_vector[7]
+		elif state == self.State.xautomatic_moving_move_precise:
+			self.__exit_sequence_x_automatic_moving_move_precise()
+		elif state == self.State.xautomatic_moving_move_precise2:
+			self.__exit_sequence_x_automatic_moving_move_precise2()
+		state = self.__state_vector[6]
 		if state == self.State.xautomatic_moving_turn_high_level_normal:
 			self.__exit_sequence_x_automatic_moving_turn_high_level_normal()
 		elif state == self.State.xautomatic_moving_turn_high_level_turn_left:
@@ -2488,7 +2515,7 @@ class Model:
 			self.__exit_sequence_x_automatic_moving_turn_high_level_minus()
 		elif state == self.State.xautomatic_moving_turn_high_level_processing_angle2:
 			self.__exit_sequence_x_automatic_moving_turn_high_level_processing_angle2()
-		state = self.__state_vector[8]
+		state = self.__state_vector[7]
 		if state == self.State.xautomatic_moving_turn_low_level_normal:
 			self.__exit_sequence_x_automatic_moving_turn_low_level_normal()
 		elif state == self.State.xautomatic_moving_turn_low_level_negative_rotation:
@@ -2522,19 +2549,11 @@ class Model:
 		elif state == self.State.xmanual_control_manual_control_region_turning_left:
 			self.__exit_sequence_x_manual_control_manual_control_region_turning_left()
 		
-	def __exit_sequence_x_automatic_moving_update_generator(self):
-		"""Default exit sequence for region update generator.
-		"""
-		#Default exit sequence for region update generator
-		state = self.__state_vector[0]
-		if state == self.State.xautomatic_moving_update_generator_gen:
-			self.__exit_sequence_x_automatic_moving_update_generator_gen()
-		
 	def __exit_sequence_x_automatic_moving_column_calcualtion(self):
 		"""Default exit sequence for region column calcualtion.
 		"""
 		#Default exit sequence for region column calcualtion
-		state = self.__state_vector[1]
+		state = self.__state_vector[0]
 		if state == self.State.xautomatic_moving_column_calcualtion_first_step:
 			self.__exit_sequence_x_automatic_moving_column_calcualtion_first_step()
 		elif state == self.State.xautomatic_moving_column_calcualtion_second:
@@ -2544,7 +2563,7 @@ class Model:
 		"""Default exit sequence for region row calculation.
 		"""
 		#Default exit sequence for region row calculation
-		state = self.__state_vector[2]
+		state = self.__state_vector[1]
 		if state == self.State.xautomatic_moving_row_calculation_firststep:
 			self.__exit_sequence_x_automatic_moving_row_calculation_firststep()
 		elif state == self.State.xautomatic_moving_row_calculation_second:
@@ -2554,7 +2573,7 @@ class Model:
 		"""Default exit sequence for region direction calculation.
 		"""
 		#Default exit sequence for region direction calculation
-		state = self.__state_vector[3]
+		state = self.__state_vector[2]
 		if state == self.State.xautomatic_moving_direction_calculation_start:
 			self.__exit_sequence_x_automatic_moving_direction_calculation_start()
 		elif state == self.State.xautomatic_moving_direction_calculation_south:
@@ -2570,7 +2589,7 @@ class Model:
 		"""Default exit sequence for region grid interaction.
 		"""
 		#Default exit sequence for region grid interaction
-		state = self.__state_vector[4]
+		state = self.__state_vector[3]
 		if state == self.State.xautomatic_moving_grid_interaction_unlogging:
 			self.__exit_sequence_x_automatic_moving_grid_interaction_unlogging()
 		elif state == self.State.xautomatic_moving_grid_interaction_logging:
@@ -2579,12 +2598,14 @@ class Model:
 			self.__exit_sequence_x_automatic_moving_grid_interaction_logging_r1_first()
 		elif state == self.State.xautomatic_moving_grid_interaction_logging_r1second:
 			self.__exit_sequence_x_automatic_moving_grid_interaction_logging_r1_second()
+		elif state == self.State.xautomatic_moving_grid_interaction_pr:
+			self.__exit_sequence_x_automatic_moving_grid_interaction_pr()
 		
 	def __exit_sequence_x_automatic_moving_grid_interaction_logging_r1(self):
 		"""Default exit sequence for region r1.
 		"""
 		#Default exit sequence for region r1
-		state = self.__state_vector[4]
+		state = self.__state_vector[3]
 		if state == self.State.xautomatic_moving_grid_interaction_logging_r1first:
 			self.__exit_sequence_x_automatic_moving_grid_interaction_logging_r1_first()
 		elif state == self.State.xautomatic_moving_grid_interaction_logging_r1second:
@@ -2594,61 +2615,55 @@ class Model:
 		"""Default exit sequence for region automatic moving through maze.
 		"""
 		#Default exit sequence for region automatic moving through maze
-		state = self.__state_vector[5]
+		state = self.__state_vector[4]
 		if state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar:
 			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar()
-		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1go:
-			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_go()
-		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1turn_and_go:
-			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_turn_and_go()
-		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1to_right:
-			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_to_right()
-		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1move_forward:
-			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_move_forward()
-		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1return:
-			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_return()
-		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1turn_left:
-			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_turn_left()
-		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1wall_in_front:
-			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front()
+		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1base_state:
+			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_base_state()
 		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1left_wall_disappeared:
 			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_left_wall_disappeared()
-		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1normal_moving:
-			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_normal_moving()
+		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1wall_in_front:
+			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front()
+		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1move_forward:
+			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_move_forward()
+		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1need_to_turn_right:
+			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_need_to_turn_right()
+		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1dead_end:
+			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_dead_end()
+		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1logging:
+			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_logging()
 		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_without_lidar:
 			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_without_lidar()
 		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_without_lidar_r1placeholder:
 			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_without_lidar_r1_placeholder()
+		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_prom:
+			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_prom()
 		
 	def __exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1(self):
 		"""Default exit sequence for region r1.
 		"""
 		#Default exit sequence for region r1
-		state = self.__state_vector[5]
-		if state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1go:
-			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_go()
-		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1turn_and_go:
-			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_turn_and_go()
-		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1to_right:
-			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_to_right()
-		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1move_forward:
-			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_move_forward()
-		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1return:
-			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_return()
-		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1turn_left:
-			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_turn_left()
-		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1wall_in_front:
-			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front()
+		state = self.__state_vector[4]
+		if state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1base_state:
+			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_base_state()
 		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1left_wall_disappeared:
 			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_left_wall_disappeared()
-		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1normal_moving:
-			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_normal_moving()
+		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1wall_in_front:
+			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front()
+		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1move_forward:
+			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_move_forward()
+		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1need_to_turn_right:
+			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_need_to_turn_right()
+		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1dead_end:
+			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_dead_end()
+		elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1logging:
+			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_logging()
 		
 	def __exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_without_lidar_r1(self):
 		"""Default exit sequence for region r1.
 		"""
 		#Default exit sequence for region r1
-		state = self.__state_vector[5]
+		state = self.__state_vector[4]
 		if state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_without_lidar_r1placeholder:
 			self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_without_lidar_r1_placeholder()
 		
@@ -2656,19 +2671,21 @@ class Model:
 		"""Default exit sequence for region move.
 		"""
 		#Default exit sequence for region move
-		state = self.__state_vector[6]
+		state = self.__state_vector[5]
 		if state == self.State.xautomatic_moving_move_normal:
 			self.__exit_sequence_x_automatic_moving_move_normal()
 		elif state == self.State.xautomatic_moving_move_moving_full:
 			self.__exit_sequence_x_automatic_moving_move_moving_full()
-		elif state == self.State.xautomatic_moving_move_moving_half:
-			self.__exit_sequence_x_automatic_moving_move_moving_half()
+		elif state == self.State.xautomatic_moving_move_precise:
+			self.__exit_sequence_x_automatic_moving_move_precise()
+		elif state == self.State.xautomatic_moving_move_precise2:
+			self.__exit_sequence_x_automatic_moving_move_precise2()
 		
 	def __exit_sequence_x_automatic_moving_turn_high_level(self):
 		"""Default exit sequence for region turn high level.
 		"""
 		#Default exit sequence for region turn high level
-		state = self.__state_vector[7]
+		state = self.__state_vector[6]
 		if state == self.State.xautomatic_moving_turn_high_level_normal:
 			self.__exit_sequence_x_automatic_moving_turn_high_level_normal()
 		elif state == self.State.xautomatic_moving_turn_high_level_turn_left:
@@ -2690,7 +2707,7 @@ class Model:
 		"""Default exit sequence for region turn low level.
 		"""
 		#Default exit sequence for region turn low level
-		state = self.__state_vector[8]
+		state = self.__state_vector[7]
 		if state == self.State.xautomatic_moving_turn_low_level_normal:
 			self.__exit_sequence_x_automatic_moving_turn_low_level_normal()
 		elif state == self.State.xautomatic_moving_turn_low_level_negative_rotation:
@@ -2758,12 +2775,6 @@ class Model:
 		#Default react sequence for initial entry 
 		self.__enter_sequence_x_manual_control_default()
 		
-	def __react_x_automatic_moving_update_generator__entry_default(self):
-		"""Default react sequence for initial entry .
-		"""
-		#Default react sequence for initial entry 
-		self.__enter_sequence_x_automatic_moving_update_generator_gen_default()
-		
 	def __react_x_automatic_moving_column_calcualtion__entry_default(self):
 		"""Default react sequence for initial entry .
 		"""
@@ -2798,13 +2809,13 @@ class Model:
 		"""Default react sequence for initial entry .
 		"""
 		#Default react sequence for initial entry 
-		self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_normal_moving_default()
+		self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_base_state_default()
 		
 	def __react_x_automatic_moving_automatic_moving_through_maze__entry_default(self):
 		"""Default react sequence for initial entry .
 		"""
 		#Default react sequence for initial entry 
-		self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_default()
+		self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_prom_default()
 		
 	def __react_x_automatic_moving_automatic_moving_through_maze_moving_without_lidar_r1__entry_default(self):
 		"""Default react sequence for initial entry .
@@ -2850,12 +2861,12 @@ class Model:
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
-				if self.computer.m_press:
+				if (self.computer.m_press) and (self.user_var.is_calibrated):
 					self.__exit_sequence_x_manual_control()
 					self.__enter_sequence_x_automatic_moving_default()
 					self.__react(0)
 					transitioned_after = 0
-				elif (self.computer.m_press) and (False):
+				elif (self.computer.m_press) and (not self.user_var.is_calibrated):
 					self.__exit_sequence_x_manual_control()
 					self.__enter_sequence_x_initial_calibration_default()
 					self.__react(0)
@@ -3034,28 +3045,11 @@ class Model:
 					self.__exit_sequence_x_automatic_moving()
 					self.__enter_sequence_x_manual_control_default()
 					self.__react(0)
-					transitioned_after = 8
+					transitioned_after = 7
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
 				transitioned_after = self.__react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_automatic_moving_update_generator_gen_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_update_generator_gen_react function.
-		"""
-		#The reactions of state gen.
-		transitioned_after = transitioned_before
-		if self.__do_completion:
-			#Default exit sequence for state gen
-			self.__state_vector[0] = self.State.xautomatic_moving
-			self.__state_conf_vector_position = 0
-			#'default' enter sequence for state gen
-			self.__entry_action_x_automatic_moving_update_generator_gen()
-			self.__state_vector[0] = self.State.xautomatic_moving_update_generator_gen
-			self.__state_conf_vector_position = 0
-			self.__state_conf_vector_changed = True
 		return transitioned_after
 	
 	
@@ -3065,11 +3059,12 @@ class Model:
 		#The reactions of state first_step.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
-			if transitioned_after < 1:
-				self.__exit_sequence_x_automatic_moving_column_calcualtion_first_step()
-				self.user_var.ix = 0
-				self.__enter_sequence_x_automatic_moving_column_calcualtion_second_default()
-				transitioned_after = 1
+			if transitioned_after < 0:
+				if self.am_gl_update_dat:
+					self.__exit_sequence_x_automatic_moving_column_calcualtion_first_step()
+					self.user_var.ix = 0
+					self.__enter_sequence_x_automatic_moving_column_calcualtion_second_default()
+					transitioned_after = 0
 		return transitioned_after
 	
 	
@@ -3079,22 +3074,22 @@ class Model:
 		#The reactions of state second.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
-			if transitioned_after < 1:
+			if transitioned_after < 0:
 				if self.user_var.am_gl_x_rel > (self.user_var.ix + 0.5):
 					self.__exit_sequence_x_automatic_moving_column_calcualtion_second()
 					self.user_var.ix = self.user_var.ix + 1
 					self.__enter_sequence_x_automatic_moving_column_calcualtion_second_default()
-					transitioned_after = 1
+					transitioned_after = 0
 				elif self.user_var.am_gl_x_rel <= (self.user_var.ix + 0.5) and (self.user_var.am_gl_x_rel <= (self.user_var.ix - 0.25) or self.user_var.am_gl_x_rel >= (self.user_var.ix + 0.25)):
 					self.__exit_sequence_x_automatic_moving_column_calcualtion_second()
 					self.user_var.am_gl_x_cen = False
 					self.__enter_sequence_x_automatic_moving_column_calcualtion_first_step_default()
-					transitioned_after = 1
+					transitioned_after = 0
 				elif self.user_var.am_gl_x_rel > (self.user_var.ix - 0.25) and self.user_var.am_gl_x_rel < (self.user_var.ix + 0.25):
 					self.__exit_sequence_x_automatic_moving_column_calcualtion_second()
 					self.user_var.am_gl_x_cen = True
 					self.__enter_sequence_x_automatic_moving_column_calcualtion_first_step_default()
-					transitioned_after = 1
+					transitioned_after = 0
 		return transitioned_after
 	
 	
@@ -3104,11 +3099,12 @@ class Model:
 		#The reactions of state firststep.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
-			if transitioned_after < 2:
-				self.__exit_sequence_x_automatic_moving_row_calculation_firststep()
-				self.user_var.iy = 0
-				self.__enter_sequence_x_automatic_moving_row_calculation_second_default()
-				transitioned_after = 2
+			if transitioned_after < 1:
+				if self.am_gl_update_dat:
+					self.__exit_sequence_x_automatic_moving_row_calculation_firststep()
+					self.user_var.iy = 0
+					self.__enter_sequence_x_automatic_moving_row_calculation_second_default()
+					transitioned_after = 1
 		return transitioned_after
 	
 	
@@ -3118,22 +3114,22 @@ class Model:
 		#The reactions of state second.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
-			if transitioned_after < 2:
+			if transitioned_after < 1:
 				if self.user_var.am_gl_y_rel > (self.user_var.iy + 0.5):
 					self.__exit_sequence_x_automatic_moving_row_calculation_second()
 					self.user_var.iy = self.user_var.iy + 1
 					self.__enter_sequence_x_automatic_moving_row_calculation_second_default()
-					transitioned_after = 2
+					transitioned_after = 1
 				elif self.user_var.am_gl_y_rel > (self.user_var.iy - 0.25) and self.user_var.am_gl_y_rel < (self.user_var.iy + 0.25):
 					self.__exit_sequence_x_automatic_moving_row_calculation_second()
 					self.user_var.am_gl_y_cen = True
 					self.__enter_sequence_x_automatic_moving_row_calculation_firststep_default()
-					transitioned_after = 2
+					transitioned_after = 1
 				elif self.user_var.am_gl_y_rel <= (self.user_var.iy + 0.5) and (self.user_var.am_gl_y_rel <= (self.user_var.iy - 0.25) or self.user_var.am_gl_y_rel >= (self.user_var.iy + 0.25)):
 					self.__exit_sequence_x_automatic_moving_row_calculation_second()
 					self.user_var.am_gl_y_cen = False
 					self.__enter_sequence_x_automatic_moving_row_calculation_firststep_default()
-					transitioned_after = 2
+					transitioned_after = 1
 		return transitioned_after
 	
 	
@@ -3143,28 +3139,28 @@ class Model:
 		#The reactions of state start.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
-			if transitioned_after < 3:
-				if (((((self.imu.yaw - self.start_pos.zero_south_degree) + 720)) % 360)) < 5:
+			if transitioned_after < 2:
+				if (self.am_gl_update_dat) and ((((((self.imu.yaw - self.start_pos.zero_south_degree) + 720)) % 360)) < 5):
 					self.__exit_sequence_x_automatic_moving_direction_calculation_start()
 					self.__enter_sequence_x_automatic_moving_direction_calculation_south_default()
-					transitioned_after = 3
-				elif ((((((self.imu.yaw - self.start_pos.zero_south_degree) + 180) + 720)) % 360)) < 5:
+					transitioned_after = 2
+				elif (self.am_gl_update_dat) and (((((((self.imu.yaw - self.start_pos.zero_south_degree) + 180) + 720)) % 360)) < 5):
 					self.__exit_sequence_x_automatic_moving_direction_calculation_start()
 					self.__enter_sequence_x_automatic_moving_direction_calculation_north_default()
-					transitioned_after = 3
-				elif ((((((self.imu.yaw - self.start_pos.zero_south_degree) + 90) + 720)) % 360)) < 5:
+					transitioned_after = 2
+				elif (self.am_gl_update_dat) and (((((((self.imu.yaw - self.start_pos.zero_south_degree) + 90) + 720)) % 360)) < 5):
 					self.__exit_sequence_x_automatic_moving_direction_calculation_start()
 					self.__enter_sequence_x_automatic_moving_direction_calculation_east_default()
-					transitioned_after = 3
-				elif ((((((self.imu.yaw - self.start_pos.zero_south_degree) - 90) + 720)) % 360)) < 5:
+					transitioned_after = 2
+				elif (self.am_gl_update_dat) and (((((((self.imu.yaw - self.start_pos.zero_south_degree) - 90) + 720)) % 360)) < 5):
 					self.__exit_sequence_x_automatic_moving_direction_calculation_start()
 					self.__enter_sequence_x_automatic_moving_direction_calculation_west_default()
-					transitioned_after = 3
-				else:
+					transitioned_after = 2
+				elif self.am_gl_update_dat:
 					self.__exit_sequence_x_automatic_moving_direction_calculation_start()
 					self.user_var.am_gl_loc_cor = False
 					self.__enter_sequence_x_automatic_moving_direction_calculation_start_default()
-					transitioned_after = 3
+					transitioned_after = 2
 		return transitioned_after
 	
 	
@@ -3175,11 +3171,11 @@ class Model:
 		transitioned_after = transitioned_before
 		if self.__do_completion:
 			#Default exit sequence for state south
-			self.__state_vector[3] = self.State.xautomatic_moving
-			self.__state_conf_vector_position = 3
+			self.__state_vector[2] = self.State.xautomatic_moving
+			self.__state_conf_vector_position = 2
 			#'default' enter sequence for state start
-			self.__state_vector[3] = self.State.xautomatic_moving_direction_calculation_start
-			self.__state_conf_vector_position = 3
+			self.__state_vector[2] = self.State.xautomatic_moving_direction_calculation_start
+			self.__state_conf_vector_position = 2
 			self.__state_conf_vector_changed = True
 		return transitioned_after
 	
@@ -3191,11 +3187,11 @@ class Model:
 		transitioned_after = transitioned_before
 		if self.__do_completion:
 			#Default exit sequence for state north
-			self.__state_vector[3] = self.State.xautomatic_moving
-			self.__state_conf_vector_position = 3
+			self.__state_vector[2] = self.State.xautomatic_moving
+			self.__state_conf_vector_position = 2
 			#'default' enter sequence for state start
-			self.__state_vector[3] = self.State.xautomatic_moving_direction_calculation_start
-			self.__state_conf_vector_position = 3
+			self.__state_vector[2] = self.State.xautomatic_moving_direction_calculation_start
+			self.__state_conf_vector_position = 2
 			self.__state_conf_vector_changed = True
 		return transitioned_after
 	
@@ -3207,11 +3203,11 @@ class Model:
 		transitioned_after = transitioned_before
 		if self.__do_completion:
 			#Default exit sequence for state east
-			self.__state_vector[3] = self.State.xautomatic_moving
-			self.__state_conf_vector_position = 3
+			self.__state_vector[2] = self.State.xautomatic_moving
+			self.__state_conf_vector_position = 2
 			#'default' enter sequence for state start
-			self.__state_vector[3] = self.State.xautomatic_moving_direction_calculation_start
-			self.__state_conf_vector_position = 3
+			self.__state_vector[2] = self.State.xautomatic_moving_direction_calculation_start
+			self.__state_conf_vector_position = 2
 			self.__state_conf_vector_changed = True
 		return transitioned_after
 	
@@ -3223,11 +3219,11 @@ class Model:
 		transitioned_after = transitioned_before
 		if self.__do_completion:
 			#Default exit sequence for state west
-			self.__state_vector[3] = self.State.xautomatic_moving
-			self.__state_conf_vector_position = 3
+			self.__state_vector[2] = self.State.xautomatic_moving
+			self.__state_conf_vector_position = 2
 			#'default' enter sequence for state start
-			self.__state_vector[3] = self.State.xautomatic_moving_direction_calculation_start
-			self.__state_conf_vector_position = 3
+			self.__state_vector[2] = self.State.xautomatic_moving_direction_calculation_start
+			self.__state_conf_vector_position = 2
 			self.__state_conf_vector_changed = True
 		return transitioned_after
 	
@@ -3238,11 +3234,11 @@ class Model:
 		#The reactions of state unlogging.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
-			if transitioned_after < 4:
-				if self.user_var.am_gl_x_cen and self.user_var.am_gl_y_cen and self.user_var.am_gl_loc_cor:
+			if transitioned_after < 3:
+				if self.am_gl_log:
 					self.__exit_sequence_x_automatic_moving_grid_interaction_unlogging()
-					self.__enter_sequence_x_automatic_moving_grid_interaction_logging_default()
-					transitioned_after = 4
+					self.__enter_sequence_x_automatic_moving_grid_interaction_pr_default()
+					transitioned_after = 3
 		return transitioned_after
 	
 	
@@ -3258,17 +3254,14 @@ class Model:
 		"""
 		#The reactions of state first.
 		transitioned_after = transitioned_before
-		if self.__do_completion:
-			#Default exit sequence for state first
-			self.__state_vector[4] = self.State.xautomatic_moving_grid_interaction_logging
-			self.__state_conf_vector_position = 4
-			#'default' enter sequence for state second
-			self.__entry_action_x_automatic_moving_grid_interaction_logging_r1_second()
-			self.__state_vector[4] = self.State.xautomatic_moving_grid_interaction_logging_r1second
-			self.__state_conf_vector_position = 4
-			self.__state_conf_vector_changed = True
-			self.__x_automatic_moving_grid_interaction_logging_react(4)
-		else:
+		if not self.__do_completion:
+			if transitioned_after < 3:
+				if self.__time_events[0]:
+					self.__exit_sequence_x_automatic_moving_grid_interaction_logging_r1_first()
+					self.__time_events[0] = False
+					self.__enter_sequence_x_automatic_moving_grid_interaction_logging_r1_second_default()
+					self.__x_automatic_moving_grid_interaction_logging_react(3)
+					transitioned_after = 3
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
@@ -3281,20 +3274,33 @@ class Model:
 		"""
 		#The reactions of state second.
 		transitioned_after = transitioned_before
-		if self.__do_completion:
-			#Default exit sequence for state logging
-			self.__exit_sequence_x_automatic_moving_grid_interaction_logging_r1()
-			self.__state_vector[4] = self.State.xautomatic_moving
-			self.__state_conf_vector_position = 4
-			#'default' enter sequence for state unlogging
-			self.__state_vector[4] = self.State.xautomatic_moving_grid_interaction_unlogging
-			self.__state_conf_vector_position = 4
-			self.__state_conf_vector_changed = True
-		else:
+		if not self.__do_completion:
+			if transitioned_after < 3:
+				if self.__time_events[1]:
+					self.__exit_sequence_x_automatic_moving_grid_interaction_logging()
+					self.raise_am_gl_logged()
+					self.__time_events[1] = False
+					self.__enter_sequence_x_automatic_moving_grid_interaction_unlogging_default()
+					transitioned_after = 3
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
 				transitioned_after = self.__x_automatic_moving_grid_interaction_logging_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __x_automatic_moving_grid_interaction_pr_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_grid_interaction_pr_react function.
+		"""
+		#The reactions of state pr.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 3:
+				if self.__time_events[2]:
+					self.__exit_sequence_x_automatic_moving_grid_interaction_pr()
+					self.__time_events[2] = False
+					self.__enter_sequence_x_automatic_moving_grid_interaction_logging_default()
+					transitioned_after = 3
 		return transitioned_after
 	
 	
@@ -3304,150 +3310,36 @@ class Model:
 		#The reactions of state moving with lidar.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
-			if transitioned_after < 5:
+			if transitioned_after < 4:
 				if False:
 					self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar()
 					self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_without_lidar_default()
-					transitioned_after = 5
+					transitioned_after = 4
 		return transitioned_after
 	
 	
-	def __x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_go_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_go_react function.
+	def __x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_base_state_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_base_state_react function.
 		"""
-		#The reactions of state go.
+		#The reactions of state base_state.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
-			if transitioned_after < 5:
-				if self.am_finished_move:
-					self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_go()
-					self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_normal_moving_default()
-					self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(5)
-					transitioned_after = 5
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_turn_and_go_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_turn_and_go_react function.
-		"""
-		#The reactions of state turn and go.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 5:
-				if self.am_finished_turn:
-					self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_turn_and_go()
-					self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_go_default()
-					self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(5)
-					transitioned_after = 5
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_to_right_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_to_right_react function.
-		"""
-		#The reactions of state to right.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 5:
-				if self.am_finished_turn:
-					self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_to_right()
-					self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_normal_moving_default()
-					self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(5)
-					transitioned_after = 5
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_move_forward_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_move_forward_react function.
-		"""
-		#The reactions of state move forward.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 5:
-				if (self.am_finished_move) and (self.laser_distance.d90 > self.grid.grid_size):
-					self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_move_forward()
-					self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_turn_and_go_default()
-					self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(5)
-					transitioned_after = 5
-				elif (self.am_finished_move) and (self.laser_distance.d90 < self.grid.grid_size):
-					self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_move_forward()
-					self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_normal_moving_default()
-					self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(5)
-					transitioned_after = 5
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_return_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_return_react function.
-		"""
-		#The reactions of state return.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 5:
-				if self.am_finished_turn:
-					self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_return()
-					self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_normal_moving_default()
-					self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(5)
-					transitioned_after = 5
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_turn_left_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_turn_left_react function.
-		"""
-		#The reactions of state turn left.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 5:
-				if self.am_finished_turn:
-					self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_turn_left()
+			if transitioned_after < 4:
+				if self.laser_distance.d90 > self.grid.grid_size:
+					self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_base_state()
+					self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_left_wall_disappeared_default()
+					self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(4)
+					transitioned_after = 4
+				elif self.laser_distance.d0 < self.grid.grid_size:
+					self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_base_state()
+					self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front_default()
+					self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(4)
+					transitioned_after = 4
+				else:
+					self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_base_state()
 					self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_move_forward_default()
-					self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(5)
-					transitioned_after = 5
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front_react function.
-		"""
-		#The reactions of state wall_in_front.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 5:
-				if self.laser_distance.dm90 < self.grid.grid_size:
-					self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front()
-					self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_return_default()
-					self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(5)
-					transitioned_after = 5
-				elif self.laser_distance.dm90 > 0.5:
-					self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front()
-					self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_to_right_default()
-					self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(5)
-					transitioned_after = 5
+					self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(4)
+					transitioned_after = 4
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
@@ -3461,12 +3353,12 @@ class Model:
 		#The reactions of state left_wall_disappeared.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
-			if transitioned_after < 5:
-				if self.am_finished_move:
+			if transitioned_after < 4:
+				if self.am_finished_turn:
 					self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_left_wall_disappeared()
-					self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_turn_left_default()
-					self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(5)
-					transitioned_after = 5
+					self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_move_forward_default()
+					self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(4)
+					transitioned_after = 4
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
@@ -3474,23 +3366,99 @@ class Model:
 		return transitioned_after
 	
 	
-	def __x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_normal_moving_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_normal_moving_react function.
+	def __x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front_react function.
 		"""
-		#The reactions of state normal_moving.
+		#The reactions of state wall_in_front.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
-			if transitioned_after < 5:
-				if self.laser_distance.d0 < (self.grid.grid_size / 2.0):
-					self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_normal_moving()
-					self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front_default()
-					self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(5)
-					transitioned_after = 5
-				elif self.laser_distance.d90 > self.grid.grid_size:
-					self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_normal_moving()
-					self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_left_wall_disappeared_default()
-					self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(5)
-					transitioned_after = 5
+			if transitioned_after < 4:
+				if self.laser_distance.dm90 <= self.grid.grid_size:
+					self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front()
+					self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_dead_end_default()
+					self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(4)
+					transitioned_after = 4
+				elif self.laser_distance.dm90 >= self.grid.grid_size:
+					self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front()
+					self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_need_to_turn_right_default()
+					self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(4)
+					transitioned_after = 4
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_move_forward_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_move_forward_react function.
+		"""
+		#The reactions of state move_forward.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 4:
+				if self.am_finished_move:
+					self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_move_forward()
+					self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_logging_default()
+					self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(4)
+					transitioned_after = 4
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_need_to_turn_right_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_need_to_turn_right_react function.
+		"""
+		#The reactions of state need_to_turn_right.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 4:
+				if self.am_finished_turn:
+					self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_need_to_turn_right()
+					self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_move_forward_default()
+					self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(4)
+					transitioned_after = 4
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_dead_end_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_dead_end_react function.
+		"""
+		#The reactions of state dead_end.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 4:
+				if self.am_finished_turn:
+					self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_dead_end()
+					self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_move_forward_default()
+					self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(4)
+					transitioned_after = 4
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_logging_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_logging_react function.
+		"""
+		#The reactions of state logging.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 4:
+				if self.am_gl_logged:
+					self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_logging()
+					self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_base_state_default()
+					self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_react(4)
+					transitioned_after = 4
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
@@ -3518,21 +3486,31 @@ class Model:
 		return transitioned_after
 	
 	
+	def __x_automatic_moving_automatic_moving_through_maze_prom_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_automatic_moving_through_maze_prom_react function.
+		"""
+		#The reactions of state prom.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 4:
+				if self.am_finished_turn:
+					self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze_prom()
+					self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_default()
+					transitioned_after = 4
+		return transitioned_after
+	
+	
 	def __x_automatic_moving_move_normal_react(self, transitioned_before):
 		"""Implementation of __x_automatic_moving_move_normal_react function.
 		"""
 		#The reactions of state normal.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
-			if transitioned_after < 6:
-				if self.am_move_hgr:
-					self.__exit_sequence_x_automatic_moving_move_normal()
-					self.__enter_sequence_x_automatic_moving_move_moving_half_default()
-					transitioned_after = 6
-				elif self.am_move_gr:
+			if transitioned_after < 5:
+				if self.am_move_gr:
 					self.__exit_sequence_x_automatic_moving_move_normal()
 					self.__enter_sequence_x_automatic_moving_move_moving_full_default()
-					transitioned_after = 6
+					transitioned_after = 5
 		return transitioned_after
 	
 	
@@ -3542,27 +3520,39 @@ class Model:
 		#The reactions of state moving full.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
-			if transitioned_after < 6:
+			if transitioned_after < 5:
 				if ((((self.odom.x - self.user_var.am_x_mem)) * ((self.odom.x - self.user_var.am_x_mem))) + (((self.odom.y - self.user_var.am_y_mem)) * ((self.odom.y - self.user_var.am_y_mem)))) > (self.grid.grid_size * self.grid.grid_size):
 					self.__exit_sequence_x_automatic_moving_move_moving_full()
-					self.output.speed = 0.0
-					self.__enter_sequence_x_automatic_moving_move_normal_default()
-					transitioned_after = 6
+					self.__enter_sequence_x_automatic_moving_move_precise_default()
+					transitioned_after = 5
 		return transitioned_after
 	
 	
-	def __x_automatic_moving_move_moving_half_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_move_moving_half_react function.
+	def __x_automatic_moving_move_precise_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_move_precise_react function.
 		"""
-		#The reactions of state moving half.
+		#The reactions of state precise.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
-			if transitioned_after < 6:
-				if ((((self.odom.x - self.user_var.am_x_mem)) * ((self.odom.x - self.user_var.am_x_mem))) + (((self.odom.y - self.user_var.am_y_mem)) * ((self.odom.y - self.user_var.am_y_mem)))) > ((self.grid.grid_size * self.grid.grid_size) * 0.25):
-					self.__exit_sequence_x_automatic_moving_move_moving_half()
-					self.output.speed = 0.0
+			if transitioned_after < 5:
+				if ((((self.odom.x - self.user_var.am_x_mem)) * ((self.odom.x - self.user_var.am_x_mem))) + (((self.odom.y - self.user_var.am_y_mem)) * ((self.odom.y - self.user_var.am_y_mem)))) < (self.grid.grid_size * self.grid.grid_size):
+					self.__exit_sequence_x_automatic_moving_move_precise()
+					self.__enter_sequence_x_automatic_moving_move_precise2_default()
+					transitioned_after = 5
+		return transitioned_after
+	
+	
+	def __x_automatic_moving_move_precise2_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_move_precise2_react function.
+		"""
+		#The reactions of state precise2.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 5:
+				if ((((self.odom.x - self.user_var.am_x_mem)) * ((self.odom.x - self.user_var.am_x_mem))) + (((self.odom.y - self.user_var.am_y_mem)) * ((self.odom.y - self.user_var.am_y_mem)))) > (self.grid.grid_size * self.grid.grid_size):
+					self.__exit_sequence_x_automatic_moving_move_precise2()
 					self.__enter_sequence_x_automatic_moving_move_normal_default()
-					transitioned_after = 6
+					transitioned_after = 5
 		return transitioned_after
 	
 	
@@ -3572,19 +3562,19 @@ class Model:
 		#The reactions of state normal.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
-			if transitioned_after < 7:
+			if transitioned_after < 6:
 				if self.am_turn_left:
 					self.__exit_sequence_x_automatic_moving_turn_high_level_normal()
 					self.__enter_sequence_x_automatic_moving_turn_high_level_turn_left_default()
-					transitioned_after = 7
+					transitioned_after = 6
 				elif self.am_turn_right:
 					self.__exit_sequence_x_automatic_moving_turn_high_level_normal()
 					self.__enter_sequence_x_automatic_moving_turn_high_level_turn_right_default()
-					transitioned_after = 7
+					transitioned_after = 6
 				elif self.am_turn_back:
 					self.__exit_sequence_x_automatic_moving_turn_high_level_normal()
 					self.__enter_sequence_x_automatic_moving_turn_high_level_turn_back_default()
-					transitioned_after = 7
+					transitioned_after = 6
 		return transitioned_after
 	
 	
@@ -3595,12 +3585,12 @@ class Model:
 		transitioned_after = transitioned_before
 		if self.__do_completion:
 			#Default exit sequence for state turnLeft
-			self.__state_vector[7] = self.State.xautomatic_moving
-			self.__state_conf_vector_position = 7
+			self.__state_vector[6] = self.State.xautomatic_moving
+			self.__state_conf_vector_position = 6
 			#'default' enter sequence for state processingAngle
 			self.__entry_action_x_automatic_moving_turn_high_level_processing_angle()
-			self.__state_vector[7] = self.State.xautomatic_moving_turn_high_level_processing_angle
-			self.__state_conf_vector_position = 7
+			self.__state_vector[6] = self.State.xautomatic_moving_turn_high_level_processing_angle
+			self.__state_conf_vector_position = 6
 			self.__state_conf_vector_changed = True
 		return transitioned_after
 	
@@ -3612,12 +3602,12 @@ class Model:
 		transitioned_after = transitioned_before
 		if self.__do_completion:
 			#Default exit sequence for state turnRight
-			self.__state_vector[7] = self.State.xautomatic_moving
-			self.__state_conf_vector_position = 7
+			self.__state_vector[6] = self.State.xautomatic_moving
+			self.__state_conf_vector_position = 6
 			#'default' enter sequence for state processingAngle
 			self.__entry_action_x_automatic_moving_turn_high_level_processing_angle()
-			self.__state_vector[7] = self.State.xautomatic_moving_turn_high_level_processing_angle
-			self.__state_conf_vector_position = 7
+			self.__state_vector[6] = self.State.xautomatic_moving_turn_high_level_processing_angle
+			self.__state_conf_vector_position = 6
 			self.__state_conf_vector_changed = True
 		return transitioned_after
 	
@@ -3629,12 +3619,12 @@ class Model:
 		transitioned_after = transitioned_before
 		if self.__do_completion:
 			#Default exit sequence for state turnBack
-			self.__state_vector[7] = self.State.xautomatic_moving
-			self.__state_conf_vector_position = 7
+			self.__state_vector[6] = self.State.xautomatic_moving
+			self.__state_conf_vector_position = 6
 			#'default' enter sequence for state processingAngle
 			self.__entry_action_x_automatic_moving_turn_high_level_processing_angle()
-			self.__state_vector[7] = self.State.xautomatic_moving_turn_high_level_processing_angle
-			self.__state_conf_vector_position = 7
+			self.__state_vector[6] = self.State.xautomatic_moving_turn_high_level_processing_angle
+			self.__state_conf_vector_position = 6
 			self.__state_conf_vector_changed = True
 		return transitioned_after
 	
@@ -3645,20 +3635,20 @@ class Model:
 		#The reactions of state processingAngle.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
-			if transitioned_after < 7:
+			if transitioned_after < 6:
 				if self.user_var.am_angle_targ <= -(180.0):
 					self.__exit_sequence_x_automatic_moving_turn_high_level_processing_angle()
 					self.__enter_sequence_x_automatic_moving_turn_high_level_plus_default()
-					transitioned_after = 7
+					transitioned_after = 6
 				elif self.user_var.am_angle_targ > 180.0:
 					self.__exit_sequence_x_automatic_moving_turn_high_level_processing_angle()
 					self.__enter_sequence_x_automatic_moving_turn_high_level_minus_default()
-					transitioned_after = 7
-				elif self.__time_events[0]:
+					transitioned_after = 6
+				elif self.__time_events[3]:
 					self.__exit_sequence_x_automatic_moving_turn_high_level_processing_angle()
-					self.__time_events[0] = False
+					self.__time_events[3] = False
 					self.__enter_sequence_x_automatic_moving_turn_high_level_processing_angle2_default()
-					transitioned_after = 7
+					transitioned_after = 6
 		return transitioned_after
 	
 	
@@ -3669,12 +3659,12 @@ class Model:
 		transitioned_after = transitioned_before
 		if self.__do_completion:
 			#Default exit sequence for state plus
-			self.__state_vector[7] = self.State.xautomatic_moving
-			self.__state_conf_vector_position = 7
+			self.__state_vector[6] = self.State.xautomatic_moving
+			self.__state_conf_vector_position = 6
 			#'default' enter sequence for state processingAngle2
 			self.__entry_action_x_automatic_moving_turn_high_level_processing_angle2()
-			self.__state_vector[7] = self.State.xautomatic_moving_turn_high_level_processing_angle2
-			self.__state_conf_vector_position = 7
+			self.__state_vector[6] = self.State.xautomatic_moving_turn_high_level_processing_angle2
+			self.__state_conf_vector_position = 6
 			self.__state_conf_vector_changed = True
 		return transitioned_after
 	
@@ -3686,12 +3676,12 @@ class Model:
 		transitioned_after = transitioned_before
 		if self.__do_completion:
 			#Default exit sequence for state minus
-			self.__state_vector[7] = self.State.xautomatic_moving
-			self.__state_conf_vector_position = 7
+			self.__state_vector[6] = self.State.xautomatic_moving
+			self.__state_conf_vector_position = 6
 			#'default' enter sequence for state processingAngle2
 			self.__entry_action_x_automatic_moving_turn_high_level_processing_angle2()
-			self.__state_vector[7] = self.State.xautomatic_moving_turn_high_level_processing_angle2
-			self.__state_conf_vector_position = 7
+			self.__state_vector[6] = self.State.xautomatic_moving_turn_high_level_processing_angle2
+			self.__state_conf_vector_position = 6
 			self.__state_conf_vector_changed = True
 		return transitioned_after
 	
@@ -3702,11 +3692,11 @@ class Model:
 		#The reactions of state processingAngle2.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
-			if transitioned_after < 7:
+			if transitioned_after < 6:
 				if self.am_finished_turn:
 					self.__exit_sequence_x_automatic_moving_turn_high_level_processing_angle2()
 					self.__enter_sequence_x_automatic_moving_turn_high_level_normal_default()
-					transitioned_after = 7
+					transitioned_after = 6
 		return transitioned_after
 	
 	
@@ -3716,17 +3706,17 @@ class Model:
 		#The reactions of state normal.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
-			if transitioned_after < 8:
+			if transitioned_after < 7:
 				if (self.am_start_turn) and (self.user_var.am_angle_targ <= 0.0):
 					self.__exit_sequence_x_automatic_moving_turn_low_level_normal()
 					self.__enter_sequence_x_automatic_moving_turn_low_level_negative_rotation_default()
 					self.__x_automatic_moving_react(0)
-					transitioned_after = 8
+					transitioned_after = 7
 				elif (self.am_start_turn) and (self.user_var.am_angle_targ >= 0.0):
 					self.__exit_sequence_x_automatic_moving_turn_low_level_normal()
 					self.__enter_sequence_x_automatic_moving_turn_low_level_positive_rotation_default()
 					self.__x_automatic_moving_react(0)
-					transitioned_after = 8
+					transitioned_after = 7
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
@@ -3740,12 +3730,12 @@ class Model:
 		#The reactions of state negativeRotation.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
-			if transitioned_after < 8:
+			if transitioned_after < 7:
 				if (self.imu.yaw - self.user_var.am_angle_targ) > 0.0 and (self.imu.yaw - self.user_var.am_angle_targ) < self.user_var.am_ct_thr1:
 					self.__exit_sequence_x_automatic_moving_turn_low_level_negative_rotation()
 					self.__enter_sequence_x_automatic_moving_turn_low_level_n_r2_default()
 					self.__x_automatic_moving_react(0)
-					transitioned_after = 8
+					transitioned_after = 7
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
@@ -3759,12 +3749,12 @@ class Model:
 		#The reactions of state positiveRotation.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
-			if transitioned_after < 8:
+			if transitioned_after < 7:
 				if (self.imu.yaw - self.user_var.am_angle_targ) < 0.0 and (self.imu.yaw - self.user_var.am_angle_targ) > -(self.user_var.am_ct_thr1):
 					self.__exit_sequence_x_automatic_moving_turn_low_level_positive_rotation()
 					self.__enter_sequence_x_automatic_moving_turn_low_level_p_r2_default()
 					self.__x_automatic_moving_react(0)
-					transitioned_after = 8
+					transitioned_after = 7
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
@@ -3778,12 +3768,12 @@ class Model:
 		#The reactions of state pR2.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
-			if transitioned_after < 8:
+			if transitioned_after < 7:
 				if (self.imu.yaw - self.user_var.am_angle_targ) > -(self.user_var.am_ct_thr2):
 					self.__exit_sequence_x_automatic_moving_turn_low_level_p_r2()
 					self.__enter_sequence_x_automatic_moving_turn_low_level_p_r3_default()
 					self.__x_automatic_moving_react(0)
-					transitioned_after = 8
+					transitioned_after = 7
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
@@ -3797,12 +3787,12 @@ class Model:
 		#The reactions of state pR3.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
-			if transitioned_after < 8:
+			if transitioned_after < 7:
 				if (self.imu.yaw - self.user_var.am_angle_targ) > 0.0 or self.imu.yaw < -(90.0):
 					self.__exit_sequence_x_automatic_moving_turn_low_level_p_r3()
 					self.__enter_sequence_x_automatic_moving_turn_low_level_normal_default()
 					self.__x_automatic_moving_react(0)
-					transitioned_after = 8
+					transitioned_after = 7
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
@@ -3816,12 +3806,12 @@ class Model:
 		#The reactions of state nR2.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
-			if transitioned_after < 8:
+			if transitioned_after < 7:
 				if (self.imu.yaw - self.user_var.am_angle_targ) < self.user_var.am_ct_thr2:
 					self.__exit_sequence_x_automatic_moving_turn_low_level_n_r2()
 					self.__enter_sequence_x_automatic_moving_turn_low_level_n_r3_default()
 					self.__x_automatic_moving_react(0)
-					transitioned_after = 8
+					transitioned_after = 7
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
@@ -3835,12 +3825,12 @@ class Model:
 		#The reactions of state nR3.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
-			if transitioned_after < 8:
+			if transitioned_after < 7:
 				if (self.imu.yaw - self.user_var.am_angle_targ) < 0.0 or self.imu.yaw > 90.0:
 					self.__exit_sequence_x_automatic_moving_turn_low_level_n_r3()
 					self.__enter_sequence_x_automatic_moving_turn_low_level_normal_default()
 					self.__x_automatic_moving_react(0)
-					transitioned_after = 8
+					transitioned_after = 7
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
@@ -4212,8 +4202,6 @@ class Model:
 			self.__state_vector[0] = self.State.null_state
 			self.__state_conf_vector_position = 0
 			#'default' enter sequence for state automatic moving
-			self.__entry_action_x_automatic_moving()
-			self.__enter_sequence_x_automatic_moving_update_generator_default()
 			self.__enter_sequence_x_automatic_moving_column_calcualtion_default()
 			self.__enter_sequence_x_automatic_moving_row_calculation_default()
 			self.__enter_sequence_x_automatic_moving_direction_calculation_default()
@@ -4239,6 +4227,9 @@ class Model:
 		self.computer.d_press = False
 		self.computer.x_press = False
 		self.__time_events[0] = False
+		self.__time_events[1] = False
+		self.__time_events[2] = False
+		self.__time_events[3] = False
 	
 	
 	def __clear_internal_events(self):
@@ -4250,8 +4241,10 @@ class Model:
 		self.am_start_turn = False
 		self.am_finished_turn = False
 		self.am_move_gr = False
-		self.am_move_hgr = False
 		self.am_finished_move = False
+		self.am_gl_update_dat = False
+		self.am_gl_log = False
+		self.am_gl_logged = False
 	
 	
 	def __micro_step(self):
@@ -4272,8 +4265,10 @@ class Model:
 			transitioned = self.__x_manual_control_manual_control_region_turning_right_react(transitioned)
 		elif state == self.State.xmanual_control_manual_control_region_turning_left:
 			transitioned = self.__x_manual_control_manual_control_region_turning_left_react(transitioned)
-		elif state == self.State.xautomatic_moving_update_generator_gen:
-			transitioned = self.__x_automatic_moving_update_generator_gen_react(transitioned)
+		elif state == self.State.xautomatic_moving_column_calcualtion_first_step:
+			transitioned = self.__x_automatic_moving_column_calcualtion_first_step_react(transitioned)
+		elif state == self.State.xautomatic_moving_column_calcualtion_second:
+			transitioned = self.__x_automatic_moving_column_calcualtion_second_react(transitioned)
 		elif state == self.State.xinitial_calibration_initial_calibration_region_start_calibration:
 			transitioned = self.__x_initial_calibration_initial_calibration_region_start_calibration_react(transitioned)
 		elif state == self.State.xinitial_calibration_initial_calibration_region_need_to_get_closer_to_top_wall:
@@ -4310,18 +4305,12 @@ class Model:
 			transitioned = self.__x_initial_calibration_initial_calibration_region_set_zero_react(transitioned)
 		if self.__state_conf_vector_position < 1:
 			state = self.__state_vector[1]
-			if state == self.State.xautomatic_moving_column_calcualtion_first_step:
-				transitioned = self.__x_automatic_moving_column_calcualtion_first_step_react(transitioned)
-			elif state == self.State.xautomatic_moving_column_calcualtion_second:
-				transitioned = self.__x_automatic_moving_column_calcualtion_second_react(transitioned)
-		if self.__state_conf_vector_position < 2:
-			state = self.__state_vector[2]
 			if state == self.State.xautomatic_moving_row_calculation_firststep:
 				transitioned = self.__x_automatic_moving_row_calculation_firststep_react(transitioned)
 			elif state == self.State.xautomatic_moving_row_calculation_second:
 				transitioned = self.__x_automatic_moving_row_calculation_second_react(transitioned)
-		if self.__state_conf_vector_position < 3:
-			state = self.__state_vector[3]
+		if self.__state_conf_vector_position < 2:
+			state = self.__state_vector[2]
 			if state == self.State.xautomatic_moving_direction_calculation_start:
 				transitioned = self.__x_automatic_moving_direction_calculation_start_react(transitioned)
 			elif state == self.State.xautomatic_moving_direction_calculation_south:
@@ -4332,46 +4321,48 @@ class Model:
 				transitioned = self.__x_automatic_moving_direction_calculation_east_react(transitioned)
 			elif state == self.State.xautomatic_moving_direction_calculation_west:
 				transitioned = self.__x_automatic_moving_direction_calculation_west_react(transitioned)
-		if self.__state_conf_vector_position < 4:
-			state = self.__state_vector[4]
+		if self.__state_conf_vector_position < 3:
+			state = self.__state_vector[3]
 			if state == self.State.xautomatic_moving_grid_interaction_unlogging:
 				transitioned = self.__x_automatic_moving_grid_interaction_unlogging_react(transitioned)
 			elif state == self.State.xautomatic_moving_grid_interaction_logging_r1first:
 				transitioned = self.__x_automatic_moving_grid_interaction_logging_r1_first_react(transitioned)
 			elif state == self.State.xautomatic_moving_grid_interaction_logging_r1second:
 				transitioned = self.__x_automatic_moving_grid_interaction_logging_r1_second_react(transitioned)
-		if self.__state_conf_vector_position < 5:
-			state = self.__state_vector[5]
-			if state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1go:
-				transitioned = self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_go_react(transitioned)
-			elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1turn_and_go:
-				transitioned = self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_turn_and_go_react(transitioned)
-			elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1to_right:
-				transitioned = self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_to_right_react(transitioned)
-			elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1move_forward:
-				transitioned = self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_move_forward_react(transitioned)
-			elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1return:
-				transitioned = self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_return_react(transitioned)
-			elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1turn_left:
-				transitioned = self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_turn_left_react(transitioned)
-			elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1wall_in_front:
-				transitioned = self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front_react(transitioned)
+			elif state == self.State.xautomatic_moving_grid_interaction_pr:
+				transitioned = self.__x_automatic_moving_grid_interaction_pr_react(transitioned)
+		if self.__state_conf_vector_position < 4:
+			state = self.__state_vector[4]
+			if state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1base_state:
+				transitioned = self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_base_state_react(transitioned)
 			elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1left_wall_disappeared:
 				transitioned = self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_left_wall_disappeared_react(transitioned)
-			elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1normal_moving:
-				transitioned = self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_normal_moving_react(transitioned)
+			elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1wall_in_front:
+				transitioned = self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_wall_in_front_react(transitioned)
+			elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1move_forward:
+				transitioned = self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_move_forward_react(transitioned)
+			elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1need_to_turn_right:
+				transitioned = self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_need_to_turn_right_react(transitioned)
+			elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1dead_end:
+				transitioned = self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_dead_end_react(transitioned)
+			elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_with_lidar_r1logging:
+				transitioned = self.__x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_logging_react(transitioned)
 			elif state == self.State.xautomatic_moving_automatic_moving_through_maze_moving_without_lidar_r1placeholder:
 				transitioned = self.__x_automatic_moving_automatic_moving_through_maze_moving_without_lidar_r1_placeholder_react(transitioned)
-		if self.__state_conf_vector_position < 6:
-			state = self.__state_vector[6]
+			elif state == self.State.xautomatic_moving_automatic_moving_through_maze_prom:
+				transitioned = self.__x_automatic_moving_automatic_moving_through_maze_prom_react(transitioned)
+		if self.__state_conf_vector_position < 5:
+			state = self.__state_vector[5]
 			if state == self.State.xautomatic_moving_move_normal:
 				transitioned = self.__x_automatic_moving_move_normal_react(transitioned)
 			elif state == self.State.xautomatic_moving_move_moving_full:
 				transitioned = self.__x_automatic_moving_move_moving_full_react(transitioned)
-			elif state == self.State.xautomatic_moving_move_moving_half:
-				transitioned = self.__x_automatic_moving_move_moving_half_react(transitioned)
-		if self.__state_conf_vector_position < 7:
-			state = self.__state_vector[7]
+			elif state == self.State.xautomatic_moving_move_precise:
+				transitioned = self.__x_automatic_moving_move_precise_react(transitioned)
+			elif state == self.State.xautomatic_moving_move_precise2:
+				transitioned = self.__x_automatic_moving_move_precise2_react(transitioned)
+		if self.__state_conf_vector_position < 6:
+			state = self.__state_vector[6]
 			if state == self.State.xautomatic_moving_turn_high_level_normal:
 				transitioned = self.__x_automatic_moving_turn_high_level_normal_react(transitioned)
 			elif state == self.State.xautomatic_moving_turn_high_level_turn_left:
@@ -4388,8 +4379,8 @@ class Model:
 				transitioned = self.__x_automatic_moving_turn_high_level_minus_react(transitioned)
 			elif state == self.State.xautomatic_moving_turn_high_level_processing_angle2:
 				transitioned = self.__x_automatic_moving_turn_high_level_processing_angle2_react(transitioned)
-		if self.__state_conf_vector_position < 8:
-			state = self.__state_vector[8]
+		if self.__state_conf_vector_position < 7:
+			state = self.__state_vector[7]
 			if state == self.State.xautomatic_moving_turn_low_level_normal:
 				self.__x_automatic_moving_turn_low_level_normal_react(transitioned)
 			elif state == self.State.xautomatic_moving_turn_low_level_negative_rotation:
