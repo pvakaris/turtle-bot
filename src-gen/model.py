@@ -22,15 +22,24 @@ class Model:
 			xmanual_control_manual_control_region_turning_right,
 			xmanual_control_manual_control_region_turning_left,
 			xautomatic_moving,
-			xautomatic_moving_column_calcualtion_first_step,
-			xautomatic_moving_column_calcualtion_second,
-			xautomatic_moving_row_calculation_firststep,
-			xautomatic_moving_row_calculation_second,
-			xautomatic_moving_direction_calculation_start,
-			xautomatic_moving_direction_calculation_south,
+			xautomatic_moving_row_calcualtion_base_state,
+			xautomatic_moving_row_calcualtion_calc,
+			xautomatic_moving_row_calcualtion_zero,
+			xautomatic_moving_row_calcualtion_one,
+			xautomatic_moving_row_calcualtion_two,
+			xautomatic_moving_row_calcualtion_three,
+			xautomatic_moving_column_calculation_base_state,
+			xautomatic_moving_column_calculation_calc,
+			xautomatic_moving_column_calculation_zero,
+			xautomatic_moving_column_calculation_one,
+			xautomatic_moving_column_calculation_two,
+			xautomatic_moving_column_calculation_three,
+			xautomatic_moving_direction_calculation_calc,
 			xautomatic_moving_direction_calculation_north,
-			xautomatic_moving_direction_calculation_east,
+			xautomatic_moving_direction_calculation_south,
 			xautomatic_moving_direction_calculation_west,
+			xautomatic_moving_direction_calculation_east,
+			xautomatic_moving_direction_calculation_base,
 			xautomatic_moving_grid_interaction_unlogging,
 			xautomatic_moving_grid_interaction_logging,
 			xautomatic_moving_grid_interaction_logging_r1first,
@@ -98,7 +107,7 @@ class Model:
 			xinitial_calibration_initial_calibration_region_slow_turning_state_4,
 			xinitial_calibration_initial_calibration_region_very_slow_turning_state_4,
 			null_state
-		) = range(84)
+		) = range(93)
 	
 	
 	class UserVar:
@@ -136,9 +145,7 @@ class Model:
 			self.am_gl_y_rel = None
 			self.am_gl_x_cen = None
 			self.am_gl_y_cen = None
-			self.ix = None
-			self.iy = None
-			self.am_gl_loc_cor = None
+			self.am_gl_ang = None
 			
 			self.statemachine = statemachine
 		
@@ -412,7 +419,7 @@ class Model:
 		
 		# for timed statechart:
 		self.timer_service = None
-		self.__time_events = [None] * 4
+		self.__time_events = [None] * 7
 		
 		# initializations:
 		#Default init sequence for statechart model
@@ -446,9 +453,7 @@ class Model:
 		self.user_var.am_gl_y_rel = -(1.0)
 		self.user_var.am_gl_x_cen = False
 		self.user_var.am_gl_y_cen = False
-		self.user_var.ix = 0
-		self.user_var.iy = 0
-		self.user_var.am_gl_loc_cor = False
+		self.user_var.am_gl_ang = 0
 		self.base_values.max_speed = 0.22
 		self.base_values.max_rotation = 2.84
 		self.base_values.degrees_front = 10
@@ -567,24 +572,42 @@ class Model:
 		if s == self.__State.xautomatic_moving:
 			return (self.__state_vector[0] >= self.__State.xautomatic_moving)\
 				and (self.__state_vector[0] <= self.__State.xautomatic_moving_turn_low_level_nr3)
-		if s == self.__State.xautomatic_moving_column_calcualtion_first_step:
-			return self.__state_vector[0] == self.__State.xautomatic_moving_column_calcualtion_first_step
-		if s == self.__State.xautomatic_moving_column_calcualtion_second:
-			return self.__state_vector[0] == self.__State.xautomatic_moving_column_calcualtion_second
-		if s == self.__State.xautomatic_moving_row_calculation_firststep:
-			return self.__state_vector[1] == self.__State.xautomatic_moving_row_calculation_firststep
-		if s == self.__State.xautomatic_moving_row_calculation_second:
-			return self.__state_vector[1] == self.__State.xautomatic_moving_row_calculation_second
-		if s == self.__State.xautomatic_moving_direction_calculation_start:
-			return self.__state_vector[2] == self.__State.xautomatic_moving_direction_calculation_start
-		if s == self.__State.xautomatic_moving_direction_calculation_south:
-			return self.__state_vector[2] == self.__State.xautomatic_moving_direction_calculation_south
+		if s == self.__State.xautomatic_moving_row_calcualtion_base_state:
+			return self.__state_vector[0] == self.__State.xautomatic_moving_row_calcualtion_base_state
+		if s == self.__State.xautomatic_moving_row_calcualtion_calc:
+			return self.__state_vector[0] == self.__State.xautomatic_moving_row_calcualtion_calc
+		if s == self.__State.xautomatic_moving_row_calcualtion_zero:
+			return self.__state_vector[0] == self.__State.xautomatic_moving_row_calcualtion_zero
+		if s == self.__State.xautomatic_moving_row_calcualtion_one:
+			return self.__state_vector[0] == self.__State.xautomatic_moving_row_calcualtion_one
+		if s == self.__State.xautomatic_moving_row_calcualtion_two:
+			return self.__state_vector[0] == self.__State.xautomatic_moving_row_calcualtion_two
+		if s == self.__State.xautomatic_moving_row_calcualtion_three:
+			return self.__state_vector[0] == self.__State.xautomatic_moving_row_calcualtion_three
+		if s == self.__State.xautomatic_moving_column_calculation_base_state:
+			return self.__state_vector[1] == self.__State.xautomatic_moving_column_calculation_base_state
+		if s == self.__State.xautomatic_moving_column_calculation_calc:
+			return self.__state_vector[1] == self.__State.xautomatic_moving_column_calculation_calc
+		if s == self.__State.xautomatic_moving_column_calculation_zero:
+			return self.__state_vector[1] == self.__State.xautomatic_moving_column_calculation_zero
+		if s == self.__State.xautomatic_moving_column_calculation_one:
+			return self.__state_vector[1] == self.__State.xautomatic_moving_column_calculation_one
+		if s == self.__State.xautomatic_moving_column_calculation_two:
+			return self.__state_vector[1] == self.__State.xautomatic_moving_column_calculation_two
+		if s == self.__State.xautomatic_moving_column_calculation_three:
+			return self.__state_vector[1] == self.__State.xautomatic_moving_column_calculation_three
+		if s == self.__State.xautomatic_moving_direction_calculation_calc:
+			return self.__state_vector[2] == self.__State.xautomatic_moving_direction_calculation_calc
 		if s == self.__State.xautomatic_moving_direction_calculation_north:
 			return self.__state_vector[2] == self.__State.xautomatic_moving_direction_calculation_north
-		if s == self.__State.xautomatic_moving_direction_calculation_east:
-			return self.__state_vector[2] == self.__State.xautomatic_moving_direction_calculation_east
+		if s == self.__State.xautomatic_moving_direction_calculation_south:
+			return self.__state_vector[2] == self.__State.xautomatic_moving_direction_calculation_south
 		if s == self.__State.xautomatic_moving_direction_calculation_west:
 			return self.__state_vector[2] == self.__State.xautomatic_moving_direction_calculation_west
+		if s == self.__State.xautomatic_moving_direction_calculation_east:
+			return self.__state_vector[2] == self.__State.xautomatic_moving_direction_calculation_east
+		if s == self.__State.xautomatic_moving_direction_calculation_base:
+			return self.__state_vector[2] == self.__State.xautomatic_moving_direction_calculation_base
 		if s == self.__State.xautomatic_moving_grid_interaction_unlogging:
 			return self.__state_vector[3] == self.__State.xautomatic_moving_grid_interaction_unlogging
 		if s == self.__State.xautomatic_moving_grid_interaction_logging:
@@ -726,7 +749,7 @@ class Model:
 	def time_elapsed(self, event_id):
 		"""Add time events to in event queue
 		"""
-		if event_id in range(4):
+		if event_id in range(7):
 			self.in_event_queue.put(lambda: self.raise_time_event(event_id))
 			self.run_cycle()
 	
@@ -881,42 +904,101 @@ class Model:
 		self.output.rotation = (self.output.rotation + 0.02) if self.output.rotation < 2.82 else 2.84
 		self.__completed = True
 		
-	def __entry_action_x_automatic_moving_column_calcualtion_first_step(self):
-		"""Entry action for state 'first_step'..
+	def __entry_action_x_automatic_moving(self):
+		"""Entry action for state 'automatic moving'..
 		"""
-		#Entry action for state 'first_step'.
+		#Entry action for state 'automatic moving'.
+		self.start_pos.set_zero = True
+		
+	def __entry_action_x_automatic_moving_row_calcualtion_calc(self):
+		"""Entry action for state 'calc'..
+		"""
+		#Entry action for state 'calc'.
+		self.timer_service.set_timer(self, 0, (5 * 1000), False)
 		self.user_var.am_gl_x_rel = ((((self.odom.x - self.start_pos.zero_x)) if (self.odom.x > self.start_pos.zero_x) else ((self.start_pos.zero_x - self.odom.x))) / self.grid.grid_size)
-		self.grid.column = self.user_var.ix
 		
-	def __entry_action_x_automatic_moving_row_calculation_firststep(self):
-		"""Entry action for state 'firststep'..
-		"""
-		#Entry action for state 'firststep'.
-		self.user_var.am_gl_y_rel = ((((self.start_pos.zero_y - self.odom.y)) if (self.start_pos.zero_y > self.odom.y) else ((self.odom.y - self.start_pos.zero_y))) / self.grid.grid_size)
-		self.grid.row = self.user_var.iy
-		
-	def __entry_action_x_automatic_moving_direction_calculation_south(self):
+	def __entry_action_x_automatic_moving_row_calcualtion_zero(self):
 		""".
 		"""
-		#Entry action for state 'south'.
-		self.grid.orientation = 2
-		self.user_var.am_gl_loc_cor = True
+		#Entry action for state 'zero'.
+		self.grid.row = 0
 		self.__completed = True
+		
+	def __entry_action_x_automatic_moving_row_calcualtion_one(self):
+		""".
+		"""
+		#Entry action for state 'one'.
+		self.grid.row = 1
+		self.__completed = True
+		
+	def __entry_action_x_automatic_moving_row_calcualtion_two(self):
+		""".
+		"""
+		#Entry action for state 'two'.
+		self.grid.row = 2
+		self.__completed = True
+		
+	def __entry_action_x_automatic_moving_row_calcualtion_three(self):
+		""".
+		"""
+		#Entry action for state 'three'.
+		self.grid.row = 3
+		self.__completed = True
+		
+	def __entry_action_x_automatic_moving_column_calculation_calc(self):
+		"""Entry action for state 'calc'..
+		"""
+		#Entry action for state 'calc'.
+		self.timer_service.set_timer(self, 1, (5 * 1000), False)
+		self.user_var.am_gl_y_rel = ((((self.start_pos.zero_y - self.odom.y)) if (self.start_pos.zero_y > self.odom.y) else ((self.odom.y - self.start_pos.zero_y))) / self.grid.grid_size)
+		
+	def __entry_action_x_automatic_moving_column_calculation_zero(self):
+		""".
+		"""
+		#Entry action for state 'zero'.
+		self.grid.column = 0
+		self.__completed = True
+		
+	def __entry_action_x_automatic_moving_column_calculation_one(self):
+		""".
+		"""
+		#Entry action for state 'one'.
+		self.grid.column = 1
+		self.__completed = True
+		
+	def __entry_action_x_automatic_moving_column_calculation_two(self):
+		""".
+		"""
+		#Entry action for state 'two'.
+		self.grid.column = 2
+		self.__completed = True
+		
+	def __entry_action_x_automatic_moving_column_calculation_three(self):
+		""".
+		"""
+		#Entry action for state 'three'.
+		self.grid.column = 3
+		self.__completed = True
+		
+	def __entry_action_x_automatic_moving_direction_calculation_calc(self):
+		"""Entry action for state 'calc'..
+		"""
+		#Entry action for state 'calc'.
+		self.timer_service.set_timer(self, 2, (5 * 1000), False)
+		self.user_var.am_gl_ang = (((int((((self.imu.yaw + 720) - self.start_pos.zero_south_degree))))) % 360)
 		
 	def __entry_action_x_automatic_moving_direction_calculation_north(self):
 		""".
 		"""
 		#Entry action for state 'north'.
 		self.grid.orientation = 0
-		self.user_var.am_gl_loc_cor = True
 		self.__completed = True
 		
-	def __entry_action_x_automatic_moving_direction_calculation_east(self):
+	def __entry_action_x_automatic_moving_direction_calculation_south(self):
 		""".
 		"""
-		#Entry action for state 'east'.
-		self.grid.orientation = 3
-		self.user_var.am_gl_loc_cor = True
+		#Entry action for state 'south'.
+		self.grid.orientation = 2
 		self.__completed = True
 		
 	def __entry_action_x_automatic_moving_direction_calculation_west(self):
@@ -924,14 +1006,20 @@ class Model:
 		"""
 		#Entry action for state 'west'.
 		self.grid.orientation = 1
-		self.user_var.am_gl_loc_cor = True
+		self.__completed = True
+		
+	def __entry_action_x_automatic_moving_direction_calculation_east(self):
+		""".
+		"""
+		#Entry action for state 'east'.
+		self.grid.orientation = 3
 		self.__completed = True
 		
 	def __entry_action_x_automatic_moving_grid_interaction_logging_r1_first(self):
 		"""Entry action for state 'first'..
 		"""
 		#Entry action for state 'first'.
-		self.timer_service.set_timer(self, 0, (5 * 1000), False)
+		self.timer_service.set_timer(self, 3, (5 * 1000), False)
 		self.grid.wall_front = 1 if self.laser_distance.d0 < self.grid.grid_size else 0
 		self.grid.wall_left = 1 if self.laser_distance.d90 < self.grid.grid_size else 0
 		self.grid.wall_back = 1 if self.laser_distance.d180 < self.grid.grid_size else 0
@@ -941,14 +1029,14 @@ class Model:
 		"""Entry action for state 'second'..
 		"""
 		#Entry action for state 'second'.
-		self.timer_service.set_timer(self, 1, (1 * 1000), False)
+		self.timer_service.set_timer(self, 4, (1 * 1000), False)
 		self.grid.update = True
 		
 	def __entry_action_x_automatic_moving_grid_interaction_pr(self):
 		"""Entry action for state 'pr'..
 		"""
 		#Entry action for state 'pr'.
-		self.timer_service.set_timer(self, 2, (1 * 1000), False)
+		self.timer_service.set_timer(self, 5, (1 * 1000), False)
 		self.raise_am_gl_update_dat()
 		
 	def __entry_action_x_automatic_moving_automatic_moving_through_maze_moving_with_lidar_r1_base_state(self):
@@ -1032,7 +1120,6 @@ class Model:
 		"""
 		#Entry action for state 'turnLeft'.
 		self.user_var.am_angle_targ = (self.imu.yaw + 90)
-		self.grid.orientation = (((self.grid.orientation + 3)) % 4)
 		self.__completed = True
 		
 	def __entry_action_x_automatic_moving_turn_high_level_turn_right(self):
@@ -1040,7 +1127,6 @@ class Model:
 		"""
 		#Entry action for state 'turnRight'.
 		self.user_var.am_angle_targ = (self.imu.yaw - 90)
-		self.grid.orientation = (((self.grid.orientation + 1)) % 4)
 		self.__completed = True
 		
 	def __entry_action_x_automatic_moving_turn_high_level_turn_back(self):
@@ -1048,14 +1134,13 @@ class Model:
 		"""
 		#Entry action for state 'turnBack'.
 		self.user_var.am_angle_targ = (self.imu.yaw + 180)
-		self.grid.orientation = (((self.grid.orientation + 2)) % 4)
 		self.__completed = True
 		
 	def __entry_action_x_automatic_moving_turn_high_level_processing_angle(self):
 		"""Entry action for state 'processingAngle'..
 		"""
 		#Entry action for state 'processingAngle'.
-		self.timer_service.set_timer(self, 3, (1 * 1000), False)
+		self.timer_service.set_timer(self, 6, (1 * 1000), False)
 		
 	def __entry_action_x_automatic_moving_turn_high_level_plus(self):
 		""".
@@ -1310,29 +1395,47 @@ class Model:
 		#Entry action for state 'Very Slow Turning State 4'.
 		self.output.rotation = self.user_var.very_slow_turn_speed_left if self.imu.yaw > 0.0 else self.user_var.very_slow_turn_speed_right
 		
+	def __exit_action_x_automatic_moving_row_calcualtion_calc(self):
+		"""Exit action for state 'calc'..
+		"""
+		#Exit action for state 'calc'.
+		self.timer_service.unset_timer(self, 0)
+		
+	def __exit_action_x_automatic_moving_column_calculation_calc(self):
+		"""Exit action for state 'calc'..
+		"""
+		#Exit action for state 'calc'.
+		self.timer_service.unset_timer(self, 1)
+		
+	def __exit_action_x_automatic_moving_direction_calculation_calc(self):
+		"""Exit action for state 'calc'..
+		"""
+		#Exit action for state 'calc'.
+		self.timer_service.unset_timer(self, 2)
+		
 	def __exit_action_x_automatic_moving_grid_interaction_logging_r1_first(self):
 		"""Exit action for state 'first'..
 		"""
 		#Exit action for state 'first'.
-		self.timer_service.unset_timer(self, 0)
+		self.timer_service.unset_timer(self, 3)
 		
 	def __exit_action_x_automatic_moving_grid_interaction_logging_r1_second(self):
 		"""Exit action for state 'second'..
 		"""
 		#Exit action for state 'second'.
-		self.timer_service.unset_timer(self, 1)
+		self.timer_service.unset_timer(self, 4)
 		
 	def __exit_action_x_automatic_moving_grid_interaction_pr(self):
 		"""Exit action for state 'pr'..
 		"""
 		#Exit action for state 'pr'.
-		self.timer_service.unset_timer(self, 2)
+		self.timer_service.unset_timer(self, 5)
 		
 	def __exit_action_x_automatic_moving_turn_high_level_processing_angle(self):
 		"""Exit action for state 'processingAngle'..
 		"""
 		#Exit action for state 'processingAngle'.
-		self.timer_service.unset_timer(self, 3)
+		self.timer_service.unset_timer(self, 6)
 		
 	def __enter_sequence_x_manual_control_default(self):
 		"""'default' enter sequence for state Manual Control.
@@ -1389,8 +1492,9 @@ class Model:
 		"""'default' enter sequence for state automatic moving.
 		"""
 		#'default' enter sequence for state automatic moving
-		self.__enter_sequence_x_automatic_moving_column_calcualtion_default()
-		self.__enter_sequence_x_automatic_moving_row_calculation_default()
+		self.__entry_action_x_automatic_moving()
+		self.__enter_sequence_x_automatic_moving_row_calcualtion_default()
+		self.__enter_sequence_x_automatic_moving_column_calculation_default()
 		self.__enter_sequence_x_automatic_moving_direction_calculation_default()
 		self.__enter_sequence_x_automatic_moving_grid_interaction_default()
 		self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_default()
@@ -1398,54 +1502,118 @@ class Model:
 		self.__enter_sequence_x_automatic_moving_turn_high_level_default()
 		self.__enter_sequence_x_automatic_moving_turn_low_level_default()
 		
-	def __enter_sequence_x_automatic_moving_column_calcualtion_first_step_default(self):
-		"""'default' enter sequence for state first_step.
+	def __enter_sequence_x_automatic_moving_row_calcualtion_base_state_default(self):
+		"""'default' enter sequence for state base_state.
 		"""
-		#'default' enter sequence for state first_step
-		self.__entry_action_x_automatic_moving_column_calcualtion_first_step()
-		self.__state_vector[0] = self.State.xautomatic_moving_column_calcualtion_first_step
+		#'default' enter sequence for state base_state
+		self.__state_vector[0] = self.State.xautomatic_moving_row_calcualtion_base_state
 		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_x_automatic_moving_column_calcualtion_second_default(self):
-		"""'default' enter sequence for state second.
+	def __enter_sequence_x_automatic_moving_row_calcualtion_calc_default(self):
+		"""'default' enter sequence for state calc.
 		"""
-		#'default' enter sequence for state second
-		self.__state_vector[0] = self.State.xautomatic_moving_column_calcualtion_second
+		#'default' enter sequence for state calc
+		self.__entry_action_x_automatic_moving_row_calcualtion_calc()
+		self.__state_vector[0] = self.State.xautomatic_moving_row_calcualtion_calc
 		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_x_automatic_moving_row_calculation_firststep_default(self):
-		"""'default' enter sequence for state firststep.
+	def __enter_sequence_x_automatic_moving_row_calcualtion_zero_default(self):
+		"""'default' enter sequence for state zero.
 		"""
-		#'default' enter sequence for state firststep
-		self.__entry_action_x_automatic_moving_row_calculation_firststep()
-		self.__state_vector[1] = self.State.xautomatic_moving_row_calculation_firststep
+		#'default' enter sequence for state zero
+		self.__entry_action_x_automatic_moving_row_calcualtion_zero()
+		self.__state_vector[0] = self.State.xautomatic_moving_row_calcualtion_zero
+		self.__state_conf_vector_position = 0
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_x_automatic_moving_row_calcualtion_one_default(self):
+		"""'default' enter sequence for state one.
+		"""
+		#'default' enter sequence for state one
+		self.__entry_action_x_automatic_moving_row_calcualtion_one()
+		self.__state_vector[0] = self.State.xautomatic_moving_row_calcualtion_one
+		self.__state_conf_vector_position = 0
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_x_automatic_moving_row_calcualtion_two_default(self):
+		"""'default' enter sequence for state two.
+		"""
+		#'default' enter sequence for state two
+		self.__entry_action_x_automatic_moving_row_calcualtion_two()
+		self.__state_vector[0] = self.State.xautomatic_moving_row_calcualtion_two
+		self.__state_conf_vector_position = 0
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_x_automatic_moving_row_calcualtion_three_default(self):
+		"""'default' enter sequence for state three.
+		"""
+		#'default' enter sequence for state three
+		self.__entry_action_x_automatic_moving_row_calcualtion_three()
+		self.__state_vector[0] = self.State.xautomatic_moving_row_calcualtion_three
+		self.__state_conf_vector_position = 0
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_x_automatic_moving_column_calculation_base_state_default(self):
+		"""'default' enter sequence for state base state.
+		"""
+		#'default' enter sequence for state base state
+		self.__state_vector[1] = self.State.xautomatic_moving_column_calculation_base_state
 		self.__state_conf_vector_position = 1
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_x_automatic_moving_row_calculation_second_default(self):
-		"""'default' enter sequence for state second.
+	def __enter_sequence_x_automatic_moving_column_calculation_calc_default(self):
+		"""'default' enter sequence for state calc.
 		"""
-		#'default' enter sequence for state second
-		self.__state_vector[1] = self.State.xautomatic_moving_row_calculation_second
+		#'default' enter sequence for state calc
+		self.__entry_action_x_automatic_moving_column_calculation_calc()
+		self.__state_vector[1] = self.State.xautomatic_moving_column_calculation_calc
 		self.__state_conf_vector_position = 1
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_x_automatic_moving_direction_calculation_start_default(self):
-		"""'default' enter sequence for state start.
+	def __enter_sequence_x_automatic_moving_column_calculation_zero_default(self):
+		"""'default' enter sequence for state zero.
 		"""
-		#'default' enter sequence for state start
-		self.__state_vector[2] = self.State.xautomatic_moving_direction_calculation_start
-		self.__state_conf_vector_position = 2
+		#'default' enter sequence for state zero
+		self.__entry_action_x_automatic_moving_column_calculation_zero()
+		self.__state_vector[1] = self.State.xautomatic_moving_column_calculation_zero
+		self.__state_conf_vector_position = 1
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_x_automatic_moving_direction_calculation_south_default(self):
-		"""'default' enter sequence for state south.
+	def __enter_sequence_x_automatic_moving_column_calculation_one_default(self):
+		"""'default' enter sequence for state one.
 		"""
-		#'default' enter sequence for state south
-		self.__entry_action_x_automatic_moving_direction_calculation_south()
-		self.__state_vector[2] = self.State.xautomatic_moving_direction_calculation_south
+		#'default' enter sequence for state one
+		self.__entry_action_x_automatic_moving_column_calculation_one()
+		self.__state_vector[1] = self.State.xautomatic_moving_column_calculation_one
+		self.__state_conf_vector_position = 1
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_x_automatic_moving_column_calculation_two_default(self):
+		"""'default' enter sequence for state two.
+		"""
+		#'default' enter sequence for state two
+		self.__entry_action_x_automatic_moving_column_calculation_two()
+		self.__state_vector[1] = self.State.xautomatic_moving_column_calculation_two
+		self.__state_conf_vector_position = 1
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_x_automatic_moving_column_calculation_three_default(self):
+		"""'default' enter sequence for state three.
+		"""
+		#'default' enter sequence for state three
+		self.__entry_action_x_automatic_moving_column_calculation_three()
+		self.__state_vector[1] = self.State.xautomatic_moving_column_calculation_three
+		self.__state_conf_vector_position = 1
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_x_automatic_moving_direction_calculation_calc_default(self):
+		"""'default' enter sequence for state calc.
+		"""
+		#'default' enter sequence for state calc
+		self.__entry_action_x_automatic_moving_direction_calculation_calc()
+		self.__state_vector[2] = self.State.xautomatic_moving_direction_calculation_calc
 		self.__state_conf_vector_position = 2
 		self.__state_conf_vector_changed = True
 		
@@ -1458,12 +1626,12 @@ class Model:
 		self.__state_conf_vector_position = 2
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_x_automatic_moving_direction_calculation_east_default(self):
-		"""'default' enter sequence for state east.
+	def __enter_sequence_x_automatic_moving_direction_calculation_south_default(self):
+		"""'default' enter sequence for state south.
 		"""
-		#'default' enter sequence for state east
-		self.__entry_action_x_automatic_moving_direction_calculation_east()
-		self.__state_vector[2] = self.State.xautomatic_moving_direction_calculation_east
+		#'default' enter sequence for state south
+		self.__entry_action_x_automatic_moving_direction_calculation_south()
+		self.__state_vector[2] = self.State.xautomatic_moving_direction_calculation_south
 		self.__state_conf_vector_position = 2
 		self.__state_conf_vector_changed = True
 		
@@ -1473,6 +1641,23 @@ class Model:
 		#'default' enter sequence for state west
 		self.__entry_action_x_automatic_moving_direction_calculation_west()
 		self.__state_vector[2] = self.State.xautomatic_moving_direction_calculation_west
+		self.__state_conf_vector_position = 2
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_x_automatic_moving_direction_calculation_east_default(self):
+		"""'default' enter sequence for state east.
+		"""
+		#'default' enter sequence for state east
+		self.__entry_action_x_automatic_moving_direction_calculation_east()
+		self.__state_vector[2] = self.State.xautomatic_moving_direction_calculation_east
+		self.__state_conf_vector_position = 2
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_x_automatic_moving_direction_calculation_base_default(self):
+		"""'default' enter sequence for state base.
+		"""
+		#'default' enter sequence for state base
+		self.__state_vector[2] = self.State.xautomatic_moving_direction_calculation_base
 		self.__state_conf_vector_position = 2
 		self.__state_conf_vector_changed = True
 		
@@ -2048,17 +2233,17 @@ class Model:
 		#'default' enter sequence for region manual control region
 		self.__react_x_manual_control_manual_control_region__entry_default()
 		
-	def __enter_sequence_x_automatic_moving_column_calcualtion_default(self):
-		"""'default' enter sequence for region column calcualtion.
+	def __enter_sequence_x_automatic_moving_row_calcualtion_default(self):
+		"""'default' enter sequence for region row calcualtion.
 		"""
-		#'default' enter sequence for region column calcualtion
-		self.__react_x_automatic_moving_column_calcualtion__entry_default()
+		#'default' enter sequence for region row calcualtion
+		self.__react_x_automatic_moving_row_calcualtion__entry_default()
 		
-	def __enter_sequence_x_automatic_moving_row_calculation_default(self):
-		"""'default' enter sequence for region row calculation.
+	def __enter_sequence_x_automatic_moving_column_calculation_default(self):
+		"""'default' enter sequence for region column calculation.
 		"""
-		#'default' enter sequence for region row calculation
-		self.__react_x_automatic_moving_row_calculation__entry_default()
+		#'default' enter sequence for region column calculation
+		self.__react_x_automatic_moving_column_calculation__entry_default()
 		
 	def __enter_sequence_x_automatic_moving_direction_calculation_default(self):
 		"""'default' enter sequence for region direction calculation.
@@ -2174,8 +2359,8 @@ class Model:
 		"""Default exit sequence for state automatic moving.
 		"""
 		#Default exit sequence for state automatic moving
-		self.__exit_sequence_x_automatic_moving_column_calcualtion()
-		self.__exit_sequence_x_automatic_moving_row_calculation()
+		self.__exit_sequence_x_automatic_moving_row_calcualtion()
+		self.__exit_sequence_x_automatic_moving_column_calculation()
 		self.__exit_sequence_x_automatic_moving_direction_calculation()
 		self.__exit_sequence_x_automatic_moving_grid_interaction()
 		self.__exit_sequence_x_automatic_moving_automatic_moving_through_maze()
@@ -2192,38 +2377,104 @@ class Model:
 		self.__state_vector[7] = self.State.null_state
 		self.__state_conf_vector_position = 7
 		
-	def __exit_sequence_x_automatic_moving_column_calcualtion_first_step(self):
-		"""Default exit sequence for state first_step.
+	def __exit_sequence_x_automatic_moving_row_calcualtion_base_state(self):
+		"""Default exit sequence for state base_state.
 		"""
-		#Default exit sequence for state first_step
+		#Default exit sequence for state base_state
 		self.__state_vector[0] = self.State.xautomatic_moving
 		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_x_automatic_moving_column_calcualtion_second(self):
-		"""Default exit sequence for state second.
+	def __exit_sequence_x_automatic_moving_row_calcualtion_calc(self):
+		"""Default exit sequence for state calc.
 		"""
-		#Default exit sequence for state second
+		#Default exit sequence for state calc
+		self.__state_vector[0] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 0
+		self.__exit_action_x_automatic_moving_row_calcualtion_calc()
+		
+	def __exit_sequence_x_automatic_moving_row_calcualtion_zero(self):
+		"""Default exit sequence for state zero.
+		"""
+		#Default exit sequence for state zero
 		self.__state_vector[0] = self.State.xautomatic_moving
 		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_x_automatic_moving_row_calculation_firststep(self):
-		"""Default exit sequence for state firststep.
+	def __exit_sequence_x_automatic_moving_row_calcualtion_one(self):
+		"""Default exit sequence for state one.
 		"""
-		#Default exit sequence for state firststep
+		#Default exit sequence for state one
+		self.__state_vector[0] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 0
+		
+	def __exit_sequence_x_automatic_moving_row_calcualtion_two(self):
+		"""Default exit sequence for state two.
+		"""
+		#Default exit sequence for state two
+		self.__state_vector[0] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 0
+		
+	def __exit_sequence_x_automatic_moving_row_calcualtion_three(self):
+		"""Default exit sequence for state three.
+		"""
+		#Default exit sequence for state three
+		self.__state_vector[0] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 0
+		
+	def __exit_sequence_x_automatic_moving_column_calculation_base_state(self):
+		"""Default exit sequence for state base state.
+		"""
+		#Default exit sequence for state base state
 		self.__state_vector[1] = self.State.xautomatic_moving
 		self.__state_conf_vector_position = 1
 		
-	def __exit_sequence_x_automatic_moving_row_calculation_second(self):
-		"""Default exit sequence for state second.
+	def __exit_sequence_x_automatic_moving_column_calculation_calc(self):
+		"""Default exit sequence for state calc.
 		"""
-		#Default exit sequence for state second
+		#Default exit sequence for state calc
+		self.__state_vector[1] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 1
+		self.__exit_action_x_automatic_moving_column_calculation_calc()
+		
+	def __exit_sequence_x_automatic_moving_column_calculation_zero(self):
+		"""Default exit sequence for state zero.
+		"""
+		#Default exit sequence for state zero
 		self.__state_vector[1] = self.State.xautomatic_moving
 		self.__state_conf_vector_position = 1
 		
-	def __exit_sequence_x_automatic_moving_direction_calculation_start(self):
-		"""Default exit sequence for state start.
+	def __exit_sequence_x_automatic_moving_column_calculation_one(self):
+		"""Default exit sequence for state one.
 		"""
-		#Default exit sequence for state start
+		#Default exit sequence for state one
+		self.__state_vector[1] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 1
+		
+	def __exit_sequence_x_automatic_moving_column_calculation_two(self):
+		"""Default exit sequence for state two.
+		"""
+		#Default exit sequence for state two
+		self.__state_vector[1] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 1
+		
+	def __exit_sequence_x_automatic_moving_column_calculation_three(self):
+		"""Default exit sequence for state three.
+		"""
+		#Default exit sequence for state three
+		self.__state_vector[1] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 1
+		
+	def __exit_sequence_x_automatic_moving_direction_calculation_calc(self):
+		"""Default exit sequence for state calc.
+		"""
+		#Default exit sequence for state calc
+		self.__state_vector[2] = self.State.xautomatic_moving
+		self.__state_conf_vector_position = 2
+		self.__exit_action_x_automatic_moving_direction_calculation_calc()
+		
+	def __exit_sequence_x_automatic_moving_direction_calculation_north(self):
+		"""Default exit sequence for state north.
+		"""
+		#Default exit sequence for state north
 		self.__state_vector[2] = self.State.xautomatic_moving
 		self.__state_conf_vector_position = 2
 		
@@ -2234,10 +2485,10 @@ class Model:
 		self.__state_vector[2] = self.State.xautomatic_moving
 		self.__state_conf_vector_position = 2
 		
-	def __exit_sequence_x_automatic_moving_direction_calculation_north(self):
-		"""Default exit sequence for state north.
+	def __exit_sequence_x_automatic_moving_direction_calculation_west(self):
+		"""Default exit sequence for state west.
 		"""
-		#Default exit sequence for state north
+		#Default exit sequence for state west
 		self.__state_vector[2] = self.State.xautomatic_moving
 		self.__state_conf_vector_position = 2
 		
@@ -2248,10 +2499,10 @@ class Model:
 		self.__state_vector[2] = self.State.xautomatic_moving
 		self.__state_conf_vector_position = 2
 		
-	def __exit_sequence_x_automatic_moving_direction_calculation_west(self):
-		"""Default exit sequence for state west.
+	def __exit_sequence_x_automatic_moving_direction_calculation_base(self):
+		"""Default exit sequence for state base.
 		"""
-		#Default exit sequence for state west
+		#Default exit sequence for state base
 		self.__state_vector[2] = self.State.xautomatic_moving
 		self.__state_conf_vector_position = 2
 		
@@ -2744,10 +2995,18 @@ class Model:
 			self.__exit_sequence_x_manual_control_manual_control_region_turning_right()
 		elif state == self.State.xmanual_control_manual_control_region_turning_left:
 			self.__exit_sequence_x_manual_control_manual_control_region_turning_left()
-		elif state == self.State.xautomatic_moving_column_calcualtion_first_step:
-			self.__exit_sequence_x_automatic_moving_column_calcualtion_first_step()
-		elif state == self.State.xautomatic_moving_column_calcualtion_second:
-			self.__exit_sequence_x_automatic_moving_column_calcualtion_second()
+		elif state == self.State.xautomatic_moving_row_calcualtion_base_state:
+			self.__exit_sequence_x_automatic_moving_row_calcualtion_base_state()
+		elif state == self.State.xautomatic_moving_row_calcualtion_calc:
+			self.__exit_sequence_x_automatic_moving_row_calcualtion_calc()
+		elif state == self.State.xautomatic_moving_row_calcualtion_zero:
+			self.__exit_sequence_x_automatic_moving_row_calcualtion_zero()
+		elif state == self.State.xautomatic_moving_row_calcualtion_one:
+			self.__exit_sequence_x_automatic_moving_row_calcualtion_one()
+		elif state == self.State.xautomatic_moving_row_calcualtion_two:
+			self.__exit_sequence_x_automatic_moving_row_calcualtion_two()
+		elif state == self.State.xautomatic_moving_row_calcualtion_three:
+			self.__exit_sequence_x_automatic_moving_row_calcualtion_three()
 		elif state == self.State.xinitial_calibration:
 			self.__exit_sequence_x_initial_calibration()
 		elif state == self.State.xinitial_calibration_initial_calibration_region_start_calibration:
@@ -2811,21 +3070,31 @@ class Model:
 		elif state == self.State.xinitial_calibration_initial_calibration_region_very_slow_turning_state_4:
 			self.__exit_sequence_x_initial_calibration_initial_calibration_region_very_slow_turning_state_4()
 		state = self.__state_vector[1]
-		if state == self.State.xautomatic_moving_row_calculation_firststep:
-			self.__exit_sequence_x_automatic_moving_row_calculation_firststep()
-		elif state == self.State.xautomatic_moving_row_calculation_second:
-			self.__exit_sequence_x_automatic_moving_row_calculation_second()
+		if state == self.State.xautomatic_moving_column_calculation_base_state:
+			self.__exit_sequence_x_automatic_moving_column_calculation_base_state()
+		elif state == self.State.xautomatic_moving_column_calculation_calc:
+			self.__exit_sequence_x_automatic_moving_column_calculation_calc()
+		elif state == self.State.xautomatic_moving_column_calculation_zero:
+			self.__exit_sequence_x_automatic_moving_column_calculation_zero()
+		elif state == self.State.xautomatic_moving_column_calculation_one:
+			self.__exit_sequence_x_automatic_moving_column_calculation_one()
+		elif state == self.State.xautomatic_moving_column_calculation_two:
+			self.__exit_sequence_x_automatic_moving_column_calculation_two()
+		elif state == self.State.xautomatic_moving_column_calculation_three:
+			self.__exit_sequence_x_automatic_moving_column_calculation_three()
 		state = self.__state_vector[2]
-		if state == self.State.xautomatic_moving_direction_calculation_start:
-			self.__exit_sequence_x_automatic_moving_direction_calculation_start()
-		elif state == self.State.xautomatic_moving_direction_calculation_south:
-			self.__exit_sequence_x_automatic_moving_direction_calculation_south()
+		if state == self.State.xautomatic_moving_direction_calculation_calc:
+			self.__exit_sequence_x_automatic_moving_direction_calculation_calc()
 		elif state == self.State.xautomatic_moving_direction_calculation_north:
 			self.__exit_sequence_x_automatic_moving_direction_calculation_north()
-		elif state == self.State.xautomatic_moving_direction_calculation_east:
-			self.__exit_sequence_x_automatic_moving_direction_calculation_east()
+		elif state == self.State.xautomatic_moving_direction_calculation_south:
+			self.__exit_sequence_x_automatic_moving_direction_calculation_south()
 		elif state == self.State.xautomatic_moving_direction_calculation_west:
 			self.__exit_sequence_x_automatic_moving_direction_calculation_west()
+		elif state == self.State.xautomatic_moving_direction_calculation_east:
+			self.__exit_sequence_x_automatic_moving_direction_calculation_east()
+		elif state == self.State.xautomatic_moving_direction_calculation_base:
+			self.__exit_sequence_x_automatic_moving_direction_calculation_base()
 		state = self.__state_vector[3]
 		if state == self.State.xautomatic_moving_grid_interaction_unlogging:
 			self.__exit_sequence_x_automatic_moving_grid_interaction_unlogging()
@@ -2920,41 +3189,59 @@ class Model:
 		elif state == self.State.xmanual_control_manual_control_region_turning_left:
 			self.__exit_sequence_x_manual_control_manual_control_region_turning_left()
 		
-	def __exit_sequence_x_automatic_moving_column_calcualtion(self):
-		"""Default exit sequence for region column calcualtion.
+	def __exit_sequence_x_automatic_moving_row_calcualtion(self):
+		"""Default exit sequence for region row calcualtion.
 		"""
-		#Default exit sequence for region column calcualtion
+		#Default exit sequence for region row calcualtion
 		state = self.__state_vector[0]
-		if state == self.State.xautomatic_moving_column_calcualtion_first_step:
-			self.__exit_sequence_x_automatic_moving_column_calcualtion_first_step()
-		elif state == self.State.xautomatic_moving_column_calcualtion_second:
-			self.__exit_sequence_x_automatic_moving_column_calcualtion_second()
+		if state == self.State.xautomatic_moving_row_calcualtion_base_state:
+			self.__exit_sequence_x_automatic_moving_row_calcualtion_base_state()
+		elif state == self.State.xautomatic_moving_row_calcualtion_calc:
+			self.__exit_sequence_x_automatic_moving_row_calcualtion_calc()
+		elif state == self.State.xautomatic_moving_row_calcualtion_zero:
+			self.__exit_sequence_x_automatic_moving_row_calcualtion_zero()
+		elif state == self.State.xautomatic_moving_row_calcualtion_one:
+			self.__exit_sequence_x_automatic_moving_row_calcualtion_one()
+		elif state == self.State.xautomatic_moving_row_calcualtion_two:
+			self.__exit_sequence_x_automatic_moving_row_calcualtion_two()
+		elif state == self.State.xautomatic_moving_row_calcualtion_three:
+			self.__exit_sequence_x_automatic_moving_row_calcualtion_three()
 		
-	def __exit_sequence_x_automatic_moving_row_calculation(self):
-		"""Default exit sequence for region row calculation.
+	def __exit_sequence_x_automatic_moving_column_calculation(self):
+		"""Default exit sequence for region column calculation.
 		"""
-		#Default exit sequence for region row calculation
+		#Default exit sequence for region column calculation
 		state = self.__state_vector[1]
-		if state == self.State.xautomatic_moving_row_calculation_firststep:
-			self.__exit_sequence_x_automatic_moving_row_calculation_firststep()
-		elif state == self.State.xautomatic_moving_row_calculation_second:
-			self.__exit_sequence_x_automatic_moving_row_calculation_second()
+		if state == self.State.xautomatic_moving_column_calculation_base_state:
+			self.__exit_sequence_x_automatic_moving_column_calculation_base_state()
+		elif state == self.State.xautomatic_moving_column_calculation_calc:
+			self.__exit_sequence_x_automatic_moving_column_calculation_calc()
+		elif state == self.State.xautomatic_moving_column_calculation_zero:
+			self.__exit_sequence_x_automatic_moving_column_calculation_zero()
+		elif state == self.State.xautomatic_moving_column_calculation_one:
+			self.__exit_sequence_x_automatic_moving_column_calculation_one()
+		elif state == self.State.xautomatic_moving_column_calculation_two:
+			self.__exit_sequence_x_automatic_moving_column_calculation_two()
+		elif state == self.State.xautomatic_moving_column_calculation_three:
+			self.__exit_sequence_x_automatic_moving_column_calculation_three()
 		
 	def __exit_sequence_x_automatic_moving_direction_calculation(self):
 		"""Default exit sequence for region direction calculation.
 		"""
 		#Default exit sequence for region direction calculation
 		state = self.__state_vector[2]
-		if state == self.State.xautomatic_moving_direction_calculation_start:
-			self.__exit_sequence_x_automatic_moving_direction_calculation_start()
-		elif state == self.State.xautomatic_moving_direction_calculation_south:
-			self.__exit_sequence_x_automatic_moving_direction_calculation_south()
+		if state == self.State.xautomatic_moving_direction_calculation_calc:
+			self.__exit_sequence_x_automatic_moving_direction_calculation_calc()
 		elif state == self.State.xautomatic_moving_direction_calculation_north:
 			self.__exit_sequence_x_automatic_moving_direction_calculation_north()
-		elif state == self.State.xautomatic_moving_direction_calculation_east:
-			self.__exit_sequence_x_automatic_moving_direction_calculation_east()
+		elif state == self.State.xautomatic_moving_direction_calculation_south:
+			self.__exit_sequence_x_automatic_moving_direction_calculation_south()
 		elif state == self.State.xautomatic_moving_direction_calculation_west:
 			self.__exit_sequence_x_automatic_moving_direction_calculation_west()
+		elif state == self.State.xautomatic_moving_direction_calculation_east:
+			self.__exit_sequence_x_automatic_moving_direction_calculation_east()
+		elif state == self.State.xautomatic_moving_direction_calculation_base:
+			self.__exit_sequence_x_automatic_moving_direction_calculation_base()
 		
 	def __exit_sequence_x_automatic_moving_grid_interaction(self):
 		"""Default exit sequence for region grid interaction.
@@ -3172,23 +3459,23 @@ class Model:
 		#Default react sequence for initial entry 
 		self.__enter_sequence_x_manual_control_default()
 		
-	def __react_x_automatic_moving_column_calcualtion__entry_default(self):
+	def __react_x_automatic_moving_row_calcualtion__entry_default(self):
 		"""Default react sequence for initial entry .
 		"""
 		#Default react sequence for initial entry 
-		self.__enter_sequence_x_automatic_moving_column_calcualtion_first_step_default()
+		self.__enter_sequence_x_automatic_moving_row_calcualtion_base_state_default()
 		
-	def __react_x_automatic_moving_row_calculation__entry_default(self):
+	def __react_x_automatic_moving_column_calculation__entry_default(self):
 		"""Default react sequence for initial entry .
 		"""
 		#Default react sequence for initial entry 
-		self.__enter_sequence_x_automatic_moving_row_calculation_firststep_default()
+		self.__enter_sequence_x_automatic_moving_column_calculation_base_state_default()
 		
 	def __react_x_automatic_moving_direction_calculation__entry_default(self):
 		"""Default react sequence for initial entry .
 		"""
 		#Default react sequence for initial entry 
-		self.__enter_sequence_x_automatic_moving_direction_calculation_start_default()
+		self.__enter_sequence_x_automatic_moving_direction_calculation_base_default()
 		
 	def __react_x_automatic_moving_grid_interaction__entry_default(self):
 		"""Default react sequence for initial entry .
@@ -3258,12 +3545,12 @@ class Model:
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
-				if (self.computer.m_press) and (self.user_var.is_calibrated):
+				if (self.computer.m_press) and (True):
 					self.__exit_sequence_x_manual_control()
 					self.__enter_sequence_x_automatic_moving_default()
 					self.__react(0)
 					transitioned_after = 0
-				elif (self.computer.m_press) and (not self.user_var.is_calibrated):
+				elif (self.computer.m_press) and (False):
 					self.__exit_sequence_x_manual_control()
 					self.__enter_sequence_x_initial_calibration_default()
 					self.__react(0)
@@ -3450,130 +3737,252 @@ class Model:
 		return transitioned_after
 	
 	
-	def __x_automatic_moving_column_calcualtion_first_step_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_column_calcualtion_first_step_react function.
+	def __x_automatic_moving_row_calcualtion_base_state_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_row_calcualtion_base_state_react function.
 		"""
-		#The reactions of state first_step.
+		#The reactions of state base_state.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
 				if self.am_gl_update_dat:
-					self.__exit_sequence_x_automatic_moving_column_calcualtion_first_step()
-					self.user_var.ix = 0
-					self.__enter_sequence_x_automatic_moving_column_calcualtion_second_default()
+					self.__exit_sequence_x_automatic_moving_row_calcualtion_base_state()
+					self.__enter_sequence_x_automatic_moving_row_calcualtion_calc_default()
 					transitioned_after = 0
 		return transitioned_after
 	
 	
-	def __x_automatic_moving_column_calcualtion_second_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_column_calcualtion_second_react function.
+	def __x_automatic_moving_row_calcualtion_calc_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_row_calcualtion_calc_react function.
 		"""
-		#The reactions of state second.
+		#The reactions of state calc.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
-				if self.user_var.am_gl_x_rel > (self.user_var.ix + 0.5):
-					self.__exit_sequence_x_automatic_moving_column_calcualtion_second()
-					self.user_var.ix = self.user_var.ix + 1
-					self.__enter_sequence_x_automatic_moving_column_calcualtion_second_default()
+				if self.user_var.am_gl_x_rel <= 0.5:
+					self.__exit_sequence_x_automatic_moving_row_calcualtion_calc()
+					self.__enter_sequence_x_automatic_moving_row_calcualtion_zero_default()
 					transitioned_after = 0
-				elif self.user_var.am_gl_x_rel <= (self.user_var.ix + 0.5) and (self.user_var.am_gl_x_rel <= (self.user_var.ix - 0.25) or self.user_var.am_gl_x_rel >= (self.user_var.ix + 0.25)):
-					self.__exit_sequence_x_automatic_moving_column_calcualtion_second()
-					self.user_var.am_gl_x_cen = False
-					self.__enter_sequence_x_automatic_moving_column_calcualtion_first_step_default()
+				elif self.user_var.am_gl_x_rel >= 0.5 and self.user_var.am_gl_x_rel <= 1.5:
+					self.__exit_sequence_x_automatic_moving_row_calcualtion_calc()
+					self.__enter_sequence_x_automatic_moving_row_calcualtion_one_default()
 					transitioned_after = 0
-				elif self.user_var.am_gl_x_rel > (self.user_var.ix - 0.25) and self.user_var.am_gl_x_rel < (self.user_var.ix + 0.25):
-					self.__exit_sequence_x_automatic_moving_column_calcualtion_second()
-					self.user_var.am_gl_x_cen = True
-					self.__enter_sequence_x_automatic_moving_column_calcualtion_first_step_default()
+				elif self.user_var.am_gl_x_rel >= 1.5 and self.user_var.am_gl_x_rel <= 2.5:
+					self.__exit_sequence_x_automatic_moving_row_calcualtion_calc()
+					self.__enter_sequence_x_automatic_moving_row_calcualtion_two_default()
+					transitioned_after = 0
+				elif self.user_var.am_gl_x_rel >= 2.5 and self.user_var.am_gl_x_rel <= 3.5:
+					self.__exit_sequence_x_automatic_moving_row_calcualtion_calc()
+					self.__enter_sequence_x_automatic_moving_row_calcualtion_three_default()
+					transitioned_after = 0
+				elif self.__time_events[0]:
+					self.__exit_sequence_x_automatic_moving_row_calcualtion_calc()
+					self.__time_events[0] = False
+					self.__enter_sequence_x_automatic_moving_row_calcualtion_base_state_default()
 					transitioned_after = 0
 		return transitioned_after
 	
 	
-	def __x_automatic_moving_row_calculation_firststep_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_row_calculation_firststep_react function.
+	def __x_automatic_moving_row_calcualtion_zero_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_row_calcualtion_zero_react function.
 		"""
-		#The reactions of state firststep.
+		#The reactions of state zero.
+		transitioned_after = transitioned_before
+		if self.__do_completion:
+			#Default exit sequence for state zero
+			self.__state_vector[0] = self.State.xautomatic_moving
+			self.__state_conf_vector_position = 0
+			#'default' enter sequence for state base_state
+			self.__state_vector[0] = self.State.xautomatic_moving_row_calcualtion_base_state
+			self.__state_conf_vector_position = 0
+			self.__state_conf_vector_changed = True
+		return transitioned_after
+	
+	
+	def __x_automatic_moving_row_calcualtion_one_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_row_calcualtion_one_react function.
+		"""
+		#The reactions of state one.
+		transitioned_after = transitioned_before
+		if self.__do_completion:
+			#Default exit sequence for state one
+			self.__state_vector[0] = self.State.xautomatic_moving
+			self.__state_conf_vector_position = 0
+			#'default' enter sequence for state base_state
+			self.__state_vector[0] = self.State.xautomatic_moving_row_calcualtion_base_state
+			self.__state_conf_vector_position = 0
+			self.__state_conf_vector_changed = True
+		return transitioned_after
+	
+	
+	def __x_automatic_moving_row_calcualtion_two_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_row_calcualtion_two_react function.
+		"""
+		#The reactions of state two.
+		transitioned_after = transitioned_before
+		if self.__do_completion:
+			#Default exit sequence for state two
+			self.__state_vector[0] = self.State.xautomatic_moving
+			self.__state_conf_vector_position = 0
+			#'default' enter sequence for state base_state
+			self.__state_vector[0] = self.State.xautomatic_moving_row_calcualtion_base_state
+			self.__state_conf_vector_position = 0
+			self.__state_conf_vector_changed = True
+		return transitioned_after
+	
+	
+	def __x_automatic_moving_row_calcualtion_three_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_row_calcualtion_three_react function.
+		"""
+		#The reactions of state three.
+		transitioned_after = transitioned_before
+		if self.__do_completion:
+			#Default exit sequence for state three
+			self.__state_vector[0] = self.State.xautomatic_moving
+			self.__state_conf_vector_position = 0
+			#'default' enter sequence for state base_state
+			self.__state_vector[0] = self.State.xautomatic_moving_row_calcualtion_base_state
+			self.__state_conf_vector_position = 0
+			self.__state_conf_vector_changed = True
+		return transitioned_after
+	
+	
+	def __x_automatic_moving_column_calculation_base_state_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_column_calculation_base_state_react function.
+		"""
+		#The reactions of state base state.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 1:
 				if self.am_gl_update_dat:
-					self.__exit_sequence_x_automatic_moving_row_calculation_firststep()
-					self.user_var.iy = 0
-					self.__enter_sequence_x_automatic_moving_row_calculation_second_default()
+					self.__exit_sequence_x_automatic_moving_column_calculation_base_state()
+					self.__enter_sequence_x_automatic_moving_column_calculation_calc_default()
 					transitioned_after = 1
 		return transitioned_after
 	
 	
-	def __x_automatic_moving_row_calculation_second_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_row_calculation_second_react function.
+	def __x_automatic_moving_column_calculation_calc_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_column_calculation_calc_react function.
 		"""
-		#The reactions of state second.
+		#The reactions of state calc.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 1:
-				if self.user_var.am_gl_y_rel > (self.user_var.iy + 0.5):
-					self.__exit_sequence_x_automatic_moving_row_calculation_second()
-					self.user_var.iy = self.user_var.iy + 1
-					self.__enter_sequence_x_automatic_moving_row_calculation_second_default()
+				if self.user_var.am_gl_y_rel <= 0.5:
+					self.__exit_sequence_x_automatic_moving_column_calculation_calc()
+					self.__enter_sequence_x_automatic_moving_column_calculation_zero_default()
 					transitioned_after = 1
-				elif self.user_var.am_gl_y_rel > (self.user_var.iy - 0.25) and self.user_var.am_gl_y_rel < (self.user_var.iy + 0.25):
-					self.__exit_sequence_x_automatic_moving_row_calculation_second()
-					self.user_var.am_gl_y_cen = True
-					self.__enter_sequence_x_automatic_moving_row_calculation_firststep_default()
+				elif self.user_var.am_gl_y_rel >= 0.5 and self.user_var.am_gl_y_rel <= 1.5:
+					self.__exit_sequence_x_automatic_moving_column_calculation_calc()
+					self.__enter_sequence_x_automatic_moving_column_calculation_one_default()
 					transitioned_after = 1
-				elif self.user_var.am_gl_y_rel <= (self.user_var.iy + 0.5) and (self.user_var.am_gl_y_rel <= (self.user_var.iy - 0.25) or self.user_var.am_gl_y_rel >= (self.user_var.iy + 0.25)):
-					self.__exit_sequence_x_automatic_moving_row_calculation_second()
-					self.user_var.am_gl_y_cen = False
-					self.__enter_sequence_x_automatic_moving_row_calculation_firststep_default()
+				elif self.user_var.am_gl_y_rel >= 1.5 and self.user_var.am_gl_y_rel <= 2.5:
+					self.__exit_sequence_x_automatic_moving_column_calculation_calc()
+					self.__enter_sequence_x_automatic_moving_column_calculation_two_default()
+					transitioned_after = 1
+				elif self.user_var.am_gl_y_rel >= 2.5 and self.user_var.am_gl_y_rel <= 3.5:
+					self.__exit_sequence_x_automatic_moving_column_calculation_calc()
+					self.__enter_sequence_x_automatic_moving_column_calculation_three_default()
+					transitioned_after = 1
+				elif self.__time_events[1]:
+					self.__exit_sequence_x_automatic_moving_column_calculation_calc()
+					self.__time_events[1] = False
+					self.__enter_sequence_x_automatic_moving_column_calculation_base_state_default()
 					transitioned_after = 1
 		return transitioned_after
 	
 	
-	def __x_automatic_moving_direction_calculation_start_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_direction_calculation_start_react function.
+	def __x_automatic_moving_column_calculation_zero_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_column_calculation_zero_react function.
 		"""
-		#The reactions of state start.
+		#The reactions of state zero.
+		transitioned_after = transitioned_before
+		if self.__do_completion:
+			#Default exit sequence for state zero
+			self.__state_vector[1] = self.State.xautomatic_moving
+			self.__state_conf_vector_position = 1
+			#'default' enter sequence for state base state
+			self.__state_vector[1] = self.State.xautomatic_moving_column_calculation_base_state
+			self.__state_conf_vector_position = 1
+			self.__state_conf_vector_changed = True
+		return transitioned_after
+	
+	
+	def __x_automatic_moving_column_calculation_one_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_column_calculation_one_react function.
+		"""
+		#The reactions of state one.
+		transitioned_after = transitioned_before
+		if self.__do_completion:
+			#Default exit sequence for state one
+			self.__state_vector[1] = self.State.xautomatic_moving
+			self.__state_conf_vector_position = 1
+			#'default' enter sequence for state base state
+			self.__state_vector[1] = self.State.xautomatic_moving_column_calculation_base_state
+			self.__state_conf_vector_position = 1
+			self.__state_conf_vector_changed = True
+		return transitioned_after
+	
+	
+	def __x_automatic_moving_column_calculation_two_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_column_calculation_two_react function.
+		"""
+		#The reactions of state two.
+		transitioned_after = transitioned_before
+		if self.__do_completion:
+			#Default exit sequence for state two
+			self.__state_vector[1] = self.State.xautomatic_moving
+			self.__state_conf_vector_position = 1
+			#'default' enter sequence for state base state
+			self.__state_vector[1] = self.State.xautomatic_moving_column_calculation_base_state
+			self.__state_conf_vector_position = 1
+			self.__state_conf_vector_changed = True
+		return transitioned_after
+	
+	
+	def __x_automatic_moving_column_calculation_three_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_column_calculation_three_react function.
+		"""
+		#The reactions of state three.
+		transitioned_after = transitioned_before
+		if self.__do_completion:
+			#Default exit sequence for state three
+			self.__state_vector[1] = self.State.xautomatic_moving
+			self.__state_conf_vector_position = 1
+			#'default' enter sequence for state base state
+			self.__state_vector[1] = self.State.xautomatic_moving_column_calculation_base_state
+			self.__state_conf_vector_position = 1
+			self.__state_conf_vector_changed = True
+		return transitioned_after
+	
+	
+	def __x_automatic_moving_direction_calculation_calc_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_direction_calculation_calc_react function.
+		"""
+		#The reactions of state calc.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 2:
-				if (self.am_gl_update_dat) and ((((((self.imu.yaw - self.start_pos.zero_south_degree) + 720)) % 360)) < 5):
-					self.__exit_sequence_x_automatic_moving_direction_calculation_start()
+				if self.user_var.am_gl_ang < 5 or self.user_var.am_gl_ang > 355:
+					self.__exit_sequence_x_automatic_moving_direction_calculation_calc()
 					self.__enter_sequence_x_automatic_moving_direction_calculation_south_default()
 					transitioned_after = 2
-				elif (self.am_gl_update_dat) and (((((((self.imu.yaw - self.start_pos.zero_south_degree) + 180) + 720)) % 360)) < 5):
-					self.__exit_sequence_x_automatic_moving_direction_calculation_start()
-					self.__enter_sequence_x_automatic_moving_direction_calculation_north_default()
-					transitioned_after = 2
-				elif (self.am_gl_update_dat) and (((((((self.imu.yaw - self.start_pos.zero_south_degree) + 90) + 720)) % 360)) < 5):
-					self.__exit_sequence_x_automatic_moving_direction_calculation_start()
-					self.__enter_sequence_x_automatic_moving_direction_calculation_east_default()
-					transitioned_after = 2
-				elif (self.am_gl_update_dat) and (((((((self.imu.yaw - self.start_pos.zero_south_degree) - 90) + 720)) % 360)) < 5):
-					self.__exit_sequence_x_automatic_moving_direction_calculation_start()
+				elif self.user_var.am_gl_ang > 85 and self.user_var.am_gl_ang < 95:
+					self.__exit_sequence_x_automatic_moving_direction_calculation_calc()
 					self.__enter_sequence_x_automatic_moving_direction_calculation_west_default()
 					transitioned_after = 2
-				elif self.am_gl_update_dat:
-					self.__exit_sequence_x_automatic_moving_direction_calculation_start()
-					self.user_var.am_gl_loc_cor = False
-					self.__enter_sequence_x_automatic_moving_direction_calculation_start_default()
+				elif self.user_var.am_gl_ang > 265 and self.user_var.am_gl_ang < 275:
+					self.__exit_sequence_x_automatic_moving_direction_calculation_calc()
+					self.__enter_sequence_x_automatic_moving_direction_calculation_east_default()
 					transitioned_after = 2
-		return transitioned_after
-	
-	
-	def __x_automatic_moving_direction_calculation_south_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_direction_calculation_south_react function.
-		"""
-		#The reactions of state south.
-		transitioned_after = transitioned_before
-		if self.__do_completion:
-			#Default exit sequence for state south
-			self.__state_vector[2] = self.State.xautomatic_moving
-			self.__state_conf_vector_position = 2
-			#'default' enter sequence for state start
-			self.__state_vector[2] = self.State.xautomatic_moving_direction_calculation_start
-			self.__state_conf_vector_position = 2
-			self.__state_conf_vector_changed = True
+				elif self.user_var.am_gl_ang > 175 and self.user_var.am_gl_ang < 185:
+					self.__exit_sequence_x_automatic_moving_direction_calculation_calc()
+					self.__enter_sequence_x_automatic_moving_direction_calculation_north_default()
+					transitioned_after = 2
+				elif self.__time_events[2]:
+					self.__exit_sequence_x_automatic_moving_direction_calculation_calc()
+					self.__time_events[2] = False
+					self.__enter_sequence_x_automatic_moving_direction_calculation_base_default()
+					transitioned_after = 2
 		return transitioned_after
 	
 	
@@ -3586,24 +3995,24 @@ class Model:
 			#Default exit sequence for state north
 			self.__state_vector[2] = self.State.xautomatic_moving
 			self.__state_conf_vector_position = 2
-			#'default' enter sequence for state start
-			self.__state_vector[2] = self.State.xautomatic_moving_direction_calculation_start
+			#'default' enter sequence for state base
+			self.__state_vector[2] = self.State.xautomatic_moving_direction_calculation_base
 			self.__state_conf_vector_position = 2
 			self.__state_conf_vector_changed = True
 		return transitioned_after
 	
 	
-	def __x_automatic_moving_direction_calculation_east_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_direction_calculation_east_react function.
+	def __x_automatic_moving_direction_calculation_south_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_direction_calculation_south_react function.
 		"""
-		#The reactions of state east.
+		#The reactions of state south.
 		transitioned_after = transitioned_before
 		if self.__do_completion:
-			#Default exit sequence for state east
+			#Default exit sequence for state south
 			self.__state_vector[2] = self.State.xautomatic_moving
 			self.__state_conf_vector_position = 2
-			#'default' enter sequence for state start
-			self.__state_vector[2] = self.State.xautomatic_moving_direction_calculation_start
+			#'default' enter sequence for state base
+			self.__state_vector[2] = self.State.xautomatic_moving_direction_calculation_base
 			self.__state_conf_vector_position = 2
 			self.__state_conf_vector_changed = True
 		return transitioned_after
@@ -3618,10 +4027,40 @@ class Model:
 			#Default exit sequence for state west
 			self.__state_vector[2] = self.State.xautomatic_moving
 			self.__state_conf_vector_position = 2
-			#'default' enter sequence for state start
-			self.__state_vector[2] = self.State.xautomatic_moving_direction_calculation_start
+			#'default' enter sequence for state base
+			self.__state_vector[2] = self.State.xautomatic_moving_direction_calculation_base
 			self.__state_conf_vector_position = 2
 			self.__state_conf_vector_changed = True
+		return transitioned_after
+	
+	
+	def __x_automatic_moving_direction_calculation_east_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_direction_calculation_east_react function.
+		"""
+		#The reactions of state east.
+		transitioned_after = transitioned_before
+		if self.__do_completion:
+			#Default exit sequence for state east
+			self.__state_vector[2] = self.State.xautomatic_moving
+			self.__state_conf_vector_position = 2
+			#'default' enter sequence for state base
+			self.__state_vector[2] = self.State.xautomatic_moving_direction_calculation_base
+			self.__state_conf_vector_position = 2
+			self.__state_conf_vector_changed = True
+		return transitioned_after
+	
+	
+	def __x_automatic_moving_direction_calculation_base_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_direction_calculation_base_react function.
+		"""
+		#The reactions of state base.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 2:
+				if self.am_gl_update_dat:
+					self.__exit_sequence_x_automatic_moving_direction_calculation_base()
+					self.__enter_sequence_x_automatic_moving_direction_calculation_calc_default()
+					transitioned_after = 2
 		return transitioned_after
 	
 	
@@ -3653,9 +4092,9 @@ class Model:
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 3:
-				if self.__time_events[0]:
+				if self.__time_events[3]:
 					self.__exit_sequence_x_automatic_moving_grid_interaction_logging_r1_first()
-					self.__time_events[0] = False
+					self.__time_events[3] = False
 					self.__enter_sequence_x_automatic_moving_grid_interaction_logging_r1_second_default()
 					self.__x_automatic_moving_grid_interaction_logging_react(3)
 					transitioned_after = 3
@@ -3673,10 +4112,10 @@ class Model:
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 3:
-				if self.__time_events[1]:
+				if self.__time_events[4]:
 					self.__exit_sequence_x_automatic_moving_grid_interaction_logging()
 					self.raise_am_gl_logged()
-					self.__time_events[1] = False
+					self.__time_events[4] = False
 					self.__enter_sequence_x_automatic_moving_grid_interaction_unlogging_default()
 					transitioned_after = 3
 			#If no transition was taken
@@ -3693,9 +4132,9 @@ class Model:
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 3:
-				if self.__time_events[2]:
+				if self.__time_events[5]:
 					self.__exit_sequence_x_automatic_moving_grid_interaction_pr()
-					self.__time_events[2] = False
+					self.__time_events[5] = False
 					self.__enter_sequence_x_automatic_moving_grid_interaction_logging_default()
 					transitioned_after = 3
 		return transitioned_after
@@ -4041,9 +4480,9 @@ class Model:
 					self.__exit_sequence_x_automatic_moving_turn_high_level_processing_angle()
 					self.__enter_sequence_x_automatic_moving_turn_high_level_minus_default()
 					transitioned_after = 6
-				elif self.__time_events[3]:
+				elif self.__time_events[6]:
 					self.__exit_sequence_x_automatic_moving_turn_high_level_processing_angle()
-					self.__time_events[3] = False
+					self.__time_events[6] = False
 					self.__enter_sequence_x_automatic_moving_turn_high_level_processing_angle2_default()
 					transitioned_after = 6
 		return transitioned_after
@@ -4619,8 +5058,9 @@ class Model:
 			self.__state_vector[0] = self.State.null_state
 			self.__state_conf_vector_position = 0
 			#'default' enter sequence for state automatic moving
-			self.__enter_sequence_x_automatic_moving_column_calcualtion_default()
-			self.__enter_sequence_x_automatic_moving_row_calculation_default()
+			self.__entry_action_x_automatic_moving()
+			self.__enter_sequence_x_automatic_moving_row_calcualtion_default()
+			self.__enter_sequence_x_automatic_moving_column_calculation_default()
 			self.__enter_sequence_x_automatic_moving_direction_calculation_default()
 			self.__enter_sequence_x_automatic_moving_grid_interaction_default()
 			self.__enter_sequence_x_automatic_moving_automatic_moving_through_maze_default()
@@ -4901,6 +5341,9 @@ class Model:
 		self.__time_events[1] = False
 		self.__time_events[2] = False
 		self.__time_events[3] = False
+		self.__time_events[4] = False
+		self.__time_events[5] = False
+		self.__time_events[6] = False
 	
 	
 	def __clear_internal_events(self):
@@ -4936,10 +5379,18 @@ class Model:
 			transitioned = self.__x_manual_control_manual_control_region_turning_right_react(transitioned)
 		elif state == self.State.xmanual_control_manual_control_region_turning_left:
 			transitioned = self.__x_manual_control_manual_control_region_turning_left_react(transitioned)
-		elif state == self.State.xautomatic_moving_column_calcualtion_first_step:
-			transitioned = self.__x_automatic_moving_column_calcualtion_first_step_react(transitioned)
-		elif state == self.State.xautomatic_moving_column_calcualtion_second:
-			transitioned = self.__x_automatic_moving_column_calcualtion_second_react(transitioned)
+		elif state == self.State.xautomatic_moving_row_calcualtion_base_state:
+			transitioned = self.__x_automatic_moving_row_calcualtion_base_state_react(transitioned)
+		elif state == self.State.xautomatic_moving_row_calcualtion_calc:
+			transitioned = self.__x_automatic_moving_row_calcualtion_calc_react(transitioned)
+		elif state == self.State.xautomatic_moving_row_calcualtion_zero:
+			transitioned = self.__x_automatic_moving_row_calcualtion_zero_react(transitioned)
+		elif state == self.State.xautomatic_moving_row_calcualtion_one:
+			transitioned = self.__x_automatic_moving_row_calcualtion_one_react(transitioned)
+		elif state == self.State.xautomatic_moving_row_calcualtion_two:
+			transitioned = self.__x_automatic_moving_row_calcualtion_two_react(transitioned)
+		elif state == self.State.xautomatic_moving_row_calcualtion_three:
+			transitioned = self.__x_automatic_moving_row_calcualtion_three_react(transitioned)
 		elif state == self.State.xinitial_calibration_initial_calibration_region_start_calibration:
 			transitioned = self.__x_initial_calibration_initial_calibration_region_start_calibration_react(transitioned)
 		elif state == self.State.xinitial_calibration_initial_calibration_region_need_to_get_closer_to_top_wall:
@@ -5002,22 +5453,32 @@ class Model:
 			transitioned = self.__x_initial_calibration_initial_calibration_region_very_slow_turning_state_4_react(transitioned)
 		if self.__state_conf_vector_position < 1:
 			state = self.__state_vector[1]
-			if state == self.State.xautomatic_moving_row_calculation_firststep:
-				transitioned = self.__x_automatic_moving_row_calculation_firststep_react(transitioned)
-			elif state == self.State.xautomatic_moving_row_calculation_second:
-				transitioned = self.__x_automatic_moving_row_calculation_second_react(transitioned)
+			if state == self.State.xautomatic_moving_column_calculation_base_state:
+				transitioned = self.__x_automatic_moving_column_calculation_base_state_react(transitioned)
+			elif state == self.State.xautomatic_moving_column_calculation_calc:
+				transitioned = self.__x_automatic_moving_column_calculation_calc_react(transitioned)
+			elif state == self.State.xautomatic_moving_column_calculation_zero:
+				transitioned = self.__x_automatic_moving_column_calculation_zero_react(transitioned)
+			elif state == self.State.xautomatic_moving_column_calculation_one:
+				transitioned = self.__x_automatic_moving_column_calculation_one_react(transitioned)
+			elif state == self.State.xautomatic_moving_column_calculation_two:
+				transitioned = self.__x_automatic_moving_column_calculation_two_react(transitioned)
+			elif state == self.State.xautomatic_moving_column_calculation_three:
+				transitioned = self.__x_automatic_moving_column_calculation_three_react(transitioned)
 		if self.__state_conf_vector_position < 2:
 			state = self.__state_vector[2]
-			if state == self.State.xautomatic_moving_direction_calculation_start:
-				transitioned = self.__x_automatic_moving_direction_calculation_start_react(transitioned)
-			elif state == self.State.xautomatic_moving_direction_calculation_south:
-				transitioned = self.__x_automatic_moving_direction_calculation_south_react(transitioned)
+			if state == self.State.xautomatic_moving_direction_calculation_calc:
+				transitioned = self.__x_automatic_moving_direction_calculation_calc_react(transitioned)
 			elif state == self.State.xautomatic_moving_direction_calculation_north:
 				transitioned = self.__x_automatic_moving_direction_calculation_north_react(transitioned)
-			elif state == self.State.xautomatic_moving_direction_calculation_east:
-				transitioned = self.__x_automatic_moving_direction_calculation_east_react(transitioned)
+			elif state == self.State.xautomatic_moving_direction_calculation_south:
+				transitioned = self.__x_automatic_moving_direction_calculation_south_react(transitioned)
 			elif state == self.State.xautomatic_moving_direction_calculation_west:
 				transitioned = self.__x_automatic_moving_direction_calculation_west_react(transitioned)
+			elif state == self.State.xautomatic_moving_direction_calculation_east:
+				transitioned = self.__x_automatic_moving_direction_calculation_east_react(transitioned)
+			elif state == self.State.xautomatic_moving_direction_calculation_base:
+				transitioned = self.__x_automatic_moving_direction_calculation_base_react(transitioned)
 		if self.__state_conf_vector_position < 3:
 			state = self.__state_vector[3]
 			if state == self.State.xautomatic_moving_grid_interaction_unlogging:
