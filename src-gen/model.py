@@ -80,39 +80,11 @@ class Model:
 			xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_second_step,
 			xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_third_step,
 			xautomatic_moving_turn_low_level_finished_turn,
-			xinitial_calibration,
-			xinitial_calibration_initial_calibration_region_start_calibration,
-			xinitial_calibration_initial_calibration_region_need_to_get_closer_to_top_wall,
-			xinitial_calibration_initial_calibration_region_need_to_get_away_from_the_top_wall,
-			xinitial_calibration_initial_calibration_region_aligned_perfect_south,
-			xinitial_calibration_initial_calibration_region_aligned_y_axis,
-			xinitial_calibration_initial_calibration_region_facing_the_top_wall,
-			xinitial_calibration_initial_calibration_region_aligned_perfect_east,
-			xinitial_calibration_initial_calibration_region_0_5_g,
-			xinitial_calibration_initial_calibration_region_1_5_g,
-			xinitial_calibration_initial_calibration_region_2_5_g,
-			xinitial_calibration_initial_calibration_region_3_5_g,
-			xinitial_calibration_initial_calibration_region_the_distance_to_right_wall_is_determined,
-			xinitial_calibration_initial_calibration_region_need_to_get_closer_to_right_wall,
-			xinitial_calibration_initial_calibration_region_need_to_get_away_from_right_wall,
-			xinitial_calibration_initial_calibration_region_x_aligned,
-			xinitial_calibration_initial_calibration_region_facing_away_from_the_right_wall,
-			xinitial_calibration_initial_calibration_region_set_zero,
-			xinitial_calibration_initial_calibration_region_fast_turning_2,
-			xinitial_calibration_initial_calibration_region_medium_turning_state_2,
-			xinitial_calibration_initial_calibration_region_slow_turning_state_2,
-			xinitial_calibration_initial_calibration_region_fast_turning_state,
-			xinitial_calibration_initial_calibration_region_medium_turning_state,
-			xinitial_calibration_initial_calibration_region_slow_turning_state,
-			xinitial_calibration_initial_calibration_region_fast_turning_state_3,
-			xinitial_calibration_initial_calibration_region_medium_turning_state_3,
-			xinitial_calibration_initial_calibration_region_slow_turning_state_3,
-			xinitial_calibration_initial_calibration_region_fast_turning_state_4,
-			xinitial_calibration_initial_calibration_region_medium_turning_state_4,
-			xinitial_calibration_initial_calibration_region_slow_turning_state_4,
-			xinitial_calibration_initial_calibration_region_very_slow_turning_state_4,
+			xcalibration,
+			xcalibration_calibration_calibrate,
+			xcalibration_calibration_maze_orientation,
 			null_state
-		) = range(98)
+		) = range(70)
 	
 	
 	class UserVar:
@@ -121,35 +93,15 @@ class Model:
 		
 		def __init__(self, statemachine):
 			self.is_calibrated = None
-			self.half_grid_size = None
-			self.calibration_speed = None
-			self.calibration_rotation_speed_left = None
-			self.calibration_rotation_speed_right = None
-			self.fast_turn_speed_left = None
-			self.fast_turn_speed_right = None
-			self.medium_turn_speed_left = None
-			self.medium_turn_speed_right = None
-			self.slow_turn_speed_left = None
-			self.slow_turn_speed_right = None
-			self.very_slow_turn_speed_left = None
-			self.very_slow_turn_speed_right = None
-			self.turning_fast = None
-			self.distance_to_right_wall = None
+			self.maze_orientation = None
 			self.base_speed = None
 			self.base_rotation = None
 			self.startprocedure = None
 			self.am_x_mem = None
 			self.am_y_mem = None
 			self.am_angle_targ = None
-			self.am_ct_sp1 = None
-			self.am_ct_thr1 = None
-			self.am_ct_sp2 = None
-			self.am_ct_thr2 = None
-			self.am_ct_sp3 = None
-			self.am_gl_x_rel = None
-			self.am_gl_y_rel = None
-			self.am_gl_x_cen = None
-			self.am_gl_y_cen = None
+			self.am_gl_row_rel = None
+			self.am_gl_col_rel = None
 			self.am_gl_ang = None
 			
 			self.statemachine = statemachine
@@ -429,35 +381,15 @@ class Model:
 		# initializations:
 		#Default init sequence for statechart model
 		self.user_var.is_calibrated = False
-		self.user_var.half_grid_size = 0.24
-		self.user_var.calibration_speed = 0.02
-		self.user_var.calibration_rotation_speed_left = 0.15
-		self.user_var.calibration_rotation_speed_right = -(0.15)
-		self.user_var.fast_turn_speed_left = 0.3
-		self.user_var.fast_turn_speed_right = -(0.3)
-		self.user_var.medium_turn_speed_left = 0.2
-		self.user_var.medium_turn_speed_right = -(0.2)
-		self.user_var.slow_turn_speed_left = 0.075
-		self.user_var.slow_turn_speed_right = -(0.075)
-		self.user_var.very_slow_turn_speed_left = 0.075
-		self.user_var.very_slow_turn_speed_right = -(0.075)
-		self.user_var.turning_fast = True
-		self.user_var.distance_to_right_wall = 0.0
+		self.user_var.maze_orientation = 0
 		self.user_var.base_speed = 0.2
 		self.user_var.base_rotation = 0.4
 		self.user_var.startprocedure = True
 		self.user_var.am_x_mem = 0.0
 		self.user_var.am_y_mem = 0.0
 		self.user_var.am_angle_targ = 0
-		self.user_var.am_ct_sp1 = 0.2
-		self.user_var.am_ct_thr1 = 4.0
-		self.user_var.am_ct_sp2 = 0.02
-		self.user_var.am_ct_thr2 = 1.0
-		self.user_var.am_ct_sp3 = 0.02
-		self.user_var.am_gl_x_rel = -(1.0)
-		self.user_var.am_gl_y_rel = -(1.0)
-		self.user_var.am_gl_x_cen = False
-		self.user_var.am_gl_y_cen = False
+		self.user_var.am_gl_row_rel = -(1.0)
+		self.user_var.am_gl_col_rel = -(1.0)
 		self.user_var.am_gl_ang = 0
 		self.base_values.max_speed = 0.22
 		self.base_values.max_rotation = 2.84
@@ -698,69 +630,13 @@ class Model:
 			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_third_step
 		if s == self.__State.xautomatic_moving_turn_low_level_finished_turn:
 			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_low_level_finished_turn
-		if s == self.__State.xinitial_calibration:
-			return (self.__state_vector[0] >= self.__State.xinitial_calibration)\
-				and (self.__state_vector[0] <= self.__State.xinitial_calibration_initial_calibration_region_very_slow_turning_state_4)
-		if s == self.__State.xinitial_calibration_initial_calibration_region_start_calibration:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_start_calibration
-		if s == self.__State.xinitial_calibration_initial_calibration_region_need_to_get_closer_to_top_wall:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_need_to_get_closer_to_top_wall
-		if s == self.__State.xinitial_calibration_initial_calibration_region_need_to_get_away_from_the_top_wall:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_need_to_get_away_from_the_top_wall
-		if s == self.__State.xinitial_calibration_initial_calibration_region_aligned_perfect_south:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_aligned_perfect_south
-		if s == self.__State.xinitial_calibration_initial_calibration_region_aligned_y_axis:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_aligned_y_axis
-		if s == self.__State.xinitial_calibration_initial_calibration_region_facing_the_top_wall:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_facing_the_top_wall
-		if s == self.__State.xinitial_calibration_initial_calibration_region_aligned_perfect_east:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_aligned_perfect_east
-		if s == self.__State.xinitial_calibration_initial_calibration_region_0_5_g:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_0_5_g
-		if s == self.__State.xinitial_calibration_initial_calibration_region_1_5_g:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_1_5_g
-		if s == self.__State.xinitial_calibration_initial_calibration_region_2_5_g:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_2_5_g
-		if s == self.__State.xinitial_calibration_initial_calibration_region_3_5_g:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_3_5_g
-		if s == self.__State.xinitial_calibration_initial_calibration_region_the_distance_to_right_wall_is_determined:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_the_distance_to_right_wall_is_determined
-		if s == self.__State.xinitial_calibration_initial_calibration_region_need_to_get_closer_to_right_wall:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_need_to_get_closer_to_right_wall
-		if s == self.__State.xinitial_calibration_initial_calibration_region_need_to_get_away_from_right_wall:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_need_to_get_away_from_right_wall
-		if s == self.__State.xinitial_calibration_initial_calibration_region_x_aligned:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_x_aligned
-		if s == self.__State.xinitial_calibration_initial_calibration_region_facing_away_from_the_right_wall:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_facing_away_from_the_right_wall
-		if s == self.__State.xinitial_calibration_initial_calibration_region_set_zero:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_set_zero
-		if s == self.__State.xinitial_calibration_initial_calibration_region_fast_turning_2:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_fast_turning_2
-		if s == self.__State.xinitial_calibration_initial_calibration_region_medium_turning_state_2:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_medium_turning_state_2
-		if s == self.__State.xinitial_calibration_initial_calibration_region_slow_turning_state_2:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_slow_turning_state_2
-		if s == self.__State.xinitial_calibration_initial_calibration_region_fast_turning_state:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_fast_turning_state
-		if s == self.__State.xinitial_calibration_initial_calibration_region_medium_turning_state:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_medium_turning_state
-		if s == self.__State.xinitial_calibration_initial_calibration_region_slow_turning_state:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_slow_turning_state
-		if s == self.__State.xinitial_calibration_initial_calibration_region_fast_turning_state_3:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_fast_turning_state_3
-		if s == self.__State.xinitial_calibration_initial_calibration_region_medium_turning_state_3:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_medium_turning_state_3
-		if s == self.__State.xinitial_calibration_initial_calibration_region_slow_turning_state_3:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_slow_turning_state_3
-		if s == self.__State.xinitial_calibration_initial_calibration_region_fast_turning_state_4:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_fast_turning_state_4
-		if s == self.__State.xinitial_calibration_initial_calibration_region_medium_turning_state_4:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_medium_turning_state_4
-		if s == self.__State.xinitial_calibration_initial_calibration_region_slow_turning_state_4:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_slow_turning_state_4
-		if s == self.__State.xinitial_calibration_initial_calibration_region_very_slow_turning_state_4:
-			return self.__state_vector[0] == self.__State.xinitial_calibration_initial_calibration_region_very_slow_turning_state_4
+		if s == self.__State.xcalibration:
+			return (self.__state_vector[0] >= self.__State.xcalibration)\
+				and (self.__state_vector[0] <= self.__State.xcalibration_calibration_maze_orientation)
+		if s == self.__State.xcalibration_calibration_calibrate:
+			return self.__state_vector[0] == self.__State.xcalibration_calibration_calibrate
+		if s == self.__State.xcalibration_calibration_maze_orientation:
+			return self.__state_vector[0] == self.__State.xcalibration_calibration_maze_orientation
 		return False
 		
 	def time_elapsed(self, event_id):
@@ -921,18 +797,12 @@ class Model:
 		self.output.rotation = (self.output.rotation + 0.02) if self.output.rotation < 2.82 else 2.84
 		self.__completed = True
 		
-	def __entry_action_x_automatic_moving(self):
-		"""Entry action for state 'automatic moving'..
-		"""
-		#Entry action for state 'automatic moving'.
-		self.start_pos.set_zero = True
-		
 	def __entry_action_x_automatic_moving_row_calcualtion_calc(self):
 		"""Entry action for state 'calc'..
 		"""
 		#Entry action for state 'calc'.
 		self.timer_service.set_timer(self, 0, (100 * 1000), False)
-		self.user_var.am_gl_x_rel = ((((self.odom.x - self.start_pos.zero_x)) if (self.odom.x > self.start_pos.zero_x) else ((self.start_pos.zero_x - self.odom.x))) / self.grid.grid_size)
+		self.user_var.am_gl_row_rel = ((((self.odom.x - self.start_pos.zero_x)) if (self.odom.x > self.start_pos.zero_x) else ((self.start_pos.zero_x - self.odom.x))) / self.grid.grid_size) if (self.user_var.maze_orientation == 0) else ((((self.odom.y - self.start_pos.zero_y)) if (self.odom.y > self.start_pos.zero_y) else ((self.start_pos.zero_y - self.odom.y))) / self.grid.grid_size)
 		
 	def __entry_action_x_automatic_moving_row_calcualtion_zero(self):
 		""".
@@ -967,7 +837,7 @@ class Model:
 		"""
 		#Entry action for state 'calc'.
 		self.timer_service.set_timer(self, 1, (100 * 1000), False)
-		self.user_var.am_gl_y_rel = ((((self.start_pos.zero_y - self.odom.y)) if (self.start_pos.zero_y > self.odom.y) else ((self.odom.y - self.start_pos.zero_y))) / self.grid.grid_size)
+		self.user_var.am_gl_col_rel = ((((self.odom.x - self.start_pos.zero_x)) if (self.odom.x > self.start_pos.zero_x) else ((self.start_pos.zero_x - self.odom.x))) / self.grid.grid_size) if (self.user_var.maze_orientation == 1) else ((((self.odom.y - self.start_pos.zero_y)) if (self.odom.y > self.start_pos.zero_y) else ((self.start_pos.zero_y - self.odom.y))) / self.grid.grid_size)
 		
 	def __entry_action_x_automatic_moving_column_calculation_zero(self):
 		""".
@@ -1235,195 +1105,28 @@ class Model:
 		self.raise_am_finished_turn()
 		self.__completed = True
 		
-	def __entry_action_x_initial_calibration_initial_calibration_region_start_calibration(self):
-		"""Entry action for state 'Start calibration'..
+	def __entry_action_x_calibration(self):
+		"""Entry action for state 'calibration'..
 		"""
-		#Entry action for state 'Start calibration'.
-		self.output.speed = 0.0
-		self.output.rotation = self.user_var.calibration_rotation_speed_left if self.imu.yaw >= 0.0 else self.user_var.calibration_rotation_speed_right
+		#Entry action for state 'calibration'.
+		self.user_var.is_calibrated = True
 		
-	def __entry_action_x_initial_calibration_initial_calibration_region_need_to_get_closer_to_top_wall(self):
-		"""Entry action for state 'Need to get closer to top wall'..
-		"""
-		#Entry action for state 'Need to get closer to top wall'.
-		self.output.rotation = self.user_var.calibration_rotation_speed_left
-		
-	def __entry_action_x_initial_calibration_initial_calibration_region_need_to_get_away_from_the_top_wall(self):
-		"""Entry action for state 'Need to get away from the top wall'..
-		"""
-		#Entry action for state 'Need to get away from the top wall'.
-		self.output.speed = 0.02
-		
-	def __entry_action_x_initial_calibration_initial_calibration_region_aligned_perfect_south(self):
-		"""Entry action for state 'Aligned perfect south'..
-		"""
-		#Entry action for state 'Aligned perfect south'.
-		self.output.rotation = 0.0
-		
-	def __entry_action_x_initial_calibration_initial_calibration_region_aligned_y_axis(self):
-		"""Entry action for state 'Aligned Y axis'..
-		"""
-		#Entry action for state 'Aligned Y axis'.
-		self.output.speed = 0.0
-		self.output.rotation = self.user_var.calibration_rotation_speed_right if (self.imu.yaw > -(3.0) and self.imu.yaw < 3.0) else self.user_var.calibration_rotation_speed_left
-		
-	def __entry_action_x_initial_calibration_initial_calibration_region_facing_the_top_wall(self):
-		"""Entry action for state 'Facing the top wall'..
-		"""
-		#Entry action for state 'Facing the top wall'.
-		self.output.rotation = 0.0
-		self.output.speed = 0.02
-		
-	def __entry_action_x_initial_calibration_initial_calibration_region_aligned_perfect_east(self):
+	def __entry_action_x_calibration_calibration_calibrate(self):
 		""".
 		"""
-		#Entry action for state 'Aligned perfect East'.
-		self.output.rotation = 0.0
-		self.__completed = True
-		
-	def __entry_action_x_initial_calibration_initial_calibration_region__0_5_g(self):
-		"""Entry action for state '0,5 G'..
-		"""
-		#Entry action for state '0,5 G'.
-		self.user_var.distance_to_right_wall = self.user_var.half_grid_size
-		
-	def __entry_action_x_initial_calibration_initial_calibration_region__1_5_g(self):
-		"""Entry action for state '1,5 G'..
-		"""
-		#Entry action for state '1,5 G'.
-		self.user_var.distance_to_right_wall = (self.grid.grid_size + self.user_var.half_grid_size)
-		
-	def __entry_action_x_initial_calibration_initial_calibration_region__2_5_g(self):
-		"""Entry action for state '2,5 G'..
-		"""
-		#Entry action for state '2,5 G'.
-		self.user_var.distance_to_right_wall = ((2.0 * self.grid.grid_size) + self.user_var.half_grid_size)
-		
-	def __entry_action_x_initial_calibration_initial_calibration_region__3_5_g(self):
-		""".
-		"""
-		#Entry action for state '3,5 G'.
-		self.user_var.distance_to_right_wall = ((3.0 * self.grid.grid_size) + self.user_var.half_grid_size)
-		self.__completed = True
-		
-	def __entry_action_x_initial_calibration_initial_calibration_region_need_to_get_closer_to_right_wall(self):
-		"""Entry action for state 'Need to get closer to right wall'..
-		"""
-		#Entry action for state 'Need to get closer to right wall'.
-		self.output.speed = 0.02
-		
-	def __entry_action_x_initial_calibration_initial_calibration_region_need_to_get_away_from_right_wall(self):
-		"""Entry action for state 'Need to get away from right wall'..
-		"""
-		#Entry action for state 'Need to get away from right wall'.
-		self.output.rotation = self.user_var.calibration_rotation_speed_left
-		
-	def __entry_action_x_initial_calibration_initial_calibration_region_x_aligned(self):
-		"""Entry action for state 'X aligned'..
-		"""
-		#Entry action for state 'X aligned'.
-		self.output.speed = 0.0
-		self.output.rotation = self.user_var.calibration_rotation_speed_left if (self.imu.yaw > 87.0 and self.imu.yaw < 93.0) else -(self.user_var.calibration_rotation_speed_right)
-		
-	def __entry_action_x_initial_calibration_initial_calibration_region_facing_away_from_the_right_wall(self):
-		"""Entry action for state 'Facing away from the right wall'..
-		"""
-		#Entry action for state 'Facing away from the right wall'.
-		self.output.rotation = 0.0
-		self.output.speed = 0.02
-		
-	def __entry_action_x_initial_calibration_initial_calibration_region_set_zero(self):
-		""".
-		"""
-		#Entry action for state 'Set ZERO'.
+		#Entry action for state 'calibrate'.
 		self.start_pos.set_zero = True
 		self.start_pos.zero_x = self.odom.x
 		self.start_pos.zero_y = self.odom.y
 		self.start_pos.zero_south_degree = self.imu.yaw
-		self.output.rotation = 0.0
-		self.output.speed = 0.0
-		self.user_var.is_calibrated = True
 		self.__completed = True
 		
-	def __entry_action_x_initial_calibration_initial_calibration_region_fast_turning_2(self):
-		"""Entry action for state 'Fast Turning 2'..
-		"""
-		#Entry action for state 'Fast Turning 2'.
-		self.output.speed = 0.0
-		self.output.rotation = self.user_var.calibration_rotation_speed_left if self.imu.yaw >= 0.0 else self.user_var.calibration_rotation_speed_right
-		
-	def __entry_action_x_initial_calibration_initial_calibration_region_medium_turning_state_2(self):
-		"""Entry action for state 'Medium Turning State 2'..
-		"""
-		#Entry action for state 'Medium Turning State 2'.
-		self.output.rotation = self.user_var.medium_turn_speed_left if self.imu.yaw >= 0.0 else self.user_var.medium_turn_speed_right
-		
-	def __entry_action_x_initial_calibration_initial_calibration_region_slow_turning_state_2(self):
+	def __entry_action_x_calibration_calibration_maze_orientation(self):
 		""".
 		"""
-		#Entry action for state 'Slow Turning State 2'.
-		self.output.rotation = self.user_var.slow_turn_speed_left if self.imu.yaw >= 0.0 else self.user_var.slow_turn_speed_right
+		#Entry action for state 'maze_orientation'.
+		self.user_var.maze_orientation = 0 if (((self.start_pos.zero_south_degree < 10) and (self.start_pos.zero_south_degree > -(10))) or (self.start_pos.zero_south_degree > 170) or (self.start_pos.zero_south_degree < -(170))) else 1
 		self.__completed = True
-		
-	def __entry_action_x_initial_calibration_initial_calibration_region_fast_turning_state(self):
-		"""Entry action for state 'Fast Turning State'..
-		"""
-		#Entry action for state 'Fast Turning State'.
-		self.output.rotation = self.user_var.fast_turn_speed_left
-		
-	def __entry_action_x_initial_calibration_initial_calibration_region_medium_turning_state(self):
-		"""Entry action for state 'Medium Turning State'..
-		"""
-		#Entry action for state 'Medium Turning State'.
-		self.output.rotation = self.user_var.medium_turn_speed_left
-		
-	def __entry_action_x_initial_calibration_initial_calibration_region_slow_turning_state(self):
-		"""Entry action for state 'Slow Turning State'..
-		"""
-		#Entry action for state 'Slow Turning State'.
-		self.output.rotation = self.user_var.slow_turn_speed_left
-		
-	def __entry_action_x_initial_calibration_initial_calibration_region_fast_turning_state_3(self):
-		"""Entry action for state 'Fast Turning State 3'..
-		"""
-		#Entry action for state 'Fast Turning State 3'.
-		self.output.rotation = self.user_var.fast_turn_speed_left
-		
-	def __entry_action_x_initial_calibration_initial_calibration_region_medium_turning_state_3(self):
-		"""Entry action for state 'Medium Turning State 3'..
-		"""
-		#Entry action for state 'Medium Turning State 3'.
-		self.output.rotation = self.user_var.medium_turn_speed_left
-		
-	def __entry_action_x_initial_calibration_initial_calibration_region_slow_turning_state_3(self):
-		"""Entry action for state 'Slow Turning State 3'..
-		"""
-		#Entry action for state 'Slow Turning State 3'.
-		self.output.rotation = self.user_var.slow_turn_speed_left
-		
-	def __entry_action_x_initial_calibration_initial_calibration_region_fast_turning_state_4(self):
-		"""Entry action for state 'Fast Turning State 4'..
-		"""
-		#Entry action for state 'Fast Turning State 4'.
-		self.output.rotation = self.user_var.fast_turn_speed_left if self.imu.yaw > 90 else -(self.user_var.fast_turn_speed_right)
-		
-	def __entry_action_x_initial_calibration_initial_calibration_region_medium_turning_state_4(self):
-		"""Entry action for state 'Medium Turning State 4'..
-		"""
-		#Entry action for state 'Medium Turning State 4'.
-		self.output.rotation = self.user_var.medium_turn_speed_left if self.imu.yaw > 90.0 else -(self.user_var.medium_turn_speed_right)
-		
-	def __entry_action_x_initial_calibration_initial_calibration_region_slow_turning_state_4(self):
-		"""Entry action for state 'Slow Turning State 4'..
-		"""
-		#Entry action for state 'Slow Turning State 4'.
-		self.output.rotation = self.user_var.slow_turn_speed_left if self.imu.yaw > 90 else -(self.user_var.slow_turn_speed_right)
-		
-	def __entry_action_x_initial_calibration_initial_calibration_region_very_slow_turning_state_4(self):
-		"""Entry action for state 'Very Slow Turning State 4'..
-		"""
-		#Entry action for state 'Very Slow Turning State 4'.
-		self.output.rotation = self.user_var.very_slow_turn_speed_left if self.imu.yaw > 0.0 else self.user_var.very_slow_turn_speed_right
 		
 	def __exit_action_x_automatic_moving_row_calcualtion_calc(self):
 		"""Exit action for state 'calc'..
@@ -1522,7 +1225,6 @@ class Model:
 		"""'default' enter sequence for state automatic moving.
 		"""
 		#'default' enter sequence for state automatic moving
-		self.__entry_action_x_automatic_moving()
 		self.__enter_sequence_x_automatic_moving_row_calcualtion_default()
 		self.__enter_sequence_x_automatic_moving_column_calculation_default()
 		self.__enter_sequence_x_automatic_moving_direction_calculation_default()
@@ -2023,269 +1725,19 @@ class Model:
 		self.__state_conf_vector_position = 7
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_x_initial_calibration_default(self):
-		"""'default' enter sequence for state Initial calibration.
+	def __enter_sequence_x_calibration_default(self):
+		"""'default' enter sequence for state calibration.
 		"""
-		#'default' enter sequence for state Initial calibration
-		self.__enter_sequence_x_initial_calibration_initial_calibration_region_default()
+		#'default' enter sequence for state calibration
+		self.__entry_action_x_calibration()
+		self.__enter_sequence_x_calibration_calibration_default()
 		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region_start_calibration_default(self):
-		"""'default' enter sequence for state Start calibration.
+	def __enter_sequence_x_calibration_calibration_calibrate_default(self):
+		"""'default' enter sequence for state calibrate.
 		"""
-		#'default' enter sequence for state Start calibration
-		self.__entry_action_x_initial_calibration_initial_calibration_region_start_calibration()
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_start_calibration
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region_need_to_get_closer_to_top_wall_default(self):
-		"""'default' enter sequence for state Need to get closer to top wall.
-		"""
-		#'default' enter sequence for state Need to get closer to top wall
-		self.__entry_action_x_initial_calibration_initial_calibration_region_need_to_get_closer_to_top_wall()
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_need_to_get_closer_to_top_wall
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region_need_to_get_away_from_the_top_wall_default(self):
-		"""'default' enter sequence for state Need to get away from the top wall.
-		"""
-		#'default' enter sequence for state Need to get away from the top wall
-		self.__entry_action_x_initial_calibration_initial_calibration_region_need_to_get_away_from_the_top_wall()
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_need_to_get_away_from_the_top_wall
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region_aligned_perfect_south_default(self):
-		"""'default' enter sequence for state Aligned perfect south.
-		"""
-		#'default' enter sequence for state Aligned perfect south
-		self.__entry_action_x_initial_calibration_initial_calibration_region_aligned_perfect_south()
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_aligned_perfect_south
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region_aligned_y_axis_default(self):
-		"""'default' enter sequence for state Aligned Y axis.
-		"""
-		#'default' enter sequence for state Aligned Y axis
-		self.__entry_action_x_initial_calibration_initial_calibration_region_aligned_y_axis()
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_aligned_y_axis
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region_facing_the_top_wall_default(self):
-		"""'default' enter sequence for state Facing the top wall.
-		"""
-		#'default' enter sequence for state Facing the top wall
-		self.__entry_action_x_initial_calibration_initial_calibration_region_facing_the_top_wall()
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_facing_the_top_wall
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region_aligned_perfect_east_default(self):
-		"""'default' enter sequence for state Aligned perfect East.
-		"""
-		#'default' enter sequence for state Aligned perfect East
-		self.__entry_action_x_initial_calibration_initial_calibration_region_aligned_perfect_east()
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_aligned_perfect_east
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region__1_5_g_default(self):
-		"""'default' enter sequence for state 1,5 G.
-		"""
-		#'default' enter sequence for state 1,5 G
-		self.__entry_action_x_initial_calibration_initial_calibration_region__1_5_g()
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_1_5_g
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region__2_5_g_default(self):
-		"""'default' enter sequence for state 2,5 G.
-		"""
-		#'default' enter sequence for state 2,5 G
-		self.__entry_action_x_initial_calibration_initial_calibration_region__2_5_g()
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_2_5_g
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region__3_5_g_default(self):
-		"""'default' enter sequence for state 3,5 G.
-		"""
-		#'default' enter sequence for state 3,5 G
-		self.__entry_action_x_initial_calibration_initial_calibration_region__3_5_g()
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_3_5_g
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region_the_distance_to_right_wall_is_determined_default(self):
-		"""'default' enter sequence for state The distance to right wall is determined.
-		"""
-		#'default' enter sequence for state The distance to right wall is determined
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_the_distance_to_right_wall_is_determined
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region_need_to_get_closer_to_right_wall_default(self):
-		"""'default' enter sequence for state Need to get closer to right wall.
-		"""
-		#'default' enter sequence for state Need to get closer to right wall
-		self.__entry_action_x_initial_calibration_initial_calibration_region_need_to_get_closer_to_right_wall()
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_need_to_get_closer_to_right_wall
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region_need_to_get_away_from_right_wall_default(self):
-		"""'default' enter sequence for state Need to get away from right wall.
-		"""
-		#'default' enter sequence for state Need to get away from right wall
-		self.__entry_action_x_initial_calibration_initial_calibration_region_need_to_get_away_from_right_wall()
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_need_to_get_away_from_right_wall
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region_x_aligned_default(self):
-		"""'default' enter sequence for state X aligned.
-		"""
-		#'default' enter sequence for state X aligned
-		self.__entry_action_x_initial_calibration_initial_calibration_region_x_aligned()
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_x_aligned
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region_facing_away_from_the_right_wall_default(self):
-		"""'default' enter sequence for state Facing away from the right wall.
-		"""
-		#'default' enter sequence for state Facing away from the right wall
-		self.__entry_action_x_initial_calibration_initial_calibration_region_facing_away_from_the_right_wall()
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_facing_away_from_the_right_wall
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region_set_zero_default(self):
-		"""'default' enter sequence for state Set ZERO.
-		"""
-		#'default' enter sequence for state Set ZERO
-		self.__entry_action_x_initial_calibration_initial_calibration_region_set_zero()
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_set_zero
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region_fast_turning_2_default(self):
-		"""'default' enter sequence for state Fast Turning 2.
-		"""
-		#'default' enter sequence for state Fast Turning 2
-		self.__entry_action_x_initial_calibration_initial_calibration_region_fast_turning_2()
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_fast_turning_2
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region_medium_turning_state_2_default(self):
-		"""'default' enter sequence for state Medium Turning State 2.
-		"""
-		#'default' enter sequence for state Medium Turning State 2
-		self.__entry_action_x_initial_calibration_initial_calibration_region_medium_turning_state_2()
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_medium_turning_state_2
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region_slow_turning_state_2_default(self):
-		"""'default' enter sequence for state Slow Turning State 2.
-		"""
-		#'default' enter sequence for state Slow Turning State 2
-		self.__entry_action_x_initial_calibration_initial_calibration_region_slow_turning_state_2()
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_slow_turning_state_2
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region_fast_turning_state_default(self):
-		"""'default' enter sequence for state Fast Turning State.
-		"""
-		#'default' enter sequence for state Fast Turning State
-		self.__entry_action_x_initial_calibration_initial_calibration_region_fast_turning_state()
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_fast_turning_state
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region_medium_turning_state_default(self):
-		"""'default' enter sequence for state Medium Turning State.
-		"""
-		#'default' enter sequence for state Medium Turning State
-		self.__entry_action_x_initial_calibration_initial_calibration_region_medium_turning_state()
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_medium_turning_state
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region_slow_turning_state_default(self):
-		"""'default' enter sequence for state Slow Turning State.
-		"""
-		#'default' enter sequence for state Slow Turning State
-		self.__entry_action_x_initial_calibration_initial_calibration_region_slow_turning_state()
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_slow_turning_state
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region_fast_turning_state_3_default(self):
-		"""'default' enter sequence for state Fast Turning State 3.
-		"""
-		#'default' enter sequence for state Fast Turning State 3
-		self.__entry_action_x_initial_calibration_initial_calibration_region_fast_turning_state_3()
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_fast_turning_state_3
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region_medium_turning_state_3_default(self):
-		"""'default' enter sequence for state Medium Turning State 3.
-		"""
-		#'default' enter sequence for state Medium Turning State 3
-		self.__entry_action_x_initial_calibration_initial_calibration_region_medium_turning_state_3()
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_medium_turning_state_3
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region_slow_turning_state_3_default(self):
-		"""'default' enter sequence for state Slow Turning State 3.
-		"""
-		#'default' enter sequence for state Slow Turning State 3
-		self.__entry_action_x_initial_calibration_initial_calibration_region_slow_turning_state_3()
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_slow_turning_state_3
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region_fast_turning_state_4_default(self):
-		"""'default' enter sequence for state Fast Turning State 4.
-		"""
-		#'default' enter sequence for state Fast Turning State 4
-		self.__entry_action_x_initial_calibration_initial_calibration_region_fast_turning_state_4()
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_fast_turning_state_4
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region_medium_turning_state_4_default(self):
-		"""'default' enter sequence for state Medium Turning State 4.
-		"""
-		#'default' enter sequence for state Medium Turning State 4
-		self.__entry_action_x_initial_calibration_initial_calibration_region_medium_turning_state_4()
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_medium_turning_state_4
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region_slow_turning_state_4_default(self):
-		"""'default' enter sequence for state Slow Turning State 4.
-		"""
-		#'default' enter sequence for state Slow Turning State 4
-		self.__entry_action_x_initial_calibration_initial_calibration_region_slow_turning_state_4()
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_slow_turning_state_4
-		self.__state_conf_vector_position = 0
-		self.__state_conf_vector_changed = True
-		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region_very_slow_turning_state_4_default(self):
-		"""'default' enter sequence for state Very Slow Turning State 4.
-		"""
-		#'default' enter sequence for state Very Slow Turning State 4
-		self.__entry_action_x_initial_calibration_initial_calibration_region_very_slow_turning_state_4()
-		self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_very_slow_turning_state_4
+		#'default' enter sequence for state calibrate
+		self.__entry_action_x_calibration_calibration_calibrate()
+		self.__state_vector[0] = self.State.xcalibration_calibration_calibrate
 		self.__state_conf_vector_position = 0
 		self.__state_conf_vector_changed = True
 		
@@ -2379,11 +1831,11 @@ class Model:
 		#'default' enter sequence for region turn_to_positive_angle
 		self.__react_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle__entry_default()
 		
-	def __enter_sequence_x_initial_calibration_initial_calibration_region_default(self):
-		"""'default' enter sequence for region initial calibration region.
+	def __enter_sequence_x_calibration_calibration_default(self):
+		"""'default' enter sequence for region calibration.
 		"""
-		#'default' enter sequence for region initial calibration region
-		self.__react_x_initial_calibration_initial_calibration_region__entry_default()
+		#'default' enter sequence for region calibration
+		self.__react_x_calibration_calibration__entry_default()
 		
 	def __exit_sequence_x_manual_control(self):
 		"""Default exit sequence for state Manual Control.
@@ -2875,222 +2327,26 @@ class Model:
 		self.__state_vector[7] = self.State.xautomatic_moving
 		self.__state_conf_vector_position = 7
 		
-	def __exit_sequence_x_initial_calibration(self):
-		"""Default exit sequence for state Initial calibration.
+	def __exit_sequence_x_calibration(self):
+		"""Default exit sequence for state calibration.
 		"""
-		#Default exit sequence for state Initial calibration
-		self.__exit_sequence_x_initial_calibration_initial_calibration_region()
+		#Default exit sequence for state calibration
+		self.__exit_sequence_x_calibration_calibration()
 		self.__state_vector[0] = self.State.null_state
 		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region_start_calibration(self):
-		"""Default exit sequence for state Start calibration.
+	def __exit_sequence_x_calibration_calibration_calibrate(self):
+		"""Default exit sequence for state calibrate.
 		"""
-		#Default exit sequence for state Start calibration
-		self.__state_vector[0] = self.State.xinitial_calibration
+		#Default exit sequence for state calibrate
+		self.__state_vector[0] = self.State.xcalibration
 		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region_need_to_get_closer_to_top_wall(self):
-		"""Default exit sequence for state Need to get closer to top wall.
+	def __exit_sequence_x_calibration_calibration_maze_orientation(self):
+		"""Default exit sequence for state maze_orientation.
 		"""
-		#Default exit sequence for state Need to get closer to top wall
-		self.__state_vector[0] = self.State.xinitial_calibration
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region_need_to_get_away_from_the_top_wall(self):
-		"""Default exit sequence for state Need to get away from the top wall.
-		"""
-		#Default exit sequence for state Need to get away from the top wall
-		self.__state_vector[0] = self.State.xinitial_calibration
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region_aligned_perfect_south(self):
-		"""Default exit sequence for state Aligned perfect south.
-		"""
-		#Default exit sequence for state Aligned perfect south
-		self.__state_vector[0] = self.State.xinitial_calibration
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region_aligned_y_axis(self):
-		"""Default exit sequence for state Aligned Y axis.
-		"""
-		#Default exit sequence for state Aligned Y axis
-		self.__state_vector[0] = self.State.xinitial_calibration
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region_facing_the_top_wall(self):
-		"""Default exit sequence for state Facing the top wall.
-		"""
-		#Default exit sequence for state Facing the top wall
-		self.__state_vector[0] = self.State.xinitial_calibration
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region_aligned_perfect_east(self):
-		"""Default exit sequence for state Aligned perfect East.
-		"""
-		#Default exit sequence for state Aligned perfect East
-		self.__state_vector[0] = self.State.xinitial_calibration
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region__0_5_g(self):
-		"""Default exit sequence for state 0,5 G.
-		"""
-		#Default exit sequence for state 0,5 G
-		self.__state_vector[0] = self.State.xinitial_calibration
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region__1_5_g(self):
-		"""Default exit sequence for state 1,5 G.
-		"""
-		#Default exit sequence for state 1,5 G
-		self.__state_vector[0] = self.State.xinitial_calibration
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region__2_5_g(self):
-		"""Default exit sequence for state 2,5 G.
-		"""
-		#Default exit sequence for state 2,5 G
-		self.__state_vector[0] = self.State.xinitial_calibration
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region__3_5_g(self):
-		"""Default exit sequence for state 3,5 G.
-		"""
-		#Default exit sequence for state 3,5 G
-		self.__state_vector[0] = self.State.xinitial_calibration
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region_the_distance_to_right_wall_is_determined(self):
-		"""Default exit sequence for state The distance to right wall is determined.
-		"""
-		#Default exit sequence for state The distance to right wall is determined
-		self.__state_vector[0] = self.State.xinitial_calibration
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region_need_to_get_closer_to_right_wall(self):
-		"""Default exit sequence for state Need to get closer to right wall.
-		"""
-		#Default exit sequence for state Need to get closer to right wall
-		self.__state_vector[0] = self.State.xinitial_calibration
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region_need_to_get_away_from_right_wall(self):
-		"""Default exit sequence for state Need to get away from right wall.
-		"""
-		#Default exit sequence for state Need to get away from right wall
-		self.__state_vector[0] = self.State.xinitial_calibration
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region_x_aligned(self):
-		"""Default exit sequence for state X aligned.
-		"""
-		#Default exit sequence for state X aligned
-		self.__state_vector[0] = self.State.xinitial_calibration
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region_facing_away_from_the_right_wall(self):
-		"""Default exit sequence for state Facing away from the right wall.
-		"""
-		#Default exit sequence for state Facing away from the right wall
-		self.__state_vector[0] = self.State.xinitial_calibration
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region_set_zero(self):
-		"""Default exit sequence for state Set ZERO.
-		"""
-		#Default exit sequence for state Set ZERO
-		self.__state_vector[0] = self.State.xinitial_calibration
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region_fast_turning_2(self):
-		"""Default exit sequence for state Fast Turning 2.
-		"""
-		#Default exit sequence for state Fast Turning 2
-		self.__state_vector[0] = self.State.xinitial_calibration
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region_medium_turning_state_2(self):
-		"""Default exit sequence for state Medium Turning State 2.
-		"""
-		#Default exit sequence for state Medium Turning State 2
-		self.__state_vector[0] = self.State.xinitial_calibration
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region_slow_turning_state_2(self):
-		"""Default exit sequence for state Slow Turning State 2.
-		"""
-		#Default exit sequence for state Slow Turning State 2
-		self.__state_vector[0] = self.State.xinitial_calibration
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region_fast_turning_state(self):
-		"""Default exit sequence for state Fast Turning State.
-		"""
-		#Default exit sequence for state Fast Turning State
-		self.__state_vector[0] = self.State.xinitial_calibration
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region_medium_turning_state(self):
-		"""Default exit sequence for state Medium Turning State.
-		"""
-		#Default exit sequence for state Medium Turning State
-		self.__state_vector[0] = self.State.xinitial_calibration
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region_slow_turning_state(self):
-		"""Default exit sequence for state Slow Turning State.
-		"""
-		#Default exit sequence for state Slow Turning State
-		self.__state_vector[0] = self.State.xinitial_calibration
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region_fast_turning_state_3(self):
-		"""Default exit sequence for state Fast Turning State 3.
-		"""
-		#Default exit sequence for state Fast Turning State 3
-		self.__state_vector[0] = self.State.xinitial_calibration
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region_medium_turning_state_3(self):
-		"""Default exit sequence for state Medium Turning State 3.
-		"""
-		#Default exit sequence for state Medium Turning State 3
-		self.__state_vector[0] = self.State.xinitial_calibration
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region_slow_turning_state_3(self):
-		"""Default exit sequence for state Slow Turning State 3.
-		"""
-		#Default exit sequence for state Slow Turning State 3
-		self.__state_vector[0] = self.State.xinitial_calibration
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region_fast_turning_state_4(self):
-		"""Default exit sequence for state Fast Turning State 4.
-		"""
-		#Default exit sequence for state Fast Turning State 4
-		self.__state_vector[0] = self.State.xinitial_calibration
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region_medium_turning_state_4(self):
-		"""Default exit sequence for state Medium Turning State 4.
-		"""
-		#Default exit sequence for state Medium Turning State 4
-		self.__state_vector[0] = self.State.xinitial_calibration
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region_slow_turning_state_4(self):
-		"""Default exit sequence for state Slow Turning State 4.
-		"""
-		#Default exit sequence for state Slow Turning State 4
-		self.__state_vector[0] = self.State.xinitial_calibration
-		self.__state_conf_vector_position = 0
-		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region_very_slow_turning_state_4(self):
-		"""Default exit sequence for state Very Slow Turning State 4.
-		"""
-		#Default exit sequence for state Very Slow Turning State 4
-		self.__state_vector[0] = self.State.xinitial_calibration
+		#Default exit sequence for state maze_orientation
+		self.__state_vector[0] = self.State.xcalibration
 		self.__state_conf_vector_position = 0
 		
 	def __exit_sequence_x(self):
@@ -3124,68 +2380,12 @@ class Model:
 			self.__exit_sequence_x_automatic_moving_row_calcualtion_two()
 		elif state == self.State.xautomatic_moving_row_calcualtion_three:
 			self.__exit_sequence_x_automatic_moving_row_calcualtion_three()
-		elif state == self.State.xinitial_calibration:
-			self.__exit_sequence_x_initial_calibration()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_start_calibration:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_start_calibration()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_need_to_get_closer_to_top_wall:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_need_to_get_closer_to_top_wall()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_need_to_get_away_from_the_top_wall:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_need_to_get_away_from_the_top_wall()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_aligned_perfect_south:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_aligned_perfect_south()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_aligned_y_axis:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_aligned_y_axis()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_facing_the_top_wall:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_facing_the_top_wall()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_aligned_perfect_east:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_aligned_perfect_east()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_0_5_g:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region__0_5_g()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_1_5_g:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region__1_5_g()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_2_5_g:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region__2_5_g()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_3_5_g:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region__3_5_g()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_the_distance_to_right_wall_is_determined:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_the_distance_to_right_wall_is_determined()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_need_to_get_closer_to_right_wall:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_need_to_get_closer_to_right_wall()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_need_to_get_away_from_right_wall:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_need_to_get_away_from_right_wall()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_x_aligned:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_x_aligned()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_facing_away_from_the_right_wall:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_facing_away_from_the_right_wall()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_set_zero:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_set_zero()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_fast_turning_2:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_fast_turning_2()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_medium_turning_state_2:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_medium_turning_state_2()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_slow_turning_state_2:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_slow_turning_state_2()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_fast_turning_state:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_fast_turning_state()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_medium_turning_state:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_medium_turning_state()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_slow_turning_state:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_slow_turning_state()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_fast_turning_state_3:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_fast_turning_state_3()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_medium_turning_state_3:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_medium_turning_state_3()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_slow_turning_state_3:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_slow_turning_state_3()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_fast_turning_state_4:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_fast_turning_state_4()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_medium_turning_state_4:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_medium_turning_state_4()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_slow_turning_state_4:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_slow_turning_state_4()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_very_slow_turning_state_4:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_very_slow_turning_state_4()
+		elif state == self.State.xcalibration:
+			self.__exit_sequence_x_calibration()
+		elif state == self.State.xcalibration_calibration_calibrate:
+			self.__exit_sequence_x_calibration_calibration_calibrate()
+		elif state == self.State.xcalibration_calibration_maze_orientation:
+			self.__exit_sequence_x_calibration_calibration_maze_orientation()
 		state = self.__state_vector[1]
 		if state == self.State.xautomatic_moving_column_calculation_base_state:
 			self.__exit_sequence_x_automatic_moving_column_calculation_base_state()
@@ -3546,71 +2746,15 @@ class Model:
 		elif state == self.State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_third_step:
 			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_third_step()
 		
-	def __exit_sequence_x_initial_calibration_initial_calibration_region(self):
-		"""Default exit sequence for region initial calibration region.
+	def __exit_sequence_x_calibration_calibration(self):
+		"""Default exit sequence for region calibration.
 		"""
-		#Default exit sequence for region initial calibration region
+		#Default exit sequence for region calibration
 		state = self.__state_vector[0]
-		if state == self.State.xinitial_calibration_initial_calibration_region_start_calibration:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_start_calibration()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_need_to_get_closer_to_top_wall:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_need_to_get_closer_to_top_wall()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_need_to_get_away_from_the_top_wall:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_need_to_get_away_from_the_top_wall()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_aligned_perfect_south:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_aligned_perfect_south()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_aligned_y_axis:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_aligned_y_axis()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_facing_the_top_wall:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_facing_the_top_wall()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_aligned_perfect_east:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_aligned_perfect_east()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_0_5_g:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region__0_5_g()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_1_5_g:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region__1_5_g()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_2_5_g:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region__2_5_g()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_3_5_g:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region__3_5_g()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_the_distance_to_right_wall_is_determined:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_the_distance_to_right_wall_is_determined()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_need_to_get_closer_to_right_wall:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_need_to_get_closer_to_right_wall()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_need_to_get_away_from_right_wall:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_need_to_get_away_from_right_wall()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_x_aligned:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_x_aligned()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_facing_away_from_the_right_wall:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_facing_away_from_the_right_wall()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_set_zero:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_set_zero()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_fast_turning_2:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_fast_turning_2()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_medium_turning_state_2:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_medium_turning_state_2()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_slow_turning_state_2:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_slow_turning_state_2()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_fast_turning_state:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_fast_turning_state()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_medium_turning_state:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_medium_turning_state()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_slow_turning_state:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_slow_turning_state()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_fast_turning_state_3:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_fast_turning_state_3()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_medium_turning_state_3:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_medium_turning_state_3()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_slow_turning_state_3:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_slow_turning_state_3()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_fast_turning_state_4:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_fast_turning_state_4()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_medium_turning_state_4:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_medium_turning_state_4()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_slow_turning_state_4:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_slow_turning_state_4()
-		elif state == self.State.xinitial_calibration_initial_calibration_region_very_slow_turning_state_4:
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region_very_slow_turning_state_4()
+		if state == self.State.xcalibration_calibration_calibrate:
+			self.__exit_sequence_x_calibration_calibration_calibrate()
+		elif state == self.State.xcalibration_calibration_maze_orientation:
+			self.__exit_sequence_x_calibration_calibration_maze_orientation()
 		
 	def __react_x_manual_control_manual_control_region__entry_default(self):
 		"""Default react sequence for initial entry .
@@ -3702,11 +2846,11 @@ class Model:
 		#Default react sequence for initial entry 
 		self.__enter_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_get_to_initial_position_default()
 		
-	def __react_x_initial_calibration_initial_calibration_region__entry_default(self):
+	def __react_x_calibration_calibration__entry_default(self):
 		"""Default react sequence for initial entry .
 		"""
 		#Default react sequence for initial entry 
-		self.__enter_sequence_x_initial_calibration_initial_calibration_region_start_calibration_default()
+		self.__enter_sequence_x_calibration_calibration_calibrate_default()
 		
 	def __react(self, transitioned_before):
 		"""Implementation of __react function.
@@ -3722,14 +2866,14 @@ class Model:
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
-				if (self.computer.m_press) and (True):
+				if (self.computer.m_press) and (self.user_var.is_calibrated):
 					self.__exit_sequence_x_manual_control()
 					self.__enter_sequence_x_automatic_moving_default()
 					self.__react(0)
 					transitioned_after = 0
-				elif (self.computer.m_press) and (False):
+				elif (self.computer.m_press) and (not self.user_var.is_calibrated):
 					self.__exit_sequence_x_manual_control()
-					self.__enter_sequence_x_initial_calibration_default()
+					self.__enter_sequence_x_calibration_default()
 					self.__react(0)
 					transitioned_after = 0
 			#If no transition was taken
@@ -3935,19 +3079,19 @@ class Model:
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 0:
-				if self.user_var.am_gl_x_rel <= 0.5:
+				if self.user_var.am_gl_row_rel <= 0.5:
 					self.__exit_sequence_x_automatic_moving_row_calcualtion_calc()
 					self.__enter_sequence_x_automatic_moving_row_calcualtion_zero_default()
 					transitioned_after = 0
-				elif self.user_var.am_gl_x_rel >= 0.5 and self.user_var.am_gl_x_rel <= 1.5:
+				elif self.user_var.am_gl_row_rel >= 0.5 and self.user_var.am_gl_row_rel <= 1.5:
 					self.__exit_sequence_x_automatic_moving_row_calcualtion_calc()
 					self.__enter_sequence_x_automatic_moving_row_calcualtion_one_default()
 					transitioned_after = 0
-				elif self.user_var.am_gl_x_rel >= 1.5 and self.user_var.am_gl_x_rel <= 2.5:
+				elif self.user_var.am_gl_row_rel >= 1.5 and self.user_var.am_gl_row_rel <= 2.5:
 					self.__exit_sequence_x_automatic_moving_row_calcualtion_calc()
 					self.__enter_sequence_x_automatic_moving_row_calcualtion_two_default()
 					transitioned_after = 0
-				elif self.user_var.am_gl_x_rel >= 2.5 and self.user_var.am_gl_x_rel <= 3.5:
+				elif self.user_var.am_gl_row_rel >= 2.5 and self.user_var.am_gl_row_rel <= 3.5:
 					self.__exit_sequence_x_automatic_moving_row_calcualtion_calc()
 					self.__enter_sequence_x_automatic_moving_row_calcualtion_three_default()
 					transitioned_after = 0
@@ -4044,19 +3188,19 @@ class Model:
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 1:
-				if self.user_var.am_gl_y_rel <= 0.5:
+				if self.user_var.am_gl_col_rel <= 0.5:
 					self.__exit_sequence_x_automatic_moving_column_calculation_calc()
 					self.__enter_sequence_x_automatic_moving_column_calculation_zero_default()
 					transitioned_after = 1
-				elif self.user_var.am_gl_y_rel >= 0.5 and self.user_var.am_gl_y_rel <= 1.5:
+				elif self.user_var.am_gl_col_rel >= 0.5 and self.user_var.am_gl_col_rel <= 1.5:
 					self.__exit_sequence_x_automatic_moving_column_calculation_calc()
 					self.__enter_sequence_x_automatic_moving_column_calculation_one_default()
 					transitioned_after = 1
-				elif self.user_var.am_gl_y_rel >= 1.5 and self.user_var.am_gl_y_rel <= 2.5:
+				elif self.user_var.am_gl_col_rel >= 1.5 and self.user_var.am_gl_col_rel <= 2.5:
 					self.__exit_sequence_x_automatic_moving_column_calculation_calc()
 					self.__enter_sequence_x_automatic_moving_column_calculation_two_default()
 					transitioned_after = 1
-				elif self.user_var.am_gl_y_rel >= 2.5 and self.user_var.am_gl_y_rel <= 3.5:
+				elif self.user_var.am_gl_col_rel >= 2.5 and self.user_var.am_gl_col_rel <= 3.5:
 					self.__exit_sequence_x_automatic_moving_column_calculation_calc()
 					self.__enter_sequence_x_automatic_moving_column_calculation_three_default()
 					transitioned_after = 1
@@ -4937,10 +4081,10 @@ class Model:
 		return transitioned_after
 	
 	
-	def __x_initial_calibration_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_react function.
+	def __x_calibration_react(self, transitioned_before):
+		"""Implementation of __x_calibration_react function.
 		"""
-		#The reactions of state Initial calibration.
+		#The reactions of state calibration.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			#Always execute local reactions.
@@ -4948,380 +4092,38 @@ class Model:
 		return transitioned_after
 	
 	
-	def __x_initial_calibration_initial_calibration_region_start_calibration_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region_start_calibration_react function.
+	def __x_calibration_calibration_calibrate_react(self, transitioned_before):
+		"""Implementation of __x_calibration_calibration_calibrate_react function.
 		"""
-		#The reactions of state Start calibration.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.imu.yaw < -(150.0) or self.imu.yaw > 150.0 and self.user_var.turning_fast:
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_start_calibration()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_fast_turning_2_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-				elif self.imu.yaw < -(179.5) and self.imu.yaw > -(180.5) or self.imu.yaw > 179.5 and self.imu.yaw < 180.5:
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_start_calibration()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_aligned_perfect_south_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_initial_calibration_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_initial_calibration_initial_calibration_region_need_to_get_closer_to_top_wall_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region_need_to_get_closer_to_top_wall_react function.
-		"""
-		#The reactions of state Need to get closer to top wall.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.imu.yaw < 0.5 and self.imu.yaw > -(0.5):
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_need_to_get_closer_to_top_wall()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_facing_the_top_wall_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-				elif self.user_var.turning_fast and self.imu.yaw > -(90.0) and self.imu.yaw < 90.0:
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_need_to_get_closer_to_top_wall()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_fast_turning_state_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_initial_calibration_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_initial_calibration_initial_calibration_region_need_to_get_away_from_the_top_wall_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region_need_to_get_away_from_the_top_wall_react function.
-		"""
-		#The reactions of state Need to get away from the top wall.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.laser_distance.d180 < (self.user_var.half_grid_size + 0.02) and self.laser_distance.d180 > (self.user_var.half_grid_size - 0.02):
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_need_to_get_away_from_the_top_wall()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_aligned_y_axis_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_initial_calibration_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_initial_calibration_initial_calibration_region_aligned_perfect_south_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region_aligned_perfect_south_react function.
-		"""
-		#The reactions of state Aligned perfect south.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.laser_distance.d180 > self.user_var.half_grid_size:
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_aligned_perfect_south()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_need_to_get_closer_to_top_wall_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-				elif self.laser_distance.d180 < self.user_var.half_grid_size:
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_aligned_perfect_south()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_need_to_get_away_from_the_top_wall_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-				elif self.laser_distance.d180 == self.user_var.half_grid_size:
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_aligned_perfect_south()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_aligned_y_axis_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_initial_calibration_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_initial_calibration_initial_calibration_region_aligned_y_axis_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region_aligned_y_axis_react function.
-		"""
-		#The reactions of state Aligned Y axis.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.imu.yaw < -(89.5) and self.imu.yaw > -(90.5):
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_aligned_y_axis()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_aligned_perfect_east_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_initial_calibration_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_initial_calibration_initial_calibration_region_facing_the_top_wall_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region_facing_the_top_wall_react function.
-		"""
-		#The reactions of state Facing the top wall.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.laser_distance.d0 < (self.user_var.half_grid_size + 0.02) and self.laser_distance.d0 > (self.user_var.half_grid_size - 0.02):
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_facing_the_top_wall()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_aligned_y_axis_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_initial_calibration_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_initial_calibration_initial_calibration_region_aligned_perfect_east_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region_aligned_perfect_east_react function.
-		"""
-		#The reactions of state Aligned perfect East.
+		#The reactions of state calibrate.
 		transitioned_after = transitioned_before
 		if self.__do_completion:
-			#Default exit sequence for state Aligned perfect East
-			self.__state_vector[0] = self.State.xinitial_calibration
+			#Default exit sequence for state calibrate
+			self.__state_vector[0] = self.State.xcalibration
 			self.__state_conf_vector_position = 0
-			#'default' enter sequence for state 0,5 G
-			self.__entry_action_x_initial_calibration_initial_calibration_region__0_5_g()
-			self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_0_5_g
+			#'default' enter sequence for state maze_orientation
+			self.__entry_action_x_calibration_calibration_maze_orientation()
+			self.__state_vector[0] = self.State.xcalibration_calibration_maze_orientation
 			self.__state_conf_vector_position = 0
 			self.__state_conf_vector_changed = True
-			self.__x_initial_calibration_react(0)
+			self.__x_calibration_react(0)
 		else:
 			#Always execute local reactions.
-			transitioned_after = self.__x_initial_calibration_react(transitioned_before)
+			transitioned_after = self.__x_calibration_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __x_initial_calibration_initial_calibration_region__0_5_g_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region__0_5_g_react function.
+	def __x_calibration_calibration_maze_orientation_react(self, transitioned_before):
+		"""Implementation of __x_calibration_calibration_maze_orientation_react function.
 		"""
-		#The reactions of state 0,5 G.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.laser_distance.d0 >= (self.grid.grid_size - 0.02):
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region__0_5_g()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region__1_5_g_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-				elif self.laser_distance.d0 < self.grid.grid_size:
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region__0_5_g()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_the_distance_to_right_wall_is_determined_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_initial_calibration_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_initial_calibration_initial_calibration_region__1_5_g_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region__1_5_g_react function.
-		"""
-		#The reactions of state 1,5 G.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.laser_distance.d0 >= ((2 * self.grid.grid_size) - 0.02):
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region__1_5_g()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region__2_5_g_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-				elif self.laser_distance.d0 < (2.0 * self.grid.grid_size):
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region__1_5_g()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_the_distance_to_right_wall_is_determined_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_initial_calibration_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_initial_calibration_initial_calibration_region__2_5_g_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region__2_5_g_react function.
-		"""
-		#The reactions of state 2,5 G.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.laser_distance.d0 >= ((3 * self.grid.grid_size) - 0.02):
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region__2_5_g()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region__3_5_g_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-				elif self.laser_distance.d0 < (3.0 * self.grid.grid_size):
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region__2_5_g()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_the_distance_to_right_wall_is_determined_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_initial_calibration_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_initial_calibration_initial_calibration_region__3_5_g_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region__3_5_g_react function.
-		"""
-		#The reactions of state 3,5 G.
+		#The reactions of state maze_orientation.
 		transitioned_after = transitioned_before
 		if self.__do_completion:
-			#Default exit sequence for state 3,5 G
-			self.__state_vector[0] = self.State.xinitial_calibration
-			self.__state_conf_vector_position = 0
-			#'default' enter sequence for state The distance to right wall is determined
-			self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_the_distance_to_right_wall_is_determined
-			self.__state_conf_vector_position = 0
-			self.__state_conf_vector_changed = True
-			self.__x_initial_calibration_react(0)
-		else:
-			#Always execute local reactions.
-			transitioned_after = self.__x_initial_calibration_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_initial_calibration_initial_calibration_region_the_distance_to_right_wall_is_determined_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region_the_distance_to_right_wall_is_determined_react function.
-		"""
-		#The reactions of state The distance to right wall is determined.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.laser_distance.d0 > self.user_var.distance_to_right_wall:
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_the_distance_to_right_wall_is_determined()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_need_to_get_closer_to_right_wall_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-				elif self.laser_distance.d0 > (self.user_var.distance_to_right_wall - 0.02) and self.laser_distance.d0 < (self.user_var.distance_to_right_wall + 0.02):
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_the_distance_to_right_wall_is_determined()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_x_aligned_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-				elif self.laser_distance.d0 < self.user_var.distance_to_right_wall:
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_the_distance_to_right_wall_is_determined()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_need_to_get_away_from_right_wall_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_initial_calibration_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_initial_calibration_initial_calibration_region_need_to_get_closer_to_right_wall_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region_need_to_get_closer_to_right_wall_react function.
-		"""
-		#The reactions of state Need to get closer to right wall.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.laser_distance.d0 < (self.user_var.distance_to_right_wall + 0.02) and self.laser_distance.d0 > (self.user_var.distance_to_right_wall - 0.02):
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_need_to_get_closer_to_right_wall()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_x_aligned_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_initial_calibration_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_initial_calibration_initial_calibration_region_need_to_get_away_from_right_wall_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region_need_to_get_away_from_right_wall_react function.
-		"""
-		#The reactions of state Need to get away from right wall.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.imu.yaw < 90.25 and self.imu.yaw > 89.75:
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_need_to_get_away_from_right_wall()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_facing_away_from_the_right_wall_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-				elif self.imu.yaw > -(120.0) and self.imu.yaw < 120.0:
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_need_to_get_away_from_right_wall()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_fast_turning_state_3_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_initial_calibration_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_initial_calibration_initial_calibration_region_x_aligned_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region_x_aligned_react function.
-		"""
-		#The reactions of state X aligned.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.imu.yaw < -(179.5) and self.imu.yaw > -(180.5) or self.imu.yaw > 179.5 and self.imu.yaw < 180.5:
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_x_aligned()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_set_zero_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-				elif self.imu.yaw > -(120.0) and self.imu.yaw < 120.0 and self.user_var.turning_fast:
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_x_aligned()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_fast_turning_state_4_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_initial_calibration_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_initial_calibration_initial_calibration_region_facing_away_from_the_right_wall_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region_facing_away_from_the_right_wall_react function.
-		"""
-		#The reactions of state Facing away from the right wall.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.laser_distance.d180 < (self.user_var.distance_to_right_wall + 0.02) and self.laser_distance.d180 > (self.user_var.distance_to_right_wall - 0.02):
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_facing_away_from_the_right_wall()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_x_aligned_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_initial_calibration_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_initial_calibration_initial_calibration_region_set_zero_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region_set_zero_react function.
-		"""
-		#The reactions of state Set ZERO.
-		transitioned_after = transitioned_before
-		if self.__do_completion:
-			#Default exit sequence for state Initial calibration
-			self.__exit_sequence_x_initial_calibration_initial_calibration_region()
+			#Default exit sequence for state calibration
+			self.__exit_sequence_x_calibration_calibration()
 			self.__state_vector[0] = self.State.null_state
 			self.__state_conf_vector_position = 0
 			#'default' enter sequence for state automatic moving
-			self.__entry_action_x_automatic_moving()
 			self.__enter_sequence_x_automatic_moving_row_calcualtion_default()
 			self.__enter_sequence_x_automatic_moving_column_calculation_default()
 			self.__enter_sequence_x_automatic_moving_direction_calculation_default()
@@ -5333,261 +4135,7 @@ class Model:
 			self.__react(0)
 		else:
 			#Always execute local reactions.
-			transitioned_after = self.__x_initial_calibration_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_initial_calibration_initial_calibration_region_fast_turning_2_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region_fast_turning_2_react function.
-		"""
-		#The reactions of state Fast Turning 2.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.imu.yaw < -(150.0) or self.imu.yaw > 150.0 and self.imu.yaw < -(170.0) or self.imu.yaw > 170.0:
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_fast_turning_2()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_medium_turning_state_2_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_initial_calibration_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_initial_calibration_initial_calibration_region_medium_turning_state_2_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region_medium_turning_state_2_react function.
-		"""
-		#The reactions of state Medium Turning State 2.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.imu.yaw < -(170.0) or self.imu.yaw > 170.0 and self.imu.yaw < -(179.5) and self.imu.yaw > -(180.5) or self.imu.yaw > 179.5 and self.imu.yaw < 180.5:
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_medium_turning_state_2()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_slow_turning_state_2_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_initial_calibration_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_initial_calibration_initial_calibration_region_slow_turning_state_2_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region_slow_turning_state_2_react function.
-		"""
-		#The reactions of state Slow Turning State 2.
-		transitioned_after = transitioned_before
-		if self.__do_completion:
-			#Default exit sequence for state Slow Turning State 2
-			self.__state_vector[0] = self.State.xinitial_calibration
-			self.__state_conf_vector_position = 0
-			#'default' enter sequence for state Aligned perfect south
-			self.__entry_action_x_initial_calibration_initial_calibration_region_aligned_perfect_south()
-			self.__state_vector[0] = self.State.xinitial_calibration_initial_calibration_region_aligned_perfect_south
-			self.__state_conf_vector_position = 0
-			self.__state_conf_vector_changed = True
-			self.__x_initial_calibration_react(0)
-		else:
-			#Always execute local reactions.
-			transitioned_after = self.__x_initial_calibration_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_initial_calibration_initial_calibration_region_fast_turning_state_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region_fast_turning_state_react function.
-		"""
-		#The reactions of state Fast Turning State.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.imu.yaw > -(50.0) and self.imu.yaw < 50.0:
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_fast_turning_state()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_medium_turning_state_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_initial_calibration_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_initial_calibration_initial_calibration_region_medium_turning_state_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region_medium_turning_state_react function.
-		"""
-		#The reactions of state Medium Turning State.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.imu.yaw > -(20.0) and self.imu.yaw < 20.0:
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_medium_turning_state()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_slow_turning_state_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_initial_calibration_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_initial_calibration_initial_calibration_region_slow_turning_state_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region_slow_turning_state_react function.
-		"""
-		#The reactions of state Slow Turning State.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.imu.yaw < 0.5 and self.imu.yaw > -(0.5):
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_slow_turning_state()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_facing_the_top_wall_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_initial_calibration_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_initial_calibration_initial_calibration_region_fast_turning_state_3_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region_fast_turning_state_3_react function.
-		"""
-		#The reactions of state Fast Turning State 3.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.imu.yaw > 70.0 and self.imu.yaw < 110.0:
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_fast_turning_state_3()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_medium_turning_state_3_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_initial_calibration_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_initial_calibration_initial_calibration_region_medium_turning_state_3_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region_medium_turning_state_3_react function.
-		"""
-		#The reactions of state Medium Turning State 3.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.imu.yaw > 85.0 and self.imu.yaw < 95.0:
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_medium_turning_state_3()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_slow_turning_state_3_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_initial_calibration_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_initial_calibration_initial_calibration_region_slow_turning_state_3_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region_slow_turning_state_3_react function.
-		"""
-		#The reactions of state Slow Turning State 3.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.imu.yaw < 90.5 and self.imu.yaw > 89.5:
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_slow_turning_state_3()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_facing_away_from_the_right_wall_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_initial_calibration_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_initial_calibration_initial_calibration_region_fast_turning_state_4_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region_fast_turning_state_4_react function.
-		"""
-		#The reactions of state Fast Turning State 4.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.imu.yaw > -(160.0) and self.imu.yaw < -(140.0) or self.imu.yaw > 140.0 and self.imu.yaw < 160.0:
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_fast_turning_state_4()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_medium_turning_state_4_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_initial_calibration_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_initial_calibration_initial_calibration_region_medium_turning_state_4_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region_medium_turning_state_4_react function.
-		"""
-		#The reactions of state Medium Turning State 4.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.imu.yaw > -(182.0) and self.imu.yaw < -(178.0) or self.imu.yaw > 178.0 and self.imu.yaw < 182.0:
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_medium_turning_state_4()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_slow_turning_state_4_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_initial_calibration_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_initial_calibration_initial_calibration_region_slow_turning_state_4_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region_slow_turning_state_4_react function.
-		"""
-		#The reactions of state Slow Turning State 4.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.imu.yaw < -(179.95) and self.imu.yaw > -(180.05) or self.imu.yaw > 179.95 and self.imu.yaw < 180.05:
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_slow_turning_state_4()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_set_zero_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-				elif self.imu.yaw < -(178.5) and self.imu.yaw > -(181.5) or self.imu.yaw > 178.5 and self.imu.yaw < 181.5:
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_slow_turning_state_4()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_very_slow_turning_state_4_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_initial_calibration_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_initial_calibration_initial_calibration_region_very_slow_turning_state_4_react(self, transitioned_before):
-		"""Implementation of __x_initial_calibration_initial_calibration_region_very_slow_turning_state_4_react function.
-		"""
-		#The reactions of state Very Slow Turning State 4.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 0:
-				if self.imu.yaw < -(179.99) and self.imu.yaw > -(180.01) or self.imu.yaw > 179.99 and self.imu.yaw < 180.01:
-					self.__exit_sequence_x_initial_calibration_initial_calibration_region_very_slow_turning_state_4()
-					self.__enter_sequence_x_initial_calibration_initial_calibration_region_set_zero_default()
-					self.__x_initial_calibration_react(0)
-					transitioned_after = 0
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_initial_calibration_react(transitioned_before)
+			transitioned_after = self.__x_calibration_react(transitioned_before)
 		return transitioned_after
 	
 	
@@ -5654,66 +4202,10 @@ class Model:
 			transitioned = self.__x_automatic_moving_row_calcualtion_two_react(transitioned)
 		elif state == self.State.xautomatic_moving_row_calcualtion_three:
 			transitioned = self.__x_automatic_moving_row_calcualtion_three_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_start_calibration:
-			transitioned = self.__x_initial_calibration_initial_calibration_region_start_calibration_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_need_to_get_closer_to_top_wall:
-			transitioned = self.__x_initial_calibration_initial_calibration_region_need_to_get_closer_to_top_wall_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_need_to_get_away_from_the_top_wall:
-			transitioned = self.__x_initial_calibration_initial_calibration_region_need_to_get_away_from_the_top_wall_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_aligned_perfect_south:
-			transitioned = self.__x_initial_calibration_initial_calibration_region_aligned_perfect_south_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_aligned_y_axis:
-			transitioned = self.__x_initial_calibration_initial_calibration_region_aligned_y_axis_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_facing_the_top_wall:
-			transitioned = self.__x_initial_calibration_initial_calibration_region_facing_the_top_wall_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_aligned_perfect_east:
-			transitioned = self.__x_initial_calibration_initial_calibration_region_aligned_perfect_east_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_0_5_g:
-			transitioned = self.__x_initial_calibration_initial_calibration_region__0_5_g_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_1_5_g:
-			transitioned = self.__x_initial_calibration_initial_calibration_region__1_5_g_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_2_5_g:
-			transitioned = self.__x_initial_calibration_initial_calibration_region__2_5_g_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_3_5_g:
-			transitioned = self.__x_initial_calibration_initial_calibration_region__3_5_g_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_the_distance_to_right_wall_is_determined:
-			transitioned = self.__x_initial_calibration_initial_calibration_region_the_distance_to_right_wall_is_determined_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_need_to_get_closer_to_right_wall:
-			transitioned = self.__x_initial_calibration_initial_calibration_region_need_to_get_closer_to_right_wall_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_need_to_get_away_from_right_wall:
-			transitioned = self.__x_initial_calibration_initial_calibration_region_need_to_get_away_from_right_wall_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_x_aligned:
-			transitioned = self.__x_initial_calibration_initial_calibration_region_x_aligned_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_facing_away_from_the_right_wall:
-			transitioned = self.__x_initial_calibration_initial_calibration_region_facing_away_from_the_right_wall_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_set_zero:
-			transitioned = self.__x_initial_calibration_initial_calibration_region_set_zero_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_fast_turning_2:
-			transitioned = self.__x_initial_calibration_initial_calibration_region_fast_turning_2_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_medium_turning_state_2:
-			transitioned = self.__x_initial_calibration_initial_calibration_region_medium_turning_state_2_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_slow_turning_state_2:
-			transitioned = self.__x_initial_calibration_initial_calibration_region_slow_turning_state_2_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_fast_turning_state:
-			transitioned = self.__x_initial_calibration_initial_calibration_region_fast_turning_state_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_medium_turning_state:
-			transitioned = self.__x_initial_calibration_initial_calibration_region_medium_turning_state_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_slow_turning_state:
-			transitioned = self.__x_initial_calibration_initial_calibration_region_slow_turning_state_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_fast_turning_state_3:
-			transitioned = self.__x_initial_calibration_initial_calibration_region_fast_turning_state_3_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_medium_turning_state_3:
-			transitioned = self.__x_initial_calibration_initial_calibration_region_medium_turning_state_3_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_slow_turning_state_3:
-			transitioned = self.__x_initial_calibration_initial_calibration_region_slow_turning_state_3_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_fast_turning_state_4:
-			transitioned = self.__x_initial_calibration_initial_calibration_region_fast_turning_state_4_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_medium_turning_state_4:
-			transitioned = self.__x_initial_calibration_initial_calibration_region_medium_turning_state_4_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_slow_turning_state_4:
-			transitioned = self.__x_initial_calibration_initial_calibration_region_slow_turning_state_4_react(transitioned)
-		elif state == self.State.xinitial_calibration_initial_calibration_region_very_slow_turning_state_4:
-			transitioned = self.__x_initial_calibration_initial_calibration_region_very_slow_turning_state_4_react(transitioned)
+		elif state == self.State.xcalibration_calibration_calibrate:
+			transitioned = self.__x_calibration_calibration_calibrate_react(transitioned)
+		elif state == self.State.xcalibration_calibration_maze_orientation:
+			transitioned = self.__x_calibration_calibration_maze_orientation_react(transitioned)
 		if self.__state_conf_vector_position < 1:
 			state = self.__state_vector[1]
 			if state == self.State.xautomatic_moving_column_calculation_base_state:
