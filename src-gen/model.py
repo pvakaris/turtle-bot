@@ -68,13 +68,18 @@ class Model:
 			xautomatic_moving_turn_high_level_plus,
 			xautomatic_moving_turn_high_level_minus,
 			xautomatic_moving_turn_high_level_processing_angle2,
-			xautomatic_moving_turn_low_level_normal,
-			xautomatic_moving_turn_low_level_negative_rotation,
-			xautomatic_moving_turn_low_level_positive_rotation,
-			xautomatic_moving_turn_low_level_pr2,
-			xautomatic_moving_turn_low_level_pr3,
-			xautomatic_moving_turn_low_level_nr2,
-			xautomatic_moving_turn_low_level_nr3,
+			xautomatic_moving_turn_low_level_base_state,
+			xautomatic_moving_turn_low_level_turn_to_negative_angle,
+			xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_get_to_initial_position,
+			xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_first_step,
+			xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_second_step,
+			xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_third_step,
+			xautomatic_moving_turn_low_level_turn_to_positive_angle,
+			xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_get_to_initial_position,
+			xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_first_step,
+			xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_second_step,
+			xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_third_step,
+			xautomatic_moving_turn_low_level_finished_turn,
 			xinitial_calibration,
 			xinitial_calibration_initial_calibration_region_start_calibration,
 			xinitial_calibration_initial_calibration_region_need_to_get_closer_to_top_wall,
@@ -107,7 +112,7 @@ class Model:
 			xinitial_calibration_initial_calibration_region_slow_turning_state_4,
 			xinitial_calibration_initial_calibration_region_very_slow_turning_state_4,
 			null_state
-		) = range(93)
+		) = range(98)
 	
 	
 	class UserVar:
@@ -439,7 +444,7 @@ class Model:
 		self.user_var.turning_fast = True
 		self.user_var.distance_to_right_wall = 0.0
 		self.user_var.base_speed = 0.2
-		self.user_var.base_rotation = 0.2
+		self.user_var.base_rotation = 0.4
 		self.user_var.startprocedure = True
 		self.user_var.am_x_mem = 0.0
 		self.user_var.am_y_mem = 0.0
@@ -571,7 +576,7 @@ class Model:
 			return self.__state_vector[0] == self.__State.xmanual_control_manual_control_region_turning_left
 		if s == self.__State.xautomatic_moving:
 			return (self.__state_vector[0] >= self.__State.xautomatic_moving)\
-				and (self.__state_vector[0] <= self.__State.xautomatic_moving_turn_low_level_nr3)
+				and (self.__state_vector[0] <= self.__State.xautomatic_moving_turn_low_level_finished_turn)
 		if s == self.__State.xautomatic_moving_row_calcualtion_base_state:
 			return self.__state_vector[0] == self.__State.xautomatic_moving_row_calcualtion_base_state
 		if s == self.__State.xautomatic_moving_row_calcualtion_calc:
@@ -667,20 +672,32 @@ class Model:
 			return self.__state_vector[6] == self.__State.xautomatic_moving_turn_high_level_minus
 		if s == self.__State.xautomatic_moving_turn_high_level_processing_angle2:
 			return self.__state_vector[6] == self.__State.xautomatic_moving_turn_high_level_processing_angle2
-		if s == self.__State.xautomatic_moving_turn_low_level_normal:
-			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_low_level_normal
-		if s == self.__State.xautomatic_moving_turn_low_level_negative_rotation:
-			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_low_level_negative_rotation
-		if s == self.__State.xautomatic_moving_turn_low_level_positive_rotation:
-			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_low_level_positive_rotation
-		if s == self.__State.xautomatic_moving_turn_low_level_pr2:
-			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_low_level_pr2
-		if s == self.__State.xautomatic_moving_turn_low_level_pr3:
-			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_low_level_pr3
-		if s == self.__State.xautomatic_moving_turn_low_level_nr2:
-			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_low_level_nr2
-		if s == self.__State.xautomatic_moving_turn_low_level_nr3:
-			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_low_level_nr3
+		if s == self.__State.xautomatic_moving_turn_low_level_base_state:
+			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_low_level_base_state
+		if s == self.__State.xautomatic_moving_turn_low_level_turn_to_negative_angle:
+			return (self.__state_vector[7] >= self.__State.xautomatic_moving_turn_low_level_turn_to_negative_angle)\
+				and (self.__state_vector[7] <= self.__State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_third_step)
+		if s == self.__State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_get_to_initial_position:
+			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_get_to_initial_position
+		if s == self.__State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_first_step:
+			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_first_step
+		if s == self.__State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_second_step:
+			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_second_step
+		if s == self.__State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_third_step:
+			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_third_step
+		if s == self.__State.xautomatic_moving_turn_low_level_turn_to_positive_angle:
+			return (self.__state_vector[7] >= self.__State.xautomatic_moving_turn_low_level_turn_to_positive_angle)\
+				and (self.__state_vector[7] <= self.__State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_third_step)
+		if s == self.__State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_get_to_initial_position:
+			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_get_to_initial_position
+		if s == self.__State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_first_step:
+			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_first_step
+		if s == self.__State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_second_step:
+			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_second_step
+		if s == self.__State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_third_step:
+			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_third_step
+		if s == self.__State.xautomatic_moving_turn_low_level_finished_turn:
+			return self.__state_vector[7] == self.__State.xautomatic_moving_turn_low_level_finished_turn
 		if s == self.__State.xinitial_calibration:
 			return (self.__state_vector[0] >= self.__State.xinitial_calibration)\
 				and (self.__state_vector[0] <= self.__State.xinitial_calibration_initial_calibration_region_very_slow_turning_state_4)
@@ -914,7 +931,7 @@ class Model:
 		"""Entry action for state 'calc'..
 		"""
 		#Entry action for state 'calc'.
-		self.timer_service.set_timer(self, 0, (5 * 1000), False)
+		self.timer_service.set_timer(self, 0, (100 * 1000), False)
 		self.user_var.am_gl_x_rel = ((((self.odom.x - self.start_pos.zero_x)) if (self.odom.x > self.start_pos.zero_x) else ((self.start_pos.zero_x - self.odom.x))) / self.grid.grid_size)
 		
 	def __entry_action_x_automatic_moving_row_calcualtion_zero(self):
@@ -949,7 +966,7 @@ class Model:
 		"""Entry action for state 'calc'..
 		"""
 		#Entry action for state 'calc'.
-		self.timer_service.set_timer(self, 1, (5 * 1000), False)
+		self.timer_service.set_timer(self, 1, (100 * 1000), False)
 		self.user_var.am_gl_y_rel = ((((self.start_pos.zero_y - self.odom.y)) if (self.start_pos.zero_y > self.odom.y) else ((self.odom.y - self.start_pos.zero_y))) / self.grid.grid_size)
 		
 	def __entry_action_x_automatic_moving_column_calculation_zero(self):
@@ -984,7 +1001,7 @@ class Model:
 		"""Entry action for state 'calc'..
 		"""
 		#Entry action for state 'calc'.
-		self.timer_service.set_timer(self, 2, (5 * 1000), False)
+		self.timer_service.set_timer(self, 2, (100 * 1000), False)
 		self.user_var.am_gl_ang = (((int((((self.imu.yaw + 720) - self.start_pos.zero_south_degree))))) % 360)
 		
 	def __entry_action_x_automatic_moving_direction_calculation_north(self):
@@ -1162,48 +1179,61 @@ class Model:
 		#Entry action for state 'processingAngle2'.
 		self.raise_am_start_turn()
 		
-	def __entry_action_x_automatic_moving_turn_low_level_normal(self):
-		"""Entry action for state 'normal'..
+	def __entry_action_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_get_to_initial_position(self):
+		"""Entry action for state 'get_to_initial_position'..
 		"""
-		#Entry action for state 'normal'.
+		#Entry action for state 'get_to_initial_position'.
+		self.output.rotation = self.user_var.base_rotation
+		
+	def __entry_action_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_first_step(self):
+		"""Entry action for state 'first_step'..
+		"""
+		#Entry action for state 'first_step'.
+		self.output.rotation = (self.user_var.base_rotation * (-(1.0)))
+		
+	def __entry_action_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_second_step(self):
+		"""Entry action for state 'second_step'..
+		"""
+		#Entry action for state 'second_step'.
+		self.output.rotation = (self.user_var.base_rotation / 10.0)
+		
+	def __entry_action_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_third_step(self):
+		"""Entry action for state 'third_step'..
+		"""
+		#Entry action for state 'third_step'.
+		self.output.rotation = ((self.user_var.base_rotation * (-(1.0))) / 100.0)
+		
+	def __entry_action_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_get_to_initial_position(self):
+		"""Entry action for state 'get_to_initial_position'..
+		"""
+		#Entry action for state 'get_to_initial_position'.
+		self.output.rotation = self.user_var.base_rotation
+		
+	def __entry_action_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_first_step(self):
+		"""Entry action for state 'first_step'..
+		"""
+		#Entry action for state 'first_step'.
+		self.output.rotation = self.user_var.base_rotation
+		
+	def __entry_action_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_second_step(self):
+		"""Entry action for state 'second_step'..
+		"""
+		#Entry action for state 'second_step'.
+		self.output.rotation = ((self.user_var.base_rotation / 10.0) * (-(1.0)))
+		
+	def __entry_action_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_third_step(self):
+		"""Entry action for state 'third_step'..
+		"""
+		#Entry action for state 'third_step'.
+		self.output.rotation = (self.user_var.base_rotation / 100.0)
+		
+	def __entry_action_x_automatic_moving_turn_low_level_finished_turn(self):
+		""".
+		"""
+		#Entry action for state 'finished_turn'.
 		self.output.rotation = 0.0
 		self.raise_am_finished_turn()
-		
-	def __entry_action_x_automatic_moving_turn_low_level_negative_rotation(self):
-		"""Entry action for state 'negativeRotation'..
-		"""
-		#Entry action for state 'negativeRotation'.
-		self.output.rotation = -(self.user_var.am_ct_sp1)
-		
-	def __entry_action_x_automatic_moving_turn_low_level_positive_rotation(self):
-		"""Entry action for state 'positiveRotation'..
-		"""
-		#Entry action for state 'positiveRotation'.
-		self.output.rotation = self.user_var.am_ct_sp1
-		
-	def __entry_action_x_automatic_moving_turn_low_level_p_r2(self):
-		"""Entry action for state 'pR2'..
-		"""
-		#Entry action for state 'pR2'.
-		self.output.rotation = self.user_var.am_ct_sp2
-		
-	def __entry_action_x_automatic_moving_turn_low_level_p_r3(self):
-		"""Entry action for state 'pR3'..
-		"""
-		#Entry action for state 'pR3'.
-		self.output.rotation = self.user_var.am_ct_sp3
-		
-	def __entry_action_x_automatic_moving_turn_low_level_n_r2(self):
-		"""Entry action for state 'nR2'..
-		"""
-		#Entry action for state 'nR2'.
-		self.output.rotation = -(self.user_var.am_ct_sp2)
-		
-	def __entry_action_x_automatic_moving_turn_low_level_n_r3(self):
-		"""Entry action for state 'nR3'..
-		"""
-		#Entry action for state 'nR3'.
-		self.output.rotation = -(self.user_var.am_ct_sp3)
+		self.__completed = True
 		
 	def __entry_action_x_initial_calibration_initial_calibration_region_start_calibration(self):
 		"""Entry action for state 'Start calibration'..
@@ -1892,66 +1922,104 @@ class Model:
 		self.__state_conf_vector_position = 6
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_x_automatic_moving_turn_low_level_normal_default(self):
-		"""'default' enter sequence for state normal.
+	def __enter_sequence_x_automatic_moving_turn_low_level_base_state_default(self):
+		"""'default' enter sequence for state base_state.
 		"""
-		#'default' enter sequence for state normal
-		self.__entry_action_x_automatic_moving_turn_low_level_normal()
-		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_normal
+		#'default' enter sequence for state base_state
+		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_base_state
 		self.__state_conf_vector_position = 7
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_x_automatic_moving_turn_low_level_negative_rotation_default(self):
-		"""'default' enter sequence for state negativeRotation.
+	def __enter_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_default(self):
+		"""'default' enter sequence for state turn_to_negative_angle.
 		"""
-		#'default' enter sequence for state negativeRotation
-		self.__entry_action_x_automatic_moving_turn_low_level_negative_rotation()
-		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_negative_rotation
+		#'default' enter sequence for state turn_to_negative_angle
+		self.__enter_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_default()
+		
+	def __enter_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_get_to_initial_position_default(self):
+		"""'default' enter sequence for state get_to_initial_position.
+		"""
+		#'default' enter sequence for state get_to_initial_position
+		self.__entry_action_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_get_to_initial_position()
+		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_get_to_initial_position
 		self.__state_conf_vector_position = 7
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_x_automatic_moving_turn_low_level_positive_rotation_default(self):
-		"""'default' enter sequence for state positiveRotation.
+	def __enter_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_first_step_default(self):
+		"""'default' enter sequence for state first_step.
 		"""
-		#'default' enter sequence for state positiveRotation
-		self.__entry_action_x_automatic_moving_turn_low_level_positive_rotation()
-		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_positive_rotation
+		#'default' enter sequence for state first_step
+		self.__entry_action_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_first_step()
+		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_first_step
 		self.__state_conf_vector_position = 7
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_x_automatic_moving_turn_low_level_p_r2_default(self):
-		"""'default' enter sequence for state pR2.
+	def __enter_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_second_step_default(self):
+		"""'default' enter sequence for state second_step.
 		"""
-		#'default' enter sequence for state pR2
-		self.__entry_action_x_automatic_moving_turn_low_level_p_r2()
-		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_pr2
+		#'default' enter sequence for state second_step
+		self.__entry_action_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_second_step()
+		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_second_step
 		self.__state_conf_vector_position = 7
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_x_automatic_moving_turn_low_level_p_r3_default(self):
-		"""'default' enter sequence for state pR3.
+	def __enter_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_third_step_default(self):
+		"""'default' enter sequence for state third_step.
 		"""
-		#'default' enter sequence for state pR3
-		self.__entry_action_x_automatic_moving_turn_low_level_p_r3()
-		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_pr3
+		#'default' enter sequence for state third_step
+		self.__entry_action_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_third_step()
+		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_third_step
 		self.__state_conf_vector_position = 7
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_x_automatic_moving_turn_low_level_n_r2_default(self):
-		"""'default' enter sequence for state nR2.
+	def __enter_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_default(self):
+		"""'default' enter sequence for state turn_to_positive_angle.
 		"""
-		#'default' enter sequence for state nR2
-		self.__entry_action_x_automatic_moving_turn_low_level_n_r2()
-		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_nr2
+		#'default' enter sequence for state turn_to_positive_angle
+		self.__enter_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_default()
+		
+	def __enter_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_get_to_initial_position_default(self):
+		"""'default' enter sequence for state get_to_initial_position.
+		"""
+		#'default' enter sequence for state get_to_initial_position
+		self.__entry_action_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_get_to_initial_position()
+		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_get_to_initial_position
 		self.__state_conf_vector_position = 7
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_x_automatic_moving_turn_low_level_n_r3_default(self):
-		"""'default' enter sequence for state nR3.
+	def __enter_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_first_step_default(self):
+		"""'default' enter sequence for state first_step.
 		"""
-		#'default' enter sequence for state nR3
-		self.__entry_action_x_automatic_moving_turn_low_level_n_r3()
-		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_nr3
+		#'default' enter sequence for state first_step
+		self.__entry_action_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_first_step()
+		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_first_step
+		self.__state_conf_vector_position = 7
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_second_step_default(self):
+		"""'default' enter sequence for state second_step.
+		"""
+		#'default' enter sequence for state second_step
+		self.__entry_action_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_second_step()
+		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_second_step
+		self.__state_conf_vector_position = 7
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_third_step_default(self):
+		"""'default' enter sequence for state third_step.
+		"""
+		#'default' enter sequence for state third_step
+		self.__entry_action_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_third_step()
+		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_third_step
+		self.__state_conf_vector_position = 7
+		self.__state_conf_vector_changed = True
+		
+	def __enter_sequence_x_automatic_moving_turn_low_level_finished_turn_default(self):
+		"""'default' enter sequence for state finished_turn.
+		"""
+		#'default' enter sequence for state finished_turn
+		self.__entry_action_x_automatic_moving_turn_low_level_finished_turn()
+		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_finished_turn
 		self.__state_conf_vector_position = 7
 		self.__state_conf_vector_changed = True
 		
@@ -2298,6 +2366,18 @@ class Model:
 		"""
 		#'default' enter sequence for region turn low level
 		self.__react_x_automatic_moving_turn_low_level__entry_default()
+		
+	def __enter_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_default(self):
+		"""'default' enter sequence for region turn_to_negative_angle.
+		"""
+		#'default' enter sequence for region turn_to_negative_angle
+		self.__react_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle__entry_default()
+		
+	def __enter_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_default(self):
+		"""'default' enter sequence for region turn_to_positive_angle.
+		"""
+		#'default' enter sequence for region turn_to_positive_angle
+		self.__react_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle__entry_default()
 		
 	def __enter_sequence_x_initial_calibration_initial_calibration_region_default(self):
 		"""'default' enter sequence for region initial calibration region.
@@ -2709,52 +2789,89 @@ class Model:
 		self.__state_vector[6] = self.State.xautomatic_moving
 		self.__state_conf_vector_position = 6
 		
-	def __exit_sequence_x_automatic_moving_turn_low_level_normal(self):
-		"""Default exit sequence for state normal.
+	def __exit_sequence_x_automatic_moving_turn_low_level_base_state(self):
+		"""Default exit sequence for state base_state.
 		"""
-		#Default exit sequence for state normal
+		#Default exit sequence for state base_state
 		self.__state_vector[7] = self.State.xautomatic_moving
 		self.__state_conf_vector_position = 7
 		
-	def __exit_sequence_x_automatic_moving_turn_low_level_negative_rotation(self):
-		"""Default exit sequence for state negativeRotation.
+	def __exit_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle(self):
+		"""Default exit sequence for state turn_to_negative_angle.
 		"""
-		#Default exit sequence for state negativeRotation
+		#Default exit sequence for state turn_to_negative_angle
+		self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle()
 		self.__state_vector[7] = self.State.xautomatic_moving
 		self.__state_conf_vector_position = 7
 		
-	def __exit_sequence_x_automatic_moving_turn_low_level_positive_rotation(self):
-		"""Default exit sequence for state positiveRotation.
+	def __exit_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_get_to_initial_position(self):
+		"""Default exit sequence for state get_to_initial_position.
 		"""
-		#Default exit sequence for state positiveRotation
+		#Default exit sequence for state get_to_initial_position
+		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_turn_to_negative_angle
+		self.__state_conf_vector_position = 7
+		
+	def __exit_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_first_step(self):
+		"""Default exit sequence for state first_step.
+		"""
+		#Default exit sequence for state first_step
+		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_turn_to_negative_angle
+		self.__state_conf_vector_position = 7
+		
+	def __exit_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_second_step(self):
+		"""Default exit sequence for state second_step.
+		"""
+		#Default exit sequence for state second_step
+		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_turn_to_negative_angle
+		self.__state_conf_vector_position = 7
+		
+	def __exit_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_third_step(self):
+		"""Default exit sequence for state third_step.
+		"""
+		#Default exit sequence for state third_step
+		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_turn_to_negative_angle
+		self.__state_conf_vector_position = 7
+		
+	def __exit_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle(self):
+		"""Default exit sequence for state turn_to_positive_angle.
+		"""
+		#Default exit sequence for state turn_to_positive_angle
+		self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle()
 		self.__state_vector[7] = self.State.xautomatic_moving
 		self.__state_conf_vector_position = 7
 		
-	def __exit_sequence_x_automatic_moving_turn_low_level_p_r2(self):
-		"""Default exit sequence for state pR2.
+	def __exit_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_get_to_initial_position(self):
+		"""Default exit sequence for state get_to_initial_position.
 		"""
-		#Default exit sequence for state pR2
-		self.__state_vector[7] = self.State.xautomatic_moving
+		#Default exit sequence for state get_to_initial_position
+		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_turn_to_positive_angle
 		self.__state_conf_vector_position = 7
 		
-	def __exit_sequence_x_automatic_moving_turn_low_level_p_r3(self):
-		"""Default exit sequence for state pR3.
+	def __exit_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_first_step(self):
+		"""Default exit sequence for state first_step.
 		"""
-		#Default exit sequence for state pR3
-		self.__state_vector[7] = self.State.xautomatic_moving
+		#Default exit sequence for state first_step
+		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_turn_to_positive_angle
 		self.__state_conf_vector_position = 7
 		
-	def __exit_sequence_x_automatic_moving_turn_low_level_n_r2(self):
-		"""Default exit sequence for state nR2.
+	def __exit_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_second_step(self):
+		"""Default exit sequence for state second_step.
 		"""
-		#Default exit sequence for state nR2
-		self.__state_vector[7] = self.State.xautomatic_moving
+		#Default exit sequence for state second_step
+		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_turn_to_positive_angle
 		self.__state_conf_vector_position = 7
 		
-	def __exit_sequence_x_automatic_moving_turn_low_level_n_r3(self):
-		"""Default exit sequence for state nR3.
+	def __exit_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_third_step(self):
+		"""Default exit sequence for state third_step.
 		"""
-		#Default exit sequence for state nR3
+		#Default exit sequence for state third_step
+		self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_turn_to_positive_angle
+		self.__state_conf_vector_position = 7
+		
+	def __exit_sequence_x_automatic_moving_turn_low_level_finished_turn(self):
+		"""Default exit sequence for state finished_turn.
+		"""
+		#Default exit sequence for state finished_turn
 		self.__state_vector[7] = self.State.xautomatic_moving
 		self.__state_conf_vector_position = 7
 		
@@ -3156,20 +3273,30 @@ class Model:
 		elif state == self.State.xautomatic_moving_turn_high_level_processing_angle2:
 			self.__exit_sequence_x_automatic_moving_turn_high_level_processing_angle2()
 		state = self.__state_vector[7]
-		if state == self.State.xautomatic_moving_turn_low_level_normal:
-			self.__exit_sequence_x_automatic_moving_turn_low_level_normal()
-		elif state == self.State.xautomatic_moving_turn_low_level_negative_rotation:
-			self.__exit_sequence_x_automatic_moving_turn_low_level_negative_rotation()
-		elif state == self.State.xautomatic_moving_turn_low_level_positive_rotation:
-			self.__exit_sequence_x_automatic_moving_turn_low_level_positive_rotation()
-		elif state == self.State.xautomatic_moving_turn_low_level_pr2:
-			self.__exit_sequence_x_automatic_moving_turn_low_level_p_r2()
-		elif state == self.State.xautomatic_moving_turn_low_level_pr3:
-			self.__exit_sequence_x_automatic_moving_turn_low_level_p_r3()
-		elif state == self.State.xautomatic_moving_turn_low_level_nr2:
-			self.__exit_sequence_x_automatic_moving_turn_low_level_n_r2()
-		elif state == self.State.xautomatic_moving_turn_low_level_nr3:
-			self.__exit_sequence_x_automatic_moving_turn_low_level_n_r3()
+		if state == self.State.xautomatic_moving_turn_low_level_base_state:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_base_state()
+		elif state == self.State.xautomatic_moving_turn_low_level_turn_to_negative_angle:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle()
+		elif state == self.State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_get_to_initial_position:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_get_to_initial_position()
+		elif state == self.State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_first_step:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_first_step()
+		elif state == self.State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_second_step:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_second_step()
+		elif state == self.State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_third_step:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_third_step()
+		elif state == self.State.xautomatic_moving_turn_low_level_turn_to_positive_angle:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle()
+		elif state == self.State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_get_to_initial_position:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_get_to_initial_position()
+		elif state == self.State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_first_step:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_first_step()
+		elif state == self.State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_second_step:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_second_step()
+		elif state == self.State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_third_step:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_third_step()
+		elif state == self.State.xautomatic_moving_turn_low_level_finished_turn:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_finished_turn()
 		
 	def __exit_sequence_x_manual_control_manual_control_region(self):
 		"""Default exit sequence for region manual control region.
@@ -3366,20 +3493,58 @@ class Model:
 		"""
 		#Default exit sequence for region turn low level
 		state = self.__state_vector[7]
-		if state == self.State.xautomatic_moving_turn_low_level_normal:
-			self.__exit_sequence_x_automatic_moving_turn_low_level_normal()
-		elif state == self.State.xautomatic_moving_turn_low_level_negative_rotation:
-			self.__exit_sequence_x_automatic_moving_turn_low_level_negative_rotation()
-		elif state == self.State.xautomatic_moving_turn_low_level_positive_rotation:
-			self.__exit_sequence_x_automatic_moving_turn_low_level_positive_rotation()
-		elif state == self.State.xautomatic_moving_turn_low_level_pr2:
-			self.__exit_sequence_x_automatic_moving_turn_low_level_p_r2()
-		elif state == self.State.xautomatic_moving_turn_low_level_pr3:
-			self.__exit_sequence_x_automatic_moving_turn_low_level_p_r3()
-		elif state == self.State.xautomatic_moving_turn_low_level_nr2:
-			self.__exit_sequence_x_automatic_moving_turn_low_level_n_r2()
-		elif state == self.State.xautomatic_moving_turn_low_level_nr3:
-			self.__exit_sequence_x_automatic_moving_turn_low_level_n_r3()
+		if state == self.State.xautomatic_moving_turn_low_level_base_state:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_base_state()
+		elif state == self.State.xautomatic_moving_turn_low_level_turn_to_negative_angle:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle()
+		elif state == self.State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_get_to_initial_position:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_get_to_initial_position()
+		elif state == self.State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_first_step:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_first_step()
+		elif state == self.State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_second_step:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_second_step()
+		elif state == self.State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_third_step:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_third_step()
+		elif state == self.State.xautomatic_moving_turn_low_level_turn_to_positive_angle:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle()
+		elif state == self.State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_get_to_initial_position:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_get_to_initial_position()
+		elif state == self.State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_first_step:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_first_step()
+		elif state == self.State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_second_step:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_second_step()
+		elif state == self.State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_third_step:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_third_step()
+		elif state == self.State.xautomatic_moving_turn_low_level_finished_turn:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_finished_turn()
+		
+	def __exit_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle(self):
+		"""Default exit sequence for region turn_to_negative_angle.
+		"""
+		#Default exit sequence for region turn_to_negative_angle
+		state = self.__state_vector[7]
+		if state == self.State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_get_to_initial_position:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_get_to_initial_position()
+		elif state == self.State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_first_step:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_first_step()
+		elif state == self.State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_second_step:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_second_step()
+		elif state == self.State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_third_step:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_third_step()
+		
+	def __exit_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle(self):
+		"""Default exit sequence for region turn_to_positive_angle.
+		"""
+		#Default exit sequence for region turn_to_positive_angle
+		state = self.__state_vector[7]
+		if state == self.State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_get_to_initial_position:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_get_to_initial_position()
+		elif state == self.State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_first_step:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_first_step()
+		elif state == self.State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_second_step:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_second_step()
+		elif state == self.State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_third_step:
+			self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_third_step()
 		
 	def __exit_sequence_x_initial_calibration_initial_calibration_region(self):
 		"""Default exit sequence for region initial calibration region.
@@ -3523,7 +3688,19 @@ class Model:
 		"""Default react sequence for initial entry .
 		"""
 		#Default react sequence for initial entry 
-		self.__enter_sequence_x_automatic_moving_turn_low_level_normal_default()
+		self.__enter_sequence_x_automatic_moving_turn_low_level_base_state_default()
+		
+	def __react_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle__entry_default(self):
+		"""Default react sequence for initial entry .
+		"""
+		#Default react sequence for initial entry 
+		self.__enter_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_get_to_initial_position_default()
+		
+	def __react_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle__entry_default(self):
+		"""Default react sequence for initial entry .
+		"""
+		#Default react sequence for initial entry 
+		self.__enter_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_get_to_initial_position_default()
 		
 	def __react_x_initial_calibration_initial_calibration_region__entry_default(self):
 		"""Default react sequence for initial entry .
@@ -4536,21 +4713,21 @@ class Model:
 		return transitioned_after
 	
 	
-	def __x_automatic_moving_turn_low_level_normal_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_turn_low_level_normal_react function.
+	def __x_automatic_moving_turn_low_level_base_state_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_turn_low_level_base_state_react function.
 		"""
-		#The reactions of state normal.
+		#The reactions of state base_state.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 7:
 				if (self.am_start_turn) and (self.user_var.am_angle_targ <= 0.0):
-					self.__exit_sequence_x_automatic_moving_turn_low_level_normal()
-					self.__enter_sequence_x_automatic_moving_turn_low_level_negative_rotation_default()
+					self.__exit_sequence_x_automatic_moving_turn_low_level_base_state()
+					self.__enter_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_default()
 					self.__x_automatic_moving_react(0)
 					transitioned_after = 7
 				elif (self.am_start_turn) and (self.user_var.am_angle_targ >= 0.0):
-					self.__exit_sequence_x_automatic_moving_turn_low_level_normal()
-					self.__enter_sequence_x_automatic_moving_turn_low_level_positive_rotation_default()
+					self.__exit_sequence_x_automatic_moving_turn_low_level_base_state()
+					self.__enter_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_default()
 					self.__x_automatic_moving_react(0)
 					transitioned_after = 7
 			#If no transition was taken
@@ -4560,18 +4737,12 @@ class Model:
 		return transitioned_after
 	
 	
-	def __x_automatic_moving_turn_low_level_negative_rotation_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_turn_low_level_negative_rotation_react function.
+	def __x_automatic_moving_turn_low_level_turn_to_negative_angle_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_turn_low_level_turn_to_negative_angle_react function.
 		"""
-		#The reactions of state negativeRotation.
+		#The reactions of state turn_to_negative_angle.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
-			if transitioned_after < 7:
-				if (self.imu.yaw - self.user_var.am_angle_targ) > 0.0 and (self.imu.yaw - self.user_var.am_angle_targ) < self.user_var.am_ct_thr1:
-					self.__exit_sequence_x_automatic_moving_turn_low_level_negative_rotation()
-					self.__enter_sequence_x_automatic_moving_turn_low_level_n_r2_default()
-					self.__x_automatic_moving_react(0)
-					transitioned_after = 7
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
@@ -4579,18 +4750,88 @@ class Model:
 		return transitioned_after
 	
 	
-	def __x_automatic_moving_turn_low_level_positive_rotation_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_turn_low_level_positive_rotation_react function.
+	def __x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_get_to_initial_position_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_get_to_initial_position_react function.
 		"""
-		#The reactions of state positiveRotation.
+		#The reactions of state get_to_initial_position.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 7:
-				if (self.imu.yaw - self.user_var.am_angle_targ) < 0.0 and (self.imu.yaw - self.user_var.am_angle_targ) > -(self.user_var.am_ct_thr1):
-					self.__exit_sequence_x_automatic_moving_turn_low_level_positive_rotation()
-					self.__enter_sequence_x_automatic_moving_turn_low_level_p_r2_default()
+				if self.imu.yaw < 60 and self.imu.yaw > 30:
+					self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_get_to_initial_position()
+					self.__enter_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_first_step_default()
+					self.__x_automatic_moving_turn_low_level_turn_to_negative_angle_react(7)
+					transitioned_after = 7
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__x_automatic_moving_turn_low_level_turn_to_negative_angle_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_first_step_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_first_step_react function.
+		"""
+		#The reactions of state first_step.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 7:
+				if (self.imu.yaw < self.user_var.am_angle_targ) or (self.imu.yaw > 90):
+					self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_first_step()
+					self.__enter_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_second_step_default()
+					self.__x_automatic_moving_turn_low_level_turn_to_negative_angle_react(7)
+					transitioned_after = 7
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__x_automatic_moving_turn_low_level_turn_to_negative_angle_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_second_step_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_second_step_react function.
+		"""
+		#The reactions of state second_step.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 7:
+				if (self.imu.yaw > self.user_var.am_angle_targ) and (self.imu.yaw < 90):
+					self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_second_step()
+					self.__enter_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_third_step_default()
+					self.__x_automatic_moving_turn_low_level_turn_to_negative_angle_react(7)
+					transitioned_after = 7
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__x_automatic_moving_turn_low_level_turn_to_negative_angle_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_third_step_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_third_step_react function.
+		"""
+		#The reactions of state third_step.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 7:
+				if (self.imu.yaw < self.user_var.am_angle_targ) or (self.imu.yaw > 90):
+					self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_negative_angle()
+					self.__enter_sequence_x_automatic_moving_turn_low_level_finished_turn_default()
 					self.__x_automatic_moving_react(0)
 					transitioned_after = 7
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__x_automatic_moving_turn_low_level_turn_to_negative_angle_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __x_automatic_moving_turn_low_level_turn_to_positive_angle_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_turn_low_level_turn_to_positive_angle_react function.
+		"""
+		#The reactions of state turn_to_positive_angle.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
@@ -4598,75 +4839,97 @@ class Model:
 		return transitioned_after
 	
 	
-	def __x_automatic_moving_turn_low_level_p_r2_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_turn_low_level_p_r2_react function.
+	def __x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_get_to_initial_position_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_get_to_initial_position_react function.
 		"""
-		#The reactions of state pR2.
+		#The reactions of state get_to_initial_position.
 		transitioned_after = transitioned_before
 		if not self.__do_completion:
 			if transitioned_after < 7:
-				if (self.imu.yaw - self.user_var.am_angle_targ) > -(self.user_var.am_ct_thr2):
-					self.__exit_sequence_x_automatic_moving_turn_low_level_p_r2()
-					self.__enter_sequence_x_automatic_moving_turn_low_level_p_r3_default()
+				if self.imu.yaw > -(60) and self.imu.yaw < -(30):
+					self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_get_to_initial_position()
+					self.__enter_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_first_step_default()
+					self.__x_automatic_moving_turn_low_level_turn_to_positive_angle_react(7)
+					transitioned_after = 7
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__x_automatic_moving_turn_low_level_turn_to_positive_angle_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_first_step_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_first_step_react function.
+		"""
+		#The reactions of state first_step.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 7:
+				if (self.imu.yaw > self.user_var.am_angle_targ) or (self.imu.yaw < -(90)):
+					self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_first_step()
+					self.__enter_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_second_step_default()
+					self.__x_automatic_moving_turn_low_level_turn_to_positive_angle_react(7)
+					transitioned_after = 7
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__x_automatic_moving_turn_low_level_turn_to_positive_angle_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_second_step_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_second_step_react function.
+		"""
+		#The reactions of state second_step.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 7:
+				if (self.imu.yaw < self.user_var.am_angle_targ) and (self.imu.yaw > -(90)):
+					self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_second_step()
+					self.__enter_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_third_step_default()
+					self.__x_automatic_moving_turn_low_level_turn_to_positive_angle_react(7)
+					transitioned_after = 7
+			#If no transition was taken
+			if transitioned_after == transitioned_before:
+				#then execute local reactions.
+				transitioned_after = self.__x_automatic_moving_turn_low_level_turn_to_positive_angle_react(transitioned_before)
+		return transitioned_after
+	
+	
+	def __x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_third_step_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_third_step_react function.
+		"""
+		#The reactions of state third_step.
+		transitioned_after = transitioned_before
+		if not self.__do_completion:
+			if transitioned_after < 7:
+				if (self.imu.yaw > self.user_var.am_angle_targ) or (self.imu.yaw < -(90)):
+					self.__exit_sequence_x_automatic_moving_turn_low_level_turn_to_positive_angle()
+					self.__enter_sequence_x_automatic_moving_turn_low_level_finished_turn_default()
 					self.__x_automatic_moving_react(0)
 					transitioned_after = 7
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
-				transitioned_after = self.__x_automatic_moving_react(transitioned_before)
+				transitioned_after = self.__x_automatic_moving_turn_low_level_turn_to_positive_angle_react(transitioned_before)
 		return transitioned_after
 	
 	
-	def __x_automatic_moving_turn_low_level_p_r3_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_turn_low_level_p_r3_react function.
+	def __x_automatic_moving_turn_low_level_finished_turn_react(self, transitioned_before):
+		"""Implementation of __x_automatic_moving_turn_low_level_finished_turn_react function.
 		"""
-		#The reactions of state pR3.
+		#The reactions of state finished_turn.
 		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 7:
-				if (self.imu.yaw - self.user_var.am_angle_targ) > 0.0 or self.imu.yaw < -(90.0):
-					self.__exit_sequence_x_automatic_moving_turn_low_level_p_r3()
-					self.__enter_sequence_x_automatic_moving_turn_low_level_normal_default()
-					self.__x_automatic_moving_react(0)
-					transitioned_after = 7
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_automatic_moving_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_automatic_moving_turn_low_level_n_r2_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_turn_low_level_n_r2_react function.
-		"""
-		#The reactions of state nR2.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 7:
-				if (self.imu.yaw - self.user_var.am_angle_targ) < self.user_var.am_ct_thr2:
-					self.__exit_sequence_x_automatic_moving_turn_low_level_n_r2()
-					self.__enter_sequence_x_automatic_moving_turn_low_level_n_r3_default()
-					self.__x_automatic_moving_react(0)
-					transitioned_after = 7
-			#If no transition was taken
-			if transitioned_after == transitioned_before:
-				#then execute local reactions.
-				transitioned_after = self.__x_automatic_moving_react(transitioned_before)
-		return transitioned_after
-	
-	
-	def __x_automatic_moving_turn_low_level_n_r3_react(self, transitioned_before):
-		"""Implementation of __x_automatic_moving_turn_low_level_n_r3_react function.
-		"""
-		#The reactions of state nR3.
-		transitioned_after = transitioned_before
-		if not self.__do_completion:
-			if transitioned_after < 7:
-				if (self.imu.yaw - self.user_var.am_angle_targ) < 0.0 or self.imu.yaw > 90.0:
-					self.__exit_sequence_x_automatic_moving_turn_low_level_n_r3()
-					self.__enter_sequence_x_automatic_moving_turn_low_level_normal_default()
-					self.__x_automatic_moving_react(0)
-					transitioned_after = 7
+		if self.__do_completion:
+			#Default exit sequence for state finished_turn
+			self.__state_vector[7] = self.State.xautomatic_moving
+			self.__state_conf_vector_position = 7
+			#'default' enter sequence for state base_state
+			self.__state_vector[7] = self.State.xautomatic_moving_turn_low_level_base_state
+			self.__state_conf_vector_position = 7
+			self.__state_conf_vector_changed = True
+			self.__x_automatic_moving_react(0)
+		else:
 			#If no transition was taken
 			if transitioned_after == transitioned_before:
 				#then execute local reactions.
@@ -5539,20 +5802,26 @@ class Model:
 				transitioned = self.__x_automatic_moving_turn_high_level_processing_angle2_react(transitioned)
 		if self.__state_conf_vector_position < 7:
 			state = self.__state_vector[7]
-			if state == self.State.xautomatic_moving_turn_low_level_normal:
-				self.__x_automatic_moving_turn_low_level_normal_react(transitioned)
-			elif state == self.State.xautomatic_moving_turn_low_level_negative_rotation:
-				self.__x_automatic_moving_turn_low_level_negative_rotation_react(transitioned)
-			elif state == self.State.xautomatic_moving_turn_low_level_positive_rotation:
-				self.__x_automatic_moving_turn_low_level_positive_rotation_react(transitioned)
-			elif state == self.State.xautomatic_moving_turn_low_level_pr2:
-				self.__x_automatic_moving_turn_low_level_p_r2_react(transitioned)
-			elif state == self.State.xautomatic_moving_turn_low_level_pr3:
-				self.__x_automatic_moving_turn_low_level_p_r3_react(transitioned)
-			elif state == self.State.xautomatic_moving_turn_low_level_nr2:
-				self.__x_automatic_moving_turn_low_level_n_r2_react(transitioned)
-			elif state == self.State.xautomatic_moving_turn_low_level_nr3:
-				self.__x_automatic_moving_turn_low_level_n_r3_react(transitioned)
+			if state == self.State.xautomatic_moving_turn_low_level_base_state:
+				self.__x_automatic_moving_turn_low_level_base_state_react(transitioned)
+			elif state == self.State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_get_to_initial_position:
+				self.__x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_get_to_initial_position_react(transitioned)
+			elif state == self.State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_first_step:
+				self.__x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_first_step_react(transitioned)
+			elif state == self.State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_second_step:
+				self.__x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_second_step_react(transitioned)
+			elif state == self.State.xautomatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_third_step:
+				self.__x_automatic_moving_turn_low_level_turn_to_negative_angle_turn_to_negative_angle_third_step_react(transitioned)
+			elif state == self.State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_get_to_initial_position:
+				self.__x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_get_to_initial_position_react(transitioned)
+			elif state == self.State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_first_step:
+				self.__x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_first_step_react(transitioned)
+			elif state == self.State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_second_step:
+				self.__x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_second_step_react(transitioned)
+			elif state == self.State.xautomatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_third_step:
+				self.__x_automatic_moving_turn_low_level_turn_to_positive_angle_turn_to_positive_angle_third_step_react(transitioned)
+			elif state == self.State.xautomatic_moving_turn_low_level_finished_turn:
+				self.__x_automatic_moving_turn_low_level_finished_turn_react(transitioned)
 	
 	
 	def run_cycle(self):
